@@ -5,12 +5,12 @@
  *
  */
 
-package gld.algo.tlc;
+package com.github.cc007.trafficlights.algo.tlc;
 
-import gld.infra.Drivelane;
-import gld.infra.Infrastructure;
-import gld.infra.Roaduser;
-import gld.infra.Sign;
+import com.github.cc007.trafficlights.infra.Drivelane;
+import com.github.cc007.trafficlights.infra.Infrastructure;
+import com.github.cc007.trafficlights.infra.Roaduser;
+import com.github.cc007.trafficlights.infra.Sign;
 
 /**
  *  This is a base class for reinforcement learners.

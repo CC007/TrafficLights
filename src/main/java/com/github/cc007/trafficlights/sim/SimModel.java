@@ -13,19 +13,19 @@
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
 
-package gld.sim;
+package com.github.cc007.trafficlights.sim;
 
-import gld.GLDSim;
-import gld.Model;
-import gld.GLDException;
+import com.github.cc007.trafficlights.GLDSim;
+import com.github.cc007.trafficlights.Model;
+import com.github.cc007.trafficlights.GLDException;
 
-import gld.algo.dp.*;
-import gld.algo.tlc.*;
-import gld.infra.*;
-import gld.sim.stats.TrackerFactory;
-import gld.utils.Arrayutils;
-import gld.utils.NumberDispenser;
-import gld.xml.*;
+import com.github.cc007.trafficlights.algo.dp.*;
+import com.github.cc007.trafficlights.algo.tlc.*;
+import com.github.cc007.trafficlights.infra.*;
+import com.github.cc007.trafficlights.sim.stats.TrackerFactory;
+import com.github.cc007.trafficlights.utils.Arrayutils;
+import com.github.cc007.trafficlights.utils.NumberDispenser;
+import com.github.cc007.trafficlights.xml.*;
 
 import java.awt.Point;
 import java.awt.Color;
@@ -330,7 +330,7 @@ public class SimModel extends Model implements XMLSerializable
 		}
                 if (structureChanged && this.controller.getRerouting()){
                     // the paths have to be recalculated, because the structure changed (DOAS 06)
-                    gld.algo.edit.ShortestPathCalculator calc = new gld.algo.edit.ShortestPathCalculator();
+                    com.github.cc007.trafficlights.algo.edit.ShortestPathCalculator calc = new com.github.cc007.trafficlights.algo.edit.ShortestPathCalculator();
                     try{
                         calc.calcAllShortestPaths(infra);
                     } catch (InfraException e){

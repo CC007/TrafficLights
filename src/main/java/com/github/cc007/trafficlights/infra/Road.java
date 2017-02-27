@@ -14,11 +14,11 @@
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
 
-package gld.infra;
+package com.github.cc007.trafficlights.infra;
 
-import gld.*;
-import gld.utils.*;
-import gld.xml.*;
+import com.github.cc007.trafficlights.*;
+import com.github.cc007.trafficlights.utils.*;
+import com.github.cc007.trafficlights.xml.*;
 
 import java.awt.*;
 import java.awt.geom.*;
@@ -542,7 +542,7 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader
         case 6: g.setColor(new Color(255,255,230)); break;      // Busses and Bicycles only
         default: g.setColor(Color.white); break;                 // All Roadusers
     }
-    if(gld.infra.Infrastructure.disabledLanes.contains(dl))
+    if(com.github.cc007.trafficlights.infra.Infrastructure.disabledLanes.contains(dl))
         g.setColor(Color.ORANGE);
     try
     {

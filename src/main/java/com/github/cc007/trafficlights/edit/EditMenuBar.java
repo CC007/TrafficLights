@@ -14,9 +14,9 @@
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
 
-package gld.edit;
+package com.github.cc007.trafficlights.edit;
 
-import gld.*;
+import com.github.cc007.trafficlights.*;
 
 import java.awt.*;
 import java.util.*;

@@ -14,9 +14,9 @@
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
 
-package gld.xml;
+package com.github.cc007.trafficlights.xml;
 
-import gld.utils.StringUtils;
+import com.github.cc007.trafficlights.utils.StringUtils;
 import java.io.*;
 
 /** A utility class to write XML to an OutputStream

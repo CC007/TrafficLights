@@ -14,9 +14,9 @@
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
 
-package gld.config;
+package com.github.cc007.trafficlights.config;
 
-import gld.GLDException;
+import com.github.cc007.trafficlights.GLDException;
 
 /**
  *

@@ -14,9 +14,9 @@
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
 
-package gld.utils;
+package com.github.cc007.trafficlights.utils;
 
-import gld.GLDSim;
+import com.github.cc007.trafficlights.GLDSim;
 import java.lang.reflect.Array;
 import java.util.Enumeration;
 import java.util.NoSuchElementException;

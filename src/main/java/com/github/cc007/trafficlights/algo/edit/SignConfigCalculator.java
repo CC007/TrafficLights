@@ -14,9 +14,9 @@
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
 
-package gld.algo.edit;
+package com.github.cc007.trafficlights.algo.edit;
 
-import gld.infra.*;
+import com.github.cc007.trafficlights.infra.*;
 import java.util.Vector;
 import java.util.Enumeration;
 import java.util.Iterator;

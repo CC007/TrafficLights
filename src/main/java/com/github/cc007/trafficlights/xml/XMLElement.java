@@ -14,11 +14,11 @@
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
 
-package gld.xml;
+package com.github.cc007.trafficlights.xml;
 /** This class represents XML elements and their attributes.
  */
 
-import gld.xml.*;
+import com.github.cc007.trafficlights.xml.*;
 import java.util.*;
 
 // TODO:  - Write JUnit test

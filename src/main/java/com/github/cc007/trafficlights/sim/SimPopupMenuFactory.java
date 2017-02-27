@@ -14,11 +14,11 @@
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
 
-package gld.sim;
+package com.github.cc007.trafficlights.sim;
 
-import gld.*;
-import gld.infra.*;
-import gld.sim.stats.TrackerFactory;
+import com.github.cc007.trafficlights.*;
+import com.github.cc007.trafficlights.infra.*;
+import com.github.cc007.trafficlights.sim.stats.TrackerFactory;
 
 import java.awt.MenuItem;
 import java.awt.MenuShortcut;

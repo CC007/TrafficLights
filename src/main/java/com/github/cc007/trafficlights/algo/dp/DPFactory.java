@@ -14,16 +14,16 @@
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
 
-package gld.algo.dp;
+package com.github.cc007.trafficlights.algo.dp;
 /** This class can be used to create instances of Driving Policies
   * for a specific SimModel and TrafficLightController
  */
 
-import gld.algo.tlc.TLController;
-import gld.infra.InfraException;
-import gld.infra.Infrastructure; 
-import gld.sim.SimModel;
-import gld.utils.StringUtils;
+import com.github.cc007.trafficlights.algo.tlc.TLController;
+import com.github.cc007.trafficlights.infra.InfraException;
+import com.github.cc007.trafficlights.infra.Infrastructure; 
+import com.github.cc007.trafficlights.sim.SimModel;
+import com.github.cc007.trafficlights.utils.StringUtils;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Random;

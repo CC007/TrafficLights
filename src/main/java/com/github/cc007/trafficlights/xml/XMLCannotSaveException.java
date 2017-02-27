@@ -14,9 +14,9 @@
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
 
-package gld.xml;
+package com.github.cc007.trafficlights.xml;
 
-import gld.GLDException;
+import com.github.cc007.trafficlights.GLDException;
 
 /** Thrown by a XMLSerializable when it is told to save it self. But that
   * cannot be done. (e.g. because the object is in an inconsistent state)

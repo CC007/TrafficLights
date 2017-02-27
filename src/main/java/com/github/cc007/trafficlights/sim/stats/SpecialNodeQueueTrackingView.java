@@ -14,9 +14,9 @@
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
 
-package gld.sim.stats;
+package com.github.cc007.trafficlights.sim.stats;
 
-import gld.infra.SpecialNode;
+import com.github.cc007.trafficlights.infra.SpecialNode;
 
 /**
  *

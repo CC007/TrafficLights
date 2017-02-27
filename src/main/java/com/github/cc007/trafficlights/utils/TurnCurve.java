@@ -14,7 +14,7 @@
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
 
-package gld.utils;
+package com.github.cc007.trafficlights.utils;
 
 import java.awt.*;
 import java.awt.geom.*;

@@ -15,7 +15,7 @@
  *------------------------------------------------------------------------*/
 
 
-package gld.utils;
+package com.github.cc007.trafficlights.utils;
 /** Utility class to get the vendor of the JDK (for the configure script)*/
 class GetJavaVendor
 { public static void main (String[] p)

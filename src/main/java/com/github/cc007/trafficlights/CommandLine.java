@@ -5,13 +5,13 @@
  *
  */
 
-package gld;
+package com.github.cc007.trafficlights;
 
-import gld.algo.dp.DPFactory;
-import gld.algo.tlc.TLCFactory;
-import gld.algo.tlc.TLController;
-import gld.sim.SimController;
-import gld.sim.SimModel;
+import com.github.cc007.trafficlights.algo.dp.DPFactory;
+import com.github.cc007.trafficlights.algo.tlc.TLCFactory;
+import com.github.cc007.trafficlights.algo.tlc.TLController;
+import com.github.cc007.trafficlights.sim.SimController;
+import com.github.cc007.trafficlights.sim.SimModel;
 import java.util.HashMap;
 import java.util.Iterator;
 

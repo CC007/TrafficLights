@@ -14,17 +14,17 @@
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
 
-package gld.utils;
+package com.github.cc007.trafficlights.utils;
 
 import java.awt.*;
 import java.awt.geom.*;
 import java.util.*;
-import gld.infra.InfraException;
-import gld.infra.Road;
-import gld.infra.Node;
-import gld.infra.Turn;
-import gld.utils.CurveException;
-import gld.utils.TurnCurve;
+import com.github.cc007.trafficlights.infra.InfraException;
+import com.github.cc007.trafficlights.infra.Road;
+import com.github.cc007.trafficlights.infra.Node;
+import com.github.cc007.trafficlights.infra.Turn;
+import com.github.cc007.trafficlights.utils.CurveException;
+import com.github.cc007.trafficlights.utils.TurnCurve;
 
 /**
  * This class presents methods to handle curves

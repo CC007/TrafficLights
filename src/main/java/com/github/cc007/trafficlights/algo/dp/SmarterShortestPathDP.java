@@ -14,13 +14,13 @@
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
 
-package gld.algo.dp;
+package com.github.cc007.trafficlights.algo.dp;
 
-import gld.algo.dp.*;
-import gld.algo.tlc.*;
-import gld.infra.*;
-import gld.sim.*;
-import gld.xml.*;
+import com.github.cc007.trafficlights.algo.dp.*;
+import com.github.cc007.trafficlights.algo.tlc.*;
+import com.github.cc007.trafficlights.infra.*;
+import com.github.cc007.trafficlights.sim.*;
+import com.github.cc007.trafficlights.xml.*;
 import java.io.IOException;
 import java.util.Random;
 

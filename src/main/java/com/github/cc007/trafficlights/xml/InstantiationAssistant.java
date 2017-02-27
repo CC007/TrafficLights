@@ -14,7 +14,7 @@
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
 
-package gld.xml;
+package com.github.cc007.trafficlights.xml;
 
 
 /** The GLD user documentation defines InstantiationAssistant as 

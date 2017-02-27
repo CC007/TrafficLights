@@ -1,4 +1,4 @@
-package gld.algo.tlc;
+package com.github.cc007.trafficlights.algo.tlc;
 
 /*
    HEC Interface, deze interface toggled bij een TLC die een implementatie
@@ -7,8 +7,8 @@ package gld.algo.tlc;
 */
 
 
-import gld.algo.tlc.*;
-import gld.*;
+import com.github.cc007.trafficlights.algo.tlc.*;
+import com.github.cc007.trafficlights.*;
 
 
 public interface HECinterface

@@ -14,9 +14,9 @@
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
 
-package gld.xml;
+package com.github.cc007.trafficlights.xml;
 
-import gld.GLDException;
+import com.github.cc007.trafficlights.GLDException;
 
 /** Thrown when something goes wrong while trying to build or parse an
   * XML tree. For example unbalanced tags ( <onetag></othertag> )

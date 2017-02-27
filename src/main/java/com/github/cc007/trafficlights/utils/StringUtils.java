@@ -1,4 +1,4 @@
-package gld.utils;
+package com.github.cc007.trafficlights.utils;
 
 import java.util.NoSuchElementException;
 

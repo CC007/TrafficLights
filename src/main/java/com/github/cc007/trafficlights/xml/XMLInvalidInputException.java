@@ -14,9 +14,9 @@
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
 
-package gld.xml;
+package com.github.cc007.trafficlights.xml;
 
-import gld.GLDException;
+import com.github.cc007.trafficlights.GLDException;
 
 // You're in a maze of obscure exceptions, all alike...
 

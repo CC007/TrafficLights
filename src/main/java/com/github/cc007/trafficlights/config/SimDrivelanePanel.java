@@ -14,7 +14,7 @@
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
 
-package gld.config;
+package com.github.cc007.trafficlights.config;
 
 
 import java.awt.*;
@@ -23,10 +23,10 @@ import java.util.ConcurrentModificationException;
 import java.util.Vector;
 import java.awt.event.*;
 
-import gld.*;
-import gld.infra.*;
-import gld.utils.*;
-import gld.edit.*;
+import com.github.cc007.trafficlights.*;
+import com.github.cc007.trafficlights.infra.*;
+import com.github.cc007.trafficlights.utils.*;
+import com.github.cc007.trafficlights.edit.*;
 
 
 /**

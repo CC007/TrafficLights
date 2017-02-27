@@ -1,4 +1,4 @@
-package gld.algo.heuristic;
+package com.github.cc007.trafficlights.algo.heuristic;
 
 /*
    Statisch bibliotheek classe voor een functie die kan worden gebruikt voor een
@@ -6,12 +6,12 @@ package gld.algo.heuristic;
    classe.
 */
 
-import gld.infra.InfraException;
-import gld.infra.Node;
-import gld.algo.dp.DrivingPolicy;
-import gld.sim.SimModel;
-import gld.infra.Drivelane;
-import gld.infra.Roaduser;
+import com.github.cc007.trafficlights.infra.InfraException;
+import com.github.cc007.trafficlights.infra.Node;
+import com.github.cc007.trafficlights.algo.dp.DrivingPolicy;
+import com.github.cc007.trafficlights.sim.SimModel;
+import com.github.cc007.trafficlights.infra.Drivelane;
+import com.github.cc007.trafficlights.infra.Roaduser;
 
 public class HEC
 {

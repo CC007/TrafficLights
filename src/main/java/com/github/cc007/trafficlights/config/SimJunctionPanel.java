@@ -14,16 +14,16 @@
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
 
-package gld.config;
+package com.github.cc007.trafficlights.config;
 
 import java.awt.*;
 import java.awt.event.*;
 
-import gld.*;
-import gld.sim.*;
-import gld.sim.stats.*;
-import gld.utils.*;
-import gld.infra.*;
+import com.github.cc007.trafficlights.*;
+import com.github.cc007.trafficlights.sim.*;
+import com.github.cc007.trafficlights.sim.stats.*;
+import com.github.cc007.trafficlights.utils.*;
+import com.github.cc007.trafficlights.infra.*;
 
 /**
  *

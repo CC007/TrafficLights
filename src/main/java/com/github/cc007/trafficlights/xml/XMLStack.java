@@ -14,9 +14,9 @@
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
 
-package gld.xml;
+package com.github.cc007.trafficlights.xml;
 
-import gld.utils.StringUtils;
+import com.github.cc007.trafficlights.utils.StringUtils;
 
 /** This class is used by the XMLLoader and the XMLSaver to remember where
   * the parser is saving/loading in the XML tree. XMLStack is an extension

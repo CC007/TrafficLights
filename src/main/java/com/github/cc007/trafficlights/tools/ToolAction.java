@@ -14,7 +14,7 @@
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
 
-package gld.tools;
+package com.github.cc007.trafficlights.tools;
 
 
 /**

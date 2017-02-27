@@ -14,11 +14,11 @@
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
 
-package gld.infra;
+package com.github.cc007.trafficlights.infra;
 
-import gld.GeneralSettings;
-import gld.GLDSim;
-import gld.infra.*;
+import com.github.cc007.trafficlights.GeneralSettings;
+import com.github.cc007.trafficlights.GLDSim;
+import com.github.cc007.trafficlights.infra.*;
 import java.awt.Color;
 import java.util.Random;
 

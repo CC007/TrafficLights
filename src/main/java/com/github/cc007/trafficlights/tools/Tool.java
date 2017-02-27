@@ -14,10 +14,10 @@
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
 
-package gld.tools;
+package com.github.cc007.trafficlights.tools;
 
-import gld.Overlay;
-import gld.View;
+import com.github.cc007.trafficlights.Overlay;
+import com.github.cc007.trafficlights.View;
 
 import java.awt.Panel;
 import java.awt.Point;

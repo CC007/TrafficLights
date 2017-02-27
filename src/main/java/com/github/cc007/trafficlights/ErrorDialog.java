@@ -13,10 +13,9 @@
  * See the GNU General Public License for more details.
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
+package com.github.cc007.trafficlights;
 
-package gld;
-
-import gld.*;
+import com.github.cc007.trafficlights.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -28,92 +27,77 @@ import java.awt.event.*;
  * @author Group GUI
  * @version 1.0
  */
+public class ErrorDialog extends Dialog implements ActionListener {
 
-public class ErrorDialog extends Dialog implements ActionListener
-{
-	
-	/** Creates an <code>ErrorDialog</code>. */
-	public ErrorDialog(Frame f, String msg)
-	{
-		super(f, "Error", true);
-		setup(msg);
-	}
-	
-	public ErrorDialog(Dialog d, String msg)
-	{
-		super(d, "Error", true);
-		setup(msg);
-	}
-	
-	public void setup(String msg)
-	{
-		this.setResizable(false);
-		this.setSize(300, 200);
-		this.addWindowListener(new ErrorWindowListener());
-		this.setLayout(new BorderLayout());
+    /**
+     * Creates an <code>ErrorDialog</code>.
+     */
+    public ErrorDialog(Frame f, String msg) {
+        super(f, "Error", true);
+        setup(msg);
+    }
 
-		this.add(new OkPanel(this), BorderLayout.SOUTH);
-		this.add(new MessagePanel(msg), BorderLayout.CENTER);
-		this.show();
-	}
+    public ErrorDialog(Dialog d, String msg) {
+        super(d, "Error", true);
+        setup(msg);
+    }
 
-	
+    public void setup(String msg) {
+        this.setResizable(false);
+        this.setSize(300, 200);
+        this.addWindowListener(new ErrorWindowListener());
+        this.setLayout(new BorderLayout());
 
+        this.add(new OkPanel(this), BorderLayout.SOUTH);
+        this.add(new MessagePanel(msg), BorderLayout.CENTER);
+        this.show();
+    }
 
+    /*============================================*/
+ /* Listeners                                  */
+ /*============================================*/
+    /**
+     * Invoked when 'Ok' is clicked.
+     */
+    public void actionPerformed(ActionEvent e) {
+        dispose();
+    }
 
+    /**
+     * Listens to the <code>EditPropDialog</code> window.
+     */
+    public class ErrorWindowListener extends WindowAdapter {
 
+        public void windowClosing(WindowEvent e) {
+            dispose();
+        }
+    }
 
+    /*============================================*/
+ /* Panels                                     */
+ /*============================================*/
+    /**
+     * Panel showing the error message.
+     */
+    public class MessagePanel extends Panel {
 
-	/*============================================*/
-	/* Listeners                                  */
-	/*============================================*/
-	
-	/** Invoked when 'Ok' is clicked. */
-	public void actionPerformed(ActionEvent e)
-	{
-			dispose();
-	}
-	
-	
- 	/** Listens to the <code>EditPropDialog</code> window. */
- 	public class ErrorWindowListener extends WindowAdapter
- 	{
-	  public void windowClosing(WindowEvent e) 
-  	{
-   		dispose();
-  	}
-  }
+        public MessagePanel(String msg) {
+            TextArea text = new TextArea(msg, 7, 35, TextArea.SCROLLBARS_NONE);
+            text.setEditable(false);
+            this.add(text);
+        }
+    }
 
+    /**
+     * Panel containing button "Ok".
+     */
+    public class OkPanel extends Panel {
 
-
-
-
-
-
-	/*============================================*/
-	/* Panels                                     */
-	/*============================================*/
-
-  /** Panel showing the error message. */
-  public class MessagePanel extends Panel
-  {
-		public MessagePanel(String msg)
-		{ 
-			TextArea text = new TextArea(msg, 7, 35, TextArea.SCROLLBARS_NONE);
-			text.setEditable(false);
-			this.add(text);
-		}
-	}
-
-  /** Panel containing button "Ok". */
-  public class OkPanel extends Panel
-  {
-		public OkPanel(ActionListener action)
-		{  
-			this.setLayout(new FlowLayout(FlowLayout.CENTER));
-			Button b = new Button("Ok");
- 			b.addActionListener(action);
- 			this.add(b);
- 		}
-	}
+        public OkPanel(ActionListener action) {
+            this.setLayout(new FlowLayout(FlowLayout.CENTER));
+            Button b = new Button("Ok");
+            b.addActionListener(action);
+            this.add(b);
+        }
+    }
 }

@@ -14,15 +14,15 @@
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
 
-package gld.algo.tlc;
+package com.github.cc007.trafficlights.algo.tlc;
 /** This class can be used to create instances of Traffic Light Controllers
   * for a specific infrastructure.
   */
 
-import gld.infra.InfraException;
-import gld.GLDSim;
-import gld.infra.Infrastructure;
-import gld.utils.StringUtils;
+import com.github.cc007.trafficlights.infra.InfraException;
+import com.github.cc007.trafficlights.GLDSim;
+import com.github.cc007.trafficlights.infra.Infrastructure;
+import com.github.cc007.trafficlights.utils.StringUtils;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Random;

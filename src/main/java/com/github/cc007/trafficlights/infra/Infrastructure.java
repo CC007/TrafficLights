@@ -13,19 +13,19 @@
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
 
-package gld.infra;
+package com.github.cc007.trafficlights.infra;
 
 import java.awt.*;
 import java.io.IOException;
 import java.util.*;
 
-import gld.*;
-import gld.infra.Node.NodeStatistics;
-import gld.algo.dp.*;
-import gld.algo.edit.*;
-import gld.utils.*;
-import gld.xml.*;
-import gld.edit.Validation;
+import com.github.cc007.trafficlights.*;
+import com.github.cc007.trafficlights.infra.Node.NodeStatistics;
+import com.github.cc007.trafficlights.algo.dp.*;
+import com.github.cc007.trafficlights.algo.edit.*;
+import com.github.cc007.trafficlights.utils.*;
+import com.github.cc007.trafficlights.xml.*;
+import com.github.cc007.trafficlights.edit.Validation;
 
 
 /**
@@ -454,7 +454,7 @@ public class Infrastructure implements XMLSerializable, SelectionStarter
         //Check if everything is still okay about the Infrastructure
         validator.validate();
 
-        gld.algo.edit.ShortestPathCalculator calc = new gld.algo.edit.ShortestPathCalculator();
+        com.github.cc007.trafficlights.algo.edit.ShortestPathCalculator calc = new com.github.cc007.trafficlights.algo.edit.ShortestPathCalculator();
         calc.calcAllShortestPaths(this);
 
     }

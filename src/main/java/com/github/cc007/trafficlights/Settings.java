@@ -14,9 +14,9 @@
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
 
-package gld;
+package com.github.cc007.trafficlights;
 
-import gld.xml.*;
+import com.github.cc007.trafficlights.xml.*;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 

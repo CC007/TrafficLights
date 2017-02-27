@@ -15,7 +15,7 @@
  *------------------------------------------------------------------------*/
 
 
-package gld.utils;
+package com.github.cc007.trafficlights.utils;
 /** Utility class to get the version of the JDK (for the configure script)*/
 class GetJavaVersion 
 { public static void main (String[] p)

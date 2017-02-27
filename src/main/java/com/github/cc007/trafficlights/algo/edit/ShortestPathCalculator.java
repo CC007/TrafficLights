@@ -13,11 +13,11 @@
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
 
-package gld.algo.edit;
+package com.github.cc007.trafficlights.algo.edit;
 
 import java.io.*;
-import gld.infra.*;
-import gld.utils.Typeutils;
+import com.github.cc007.trafficlights.infra.*;
+import com.github.cc007.trafficlights.utils.Typeutils;
 
 /**
  * This class will determine for each node for each exitnode what lanes are

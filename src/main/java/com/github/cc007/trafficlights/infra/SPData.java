@@ -14,10 +14,10 @@
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
 
-package gld.infra;
+package com.github.cc007.trafficlights.infra;
 
-import gld.utils.Arrayutils;
-import gld.xml.*;
+import com.github.cc007.trafficlights.utils.Arrayutils;
+import com.github.cc007.trafficlights.xml.*;
 import java.io.IOException;
 import java.util.Dictionary;
 import java.util.Enumeration;

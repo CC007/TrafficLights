@@ -1,7 +1,7 @@
-package gld.config;
+package com.github.cc007.trafficlights.config;
 
-import gld.Controller;
-import gld.sim.SimController;
+import com.github.cc007.trafficlights.Controller;
+import com.github.cc007.trafficlights.sim.SimController;
 
 import java.awt.BorderLayout;
 import java.awt.Button;
