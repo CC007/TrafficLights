@@ -31,7 +31,7 @@ import com.github.cc007.trafficlights.config.*;
 public class GeneralSettings implements Settings
 {	public static final int 	COMPRESSION_NO=0,
 										COMPRESSION_GZIP=1;
-	public static final String settingsFile="gld/settings.conf";
+	public static final String settingsFile=GeneralSettings.class.getClassLoader().getResource("settings.conf").getPath();
 	public static Settings currentSettings;										
 					
 	/** Indicates if we should use our (slow) internal browser to show the
