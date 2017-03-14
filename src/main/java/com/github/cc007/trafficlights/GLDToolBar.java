@@ -57,9 +57,9 @@ public abstract class GLDToolBar extends ToolBar implements ActionListener, Item
 		controller = c;
 
 
-		if (newicon) addButton("gld/images/new.gif", this, NEW);
-		addButton("gld/images/open.gif", this, OPEN);
-		addButton("gld/images/save.gif", this, SAVE);
+		if (newicon) addButton(this.getClass().getClassLoader().getResource("images/new.gif").getPath(), this, NEW);
+		addButton(this.getClass().getClassLoader().getResource("images/open.gif").getPath(), this, OPEN);
+		addButton(this.getClass().getClassLoader().getResource("images/save.gif").getPath(), this, SAVE);
 		
 		addSeparator();
 
@@ -77,12 +77,12 @@ public abstract class GLDToolBar extends ToolBar implements ActionListener, Item
     addComponent(zoom);
     
     addSeparator();
-    addButton("gld/images/center.gif", this, CENTER);
+    addButton(this.getClass().getClassLoader().getResource("images/center.gif").getPath(), this, CENTER);
 		addSeparator();
 
-  	addButton("gld/images/scroll.gif", this, SCROLL);
-  	addButton("gld/images/zoom.gif", this, ZOOM);
-  	addButton("gld/images/select.gif", this, SELECT);
+  	addButton(this.getClass().getClassLoader().getResource("images/scroll.gif").getPath(), this, SCROLL);
+  	addButton(this.getClass().getClassLoader().getResource("images/zoom.gif").getPath(), this, ZOOM);
+  	addButton(this.getClass().getClassLoader().getResource("images/select.gif").getPath(), this, SELECT);
   	
   	addSeparator();
 
@@ -90,11 +90,11 @@ public abstract class GLDToolBar extends ToolBar implements ActionListener, Item
 
   	addSeparator();
   	
-  	addButton("gld/images/config.gif", this, CONFIG);
+  	addButton(this.getClass().getClassLoader().getResource("images/config.gif").getPath(), this, CONFIG);
   	
   	addSeparator();
   	
-		addButton("gld/images/help.gif", this, HELP);
+		addButton(this.getClass().getClassLoader().getResource("images/help.gif").getPath(), this, HELP);
 		
 		addSeparator();
 	}

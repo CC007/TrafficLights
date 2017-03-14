@@ -47,14 +47,14 @@ public class SimToolBar extends GLDToolBar
 	}
 	
 	protected void addTools() {
-  	addButton("gld/images/edgenode.gif", this, EDGENODE);
+  	addButton(this.getClass().getClassLoader().getResource("images/edgenode.gif").getPath(), this, EDGENODE);
   	
   	addSeparator();
   	
-  	addButton("gld/images/step.gif", this, STEP);
-  	addButton("gld/images/run.gif", this, RUN);
-  	addButton("gld/images/pause.gif", this, PAUSE);
-  	addButton("gld/images/stop.gif", this, STOP);
+  	addButton(this.getClass().getClassLoader().getResource("images/step.gif").getPath(), this, STEP);
+  	addButton(this.getClass().getClassLoader().getResource("images/run.gif").getPath(), this, RUN);
+  	addButton(this.getClass().getClassLoader().getResource("images/pause.gif").getPath(), this, PAUSE);
+  	addButton(this.getClass().getClassLoader().getResource("images/stop.gif").getPath(), this, STOP);
   	
   	addSeparator();
 		

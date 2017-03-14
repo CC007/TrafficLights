@@ -47,9 +47,9 @@ public class EditToolBar extends GLDToolBar
 	protected void addTools() {
 //  	addButton("gld/images/total.gif", this, TOTAL);
 //		addButton("gld/images/move.gif", this, MOVE);
-  	addButton("gld/images/node.gif", this, NODE);
-  	addButton("gld/images/road.gif", this, ROAD);
-  	addButton("gld/images/drivelane.gif", this, LANE);
+  	addButton(this.getClass().getClassLoader().getResource("images/node.gif").getPath(), this, NODE);
+  	addButton(this.getClass().getClassLoader().getResource("images/road.gif").getPath(), this, ROAD);
+  	addButton(this.getClass().getClassLoader().getResource("images/drivelane.gif").getPath(), this, LANE);
 	}
 
 	public void actionPerformed(ActionEvent e) {
