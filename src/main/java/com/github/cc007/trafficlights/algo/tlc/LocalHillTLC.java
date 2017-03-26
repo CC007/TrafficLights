@@ -134,7 +134,7 @@ public class LocalHillTLC extends TLController implements Colearning
 		{
 			Node currentNode = allnodes[i];
 			if (! (currentNode instanceof Junction)) continue;
-			DriveLaneTemp [] dls=null;
+			DriveLane [] dls=null;
 			try{dls= currentNode.getInboundLanes();}catch(Exception e){}
 
 			boolean changed;
@@ -163,7 +163,7 @@ public class LocalHillTLC extends TLController implements Colearning
 						else {
 							DrivingPolicy dp = SimModel.getDrivingPolicy();
 							Roaduser firstRU = dls[j].getFirstRoaduser();
-							DriveLaneTemp destLane = dp.getDirection(firstRU, dls[j], currentNode);
+							DriveLane destLane = dp.getDirection(firstRU, dls[j], currentNode);
 							int value = v_table[s.getId()];
 
 							if (destLane==null) value = 1; // when it is an end-node
@@ -198,7 +198,7 @@ public class LocalHillTLC extends TLController implements Colearning
 				Sign s = null;
 				for (int j=0; j<allnodes.length; j++)
 				{
-					DriveLaneTemp [] dls = allnodes[j].getInboundLanes();
+					DriveLane [] dls = allnodes[j].getInboundLanes();
 					for (int k=0; k<dls.length; k++)
 					{
 						if (dls[k].getSign().getId()==i) s=dls[k].getSign();
@@ -214,7 +214,7 @@ public class LocalHillTLC extends TLController implements Colearning
 		return Points;
 	}
 
-	public void updateRoaduserMove(Roaduser ru, DriveLaneTemp currentlane, Sign currentsign, int prevpos, DriveLaneTemp nextlane, Sign nextsign, int posnow, PosMov[] posMovs, DriveLaneTemp desired)
+	public void updateRoaduserMove(Roaduser ru, DriveLane currentlane, Sign currentsign, int prevpos, DriveLane nextlane, Sign nextsign, int posnow, PosMov[] posMovs, DriveLane desired)
 	{
 	/* If this road user is on the first position in the road, this one is used for calcing. We want to know his new direction (node, tl)
 		if(prevpos == 0 && currentlane != null && nextlane != null) {
@@ -236,7 +236,7 @@ public class LocalHillTLC extends TLController implements Colearning
 		// Save things we are gonna change, ArrayList TLDBackup
 
 		try {
-			DriveLaneTemp[] lanes = thisnode.getInboundLanes();
+			DriveLane[] lanes = thisnode.getInboundLanes();
 			// clear??
 			tld_backup.clear();
 			// Error might be here, as you're changing the object, and thus wont have a backup..
@@ -265,7 +265,7 @@ public class LocalHillTLC extends TLController implements Colearning
 		// Save things we are gonna change, ArrayList TLDBackup
 		int i = thisnode.getId();
 		try {
-			DriveLaneTemp[] lanes = thisnode.getInboundLanes();
+			DriveLane[] lanes = thisnode.getInboundLanes();
 			for (int j=0; j<lanes.length; j++) {
 				tld[i][j] = (TLDecision) tld_backup.get(j);
 			}

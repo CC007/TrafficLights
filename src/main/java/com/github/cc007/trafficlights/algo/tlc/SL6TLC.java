@@ -86,10 +86,10 @@ public class SL6TLC extends TCRL implements InstantiationAssistant
         for (int i=0; i<nodes.length; i++)
         {
             Node n = nodes[i];
-            DriveLaneTemp [] dls = n.getInboundLanes();
+            DriveLane [] dls = n.getInboundLanes();
             for (int j=0; j<dls.length; j++)
             {
-                DriveLaneTemp d = dls[j];
+                DriveLane d = dls[j];
                 Sign s = d.getSign();
                 int id = s.getId();
                 int num_pos_on_dl = d.getCompleteLength();
@@ -164,7 +164,7 @@ public class SL6TLC extends TCRL implements InstantiationAssistant
                 Sign currenttl = tld[i][j].getTL();
                 float gain=0;
 
-                DriveLaneTemp currentlane = currenttl.getLane();
+                DriveLane currentlane = currenttl.getLane();
                 int waitingsize = currentlane.getNumRoadusersWaiting();
                 ListIterator queue = currentlane.getQueue().listIterator();
 
@@ -187,8 +187,8 @@ public class SL6TLC extends TCRL implements InstantiationAssistant
     }
 
 	public void updateRoaduserMove(
-	            Roaduser ru, DriveLaneTemp prevlane, Sign prevsign, int prevpos, DriveLaneTemp dlanenow,
-	            Sign signnow, int posnow, PosMov[] posMovs, DriveLaneTemp desired, int penalty)
+	            Roaduser ru, DriveLane prevlane, Sign prevsign, int prevpos, DriveLane dlanenow,
+	            Sign signnow, int posnow, PosMov[] posMovs, DriveLane desired, int penalty)
     {
         //When a roaduser leaves the city; this will
         if(dlanenow == null || signnow == null)
@@ -432,9 +432,9 @@ public class SL6TLC extends TCRL implements InstantiationAssistant
         public void loadSecondStage (Dictionary dictionaries)
         { Dictionary laneDictionary=(Dictionary)(dictionaries.get("lane")),
                      nodeDictionary=(Dictionary)(dictionaries.get("node"));
-          tl=((DriveLaneTemp)(laneDictionary.get(
+          tl=((DriveLane)(laneDictionary.get(
               new Integer(loadData.oldTlId)))).getSign();
-          tl_new=((DriveLaneTemp)(laneDictionary.get(
+          tl_new=((DriveLane)(laneDictionary.get(
               new Integer(loadData.newTlId)))).getSign();
           destination=(Node)(nodeDictionary.get(
               new Integer(loadData.destNodeId)));
@@ -545,9 +545,9 @@ public class SL6TLC extends TCRL implements InstantiationAssistant
         public void loadSecondStage (Dictionary dictionaries)
         {   Dictionary laneDictionary=(Dictionary)(dictionaries.get("lane")),
                         nodeDictionary=(Dictionary)(dictionaries.get("node"));
-            tl=((DriveLaneTemp)(laneDictionary.get(
+            tl=((DriveLane)(laneDictionary.get(
                     new Integer(loadData.oldTlId)))).getSign();
-            tl_new=((DriveLaneTemp)(laneDictionary.get(
+            tl_new=((DriveLane)(laneDictionary.get(
                     new Integer(loadData.newTlId)))).getSign();
             destination=(Node)(nodeDictionary.get(
                     new Integer(loadData.destNodeId)));
@@ -624,7 +624,7 @@ public class SL6TLC extends TCRL implements InstantiationAssistant
 
         public void loadSecondStage (Dictionary dictionaries) throws XMLInvalidInputException,XMLTreeException
         {   Dictionary laneDictionary=(Dictionary)(dictionaries.get("lane"));
-            tl=((DriveLaneTemp)(laneDictionary.get(
+            tl=((DriveLane)(laneDictionary.get(
                          new Integer(loadData.tlId)))).getSign();
         }
 

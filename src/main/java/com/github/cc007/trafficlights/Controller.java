@@ -101,7 +101,7 @@ public abstract class Controller extends Frame implements XMLSerializable
 		add(viewScroller);
 
 		// Create main selection
-		Class[] filter = { Node.class, DriveLaneTemp.class };
+		Class[] filter = { Node.class, DriveLane.class };
 		currentSelection = new Selection(view, filter, model.getInfrastructure());
 		currentSelection.addObserver(view);
 		view.addOverlay(currentSelection);

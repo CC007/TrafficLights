@@ -115,7 +115,7 @@ public class GenNeuralTLC extends TLController implements XMLSerializable,TwoSta
 				float q = ind[i].getQValue(j);
 	    		if(trackNode!=-1)
 				if(i==trackNode) {
-					DriveLaneTemp currentlane = tld[i][j].getTL().getLane();
+					DriveLane currentlane = tld[i][j].getTL().getLane();
 					boolean[] targets = currentlane.getTargets();
 					System.out.println("node: "+i+" light: "+j+" gain: "+q+" "+targets[0]+" "+targets[1]+" "+targets[2]+" "+currentlane.getNumRoadusersWaiting());
 				}
@@ -141,7 +141,7 @@ public class GenNeuralTLC extends TLController implements XMLSerializable,TwoSta
 	 * @param _possiblelanes
 	 * @param _ranges
 	 */
-	public void updateRoaduserMove(Roaduser _ru, DriveLaneTemp _prevlane, Sign _prevsign, int _prevpos, DriveLaneTemp _dlanenow, Sign _signnow, int _posnow, PosMov[] posMovs, DriveLaneTemp _desired)
+	public void updateRoaduserMove(Roaduser _ru, DriveLane _prevlane, Sign _prevsign, int _prevpos, DriveLane _dlanenow, Sign _signnow, int _posnow, PosMov[] posMovs, DriveLane _desired)
 	{
 		// Should keep track of waits and moves per Node
 		if(_prevsign == _signnow && _prevpos == _posnow) {
@@ -589,7 +589,7 @@ public class GenNeuralTLC extends TLController implements XMLSerializable,TwoSta
 					int thisNodeId = my_nodes[i].getId();
 					int num_lanes = tld[thisNodeId].length;
 					for(int j=0;j<num_lanes;j++) {
-						DriveLaneTemp d;
+						DriveLane d;
 						input_set[input_index] = (float) tld[thisNodeId][j].getTL().getLane().getNumBlocksWaiting() / (float) tld[thisNodeId][j].getTL().getLane().getLength();
 						input_index++;
 					}

@@ -33,7 +33,7 @@ import com.github.cc007.trafficlights.utils.*;
 public class EditRoadPanel extends ConfigPanel implements ActionListener, ItemListener
 {
 	Road road;
-	DriveLaneTemp lane;
+	DriveLane lane;
 	
 	Hyperlink alphaLink, betaLink, laneLink;
 	
@@ -157,7 +157,7 @@ public class EditRoadPanel extends ConfigPanel implements ActionListener, ItemLi
 	public void addLane(Node to) {
 		EditModel em = (EditModel)confd.getController().getModel();
 		try {
-			em.addLane(new DriveLaneTemp(road), road, to);
+			em.addLane(new DriveLane(road), road, to);
 		}
 		catch (InfraException e) {
 			Controller.reportError(e);
@@ -165,7 +165,7 @@ public class EditRoadPanel extends ConfigPanel implements ActionListener, ItemLi
 	}
 	
 	public void reset() {
-		DriveLaneTemp[] lanes = road.getAlphaLanes();
+		DriveLane[] lanes = road.getAlphaLanes();
 		
 		if (lanes.length != alphaList.getItemCount()) {
 			alphaList.removeAll();
@@ -208,7 +208,7 @@ public class EditRoadPanel extends ConfigPanel implements ActionListener, ItemLi
 		alphaList.removeAll();
 		betaList.removeAll();
 		
-		DriveLaneTemp[] lanes = road.getAlphaLanes();
+		DriveLane[] lanes = road.getAlphaLanes();
 		
 		for (int i=0; i < lanes.length; i++)
 			alphaList.add(lanes[i].getName());
@@ -241,7 +241,7 @@ public class EditRoadPanel extends ConfigPanel implements ActionListener, ItemLi
 		addBeta.setLabel("Add lane to " + road.getBetaNode().getName());
 	}
 	
-	public void setLane(DriveLaneTemp l) {
+	public void setLane(DriveLane l) {
 		lane = l;
 
 		try {

@@ -202,7 +202,7 @@ public abstract class SpecialNode extends Node implements XMLSerializable, TwoSt
      * Place a roaduser in one of the outbound queues
      */
     public void placeRoaduser(Roaduser ru) throws InfraException {
-        DriveLaneTemp[] lanes = (DriveLaneTemp[]) getShortestPaths(ru.getDestNode().getId(), ru.getType()).clone();
+        DriveLane[] lanes = (DriveLane[]) getShortestPaths(ru.getDestNode().getId(), ru.getType()).clone();
         Arrayutils.randomizeArray(lanes);
         // The next person who outcomments this code will
         // be chopped into little pieces, burned, hanged, chainsawed, 
@@ -409,24 +409,24 @@ public abstract class SpecialNode extends Node implements XMLSerializable, TwoSt
         return 0;
     }
 
-    public DriveLaneTemp[] getLanesLeadingTo(DriveLaneTemp lane, int ruType) throws InfraException {
-        return new DriveLaneTemp[0];
+    public DriveLane[] getLanesLeadingTo(DriveLane lane, int ruType) throws InfraException {
+        return new DriveLane[0];
     }
 
-    public DriveLaneTemp[] getLanesLeadingFrom(DriveLaneTemp lane, int ruType) throws InfraException {
-        return new DriveLaneTemp[0];
+    public DriveLane[] getLanesLeadingFrom(DriveLane lane, int ruType) throws InfraException {
+        return new DriveLane[0];
     }
 
-    public DriveLaneTemp[] getOutboundLanes() throws InfraException {
-        return road != null ? road.getOutboundLanes(this) : new DriveLaneTemp[0];
+    public DriveLane[] getOutboundLanes() throws InfraException {
+        return road != null ? road.getOutboundLanes(this) : new DriveLane[0];
     }
 
-    public DriveLaneTemp[] getInboundLanes() throws InfraException {
-        return road != null ? road.getInboundLanes(this) : new DriveLaneTemp[0];
+    public DriveLane[] getInboundLanes() throws InfraException {
+        return road != null ? road.getInboundLanes(this) : new DriveLane[0];
     }
 
-    public DriveLaneTemp[] getAllLanes() throws InfraException {
-        return (DriveLaneTemp[]) Arrayutils.addArray(getInboundLanes(), getOutboundLanes());
+    public DriveLane[] getAllLanes() throws InfraException {
+        return (DriveLane[]) Arrayutils.addArray(getInboundLanes(), getOutboundLanes());
     }
 
     /*============================================*/

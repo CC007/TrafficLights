@@ -213,28 +213,28 @@ public class RoadAction implements ToolAction {
         Road road = new Road(alpha, beta, (int) (Math.sqrt(dx * dx + dy * dy) / Infrastructure.blockLength));
         int ruType = RoaduserFactory.getTypeByDesc("Automobiles");
 
-        DriveLaneTemp lane0 = new DriveLaneTemp(road);
+        DriveLane lane0 = new DriveLane(road);
         lane0.setType(ruType);
         lane0.setTarget(0, true);
         lane0.setTarget(1, false);
         lane0.setTarget(2, false);
         road.addLane(lane0, alpha);
 
-        DriveLaneTemp lane1 = new DriveLaneTemp(road);
+        DriveLane lane1 = new DriveLane(road);
         lane1.setType(ruType);
         lane1.setTarget(0, false);
         lane1.setTarget(1, true);
         lane1.setTarget(2, true);
         road.addLane(lane1, alpha);
 
-        DriveLaneTemp lane2 = new DriveLaneTemp(road);
+        DriveLane lane2 = new DriveLane(road);
         lane2.setType(ruType);
         lane2.setTarget(0, true);
         lane2.setTarget(1, false);
         lane2.setTarget(2, false);
         road.addLane(lane2, beta);
 
-        DriveLaneTemp lane3 = new DriveLaneTemp(road);
+        DriveLane lane3 = new DriveLane(road);
         lane3.setType(ruType);
         lane3.setTarget(0, false);
         lane3.setTarget(1, true);

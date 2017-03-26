@@ -78,9 +78,9 @@ public class TC1TLCFix extends TCRL implements Colearning, InstantiationAssistan
 			int num_specialnodes = infra.getNumSpecialNodes();
 			for (int i=0; i<num_nodes; i++)	{
 				Node n = nodes[i];
-				DriveLaneTemp [] dls = n.getInboundLanes();
+				DriveLane [] dls = n.getInboundLanes();
 				for (int j=0; j<dls.length; j++) {
-				    DriveLaneTemp d = dls[j];
+				    DriveLane d = dls[j];
 				    Sign s = d.getSign();
 				    int id = s.getId();
 				    int num_pos_on_dl = d.getCompleteLength();
@@ -126,7 +126,7 @@ public class TC1TLCFix extends TCRL implements Colearning, InstantiationAssistan
 		 */
 		int num_dec, waitingsize, pos, tlId, desId;
 		float gain, passenger_factor;
-		Sign tl; DriveLaneTemp lane; Roaduser ru; ListIterator queue; Node destination;
+		Sign tl; DriveLane lane; Roaduser ru; ListIterator queue; Node destination;
 
 		//Determine wheter it should be random or not
 		boolean randomrun = false;
@@ -158,7 +158,7 @@ public class TC1TLCFix extends TCRL implements Colearning, InstantiationAssistan
 
 				// Debug info generator
 				if(trackNode!=-1 && i==trackNode) {
-					DriveLaneTemp currentlane2 = tld[i][j].getTL().getLane();
+					DriveLane currentlane2 = tld[i][j].getTL().getLane();
 					boolean[] targets = currentlane2.getTargets();
 //					System.out.println("node: "+i+" light: "+j+" gain: "+gain+" "+targets[0]+" "+targets[1]+" "+targets[2]+" "+currentlane2.getNumRoadusersWaiting());
 				}
@@ -175,7 +175,7 @@ public class TC1TLCFix extends TCRL implements Colearning, InstantiationAssistan
 	    return tld;
 	}
 
-	public void updateRoaduserMove(Roaduser ru, DriveLaneTemp prevlane, Sign prevsign, int prevpos, DriveLaneTemp dlanenow, Sign signnow, int posnow, PosMov[] posMovs, DriveLaneTemp desired, int penalty) {
+	public void updateRoaduserMove(Roaduser ru, DriveLane prevlane, Sign prevsign, int prevpos, DriveLane dlanenow, Sign signnow, int posnow, PosMov[] posMovs, DriveLane desired, int penalty) {
 		if(dlanenow == null || signnow == null) // Roaduser has just left the building!
 			return;
 		if(prevsign.getType()==Sign.TRAFFICLIGHT && (signnow.getType()==Sign.TRAFFICLIGHT || signnow.getType()==Sign.NO_SIGN)) {
@@ -210,7 +210,7 @@ public class TC1TLCFix extends TCRL implements Colearning, InstantiationAssistan
 		}
 	}
 
-	protected void recalcP(int tlId, int pos, int desId, boolean light, int tlNewId, int posNew, Roaduser ru, DriveLaneTemp dl)	{
+	protected void recalcP(int tlId, int pos, int desId, boolean light, int tlNewId, int posNew, Roaduser ru, DriveLane dl)	{
 	    //Only update the chances when waiting (either on pos=0 or behind waiting RoadUser)
 	    if(true) {
 	        if(tlId==-1) return;
@@ -263,7 +263,7 @@ public class TC1TLCFix extends TCRL implements Colearning, InstantiationAssistan
 		}
 	}
 
-	protected void recalcQ(int tlId, int pos, int desId, boolean light, int tlNewId, int posNew, Roaduser ru, DriveLaneTemp dl, int penalty)	{
+	protected void recalcQ(int tlId, int pos, int desId, boolean light, int tlNewId, int posNew, Roaduser ru, DriveLane dl, int penalty)	{
 	    float R=0, V=0, Q=penalty, P=0;
 	    ArrayList newpositions;
 	    PEntry situation;
@@ -299,7 +299,7 @@ public class TC1TLCFix extends TCRL implements Colearning, InstantiationAssistan
 		}
 	}
 
-	protected void recalcQ2(int tlId, int pos, int desId, boolean light, int tlNewId, int posNew, Roaduser ru, DriveLaneTemp dl, PosMov[] posMovs)	{
+	protected void recalcQ2(int tlId, int pos, int desId, boolean light, int tlNewId, int posNew, Roaduser ru, DriveLane dl, PosMov[] posMovs)	{
 	    float R=0, V=0, Q=0, P=0;
 	    ArrayList newpositions;
 	    PEntry situation;

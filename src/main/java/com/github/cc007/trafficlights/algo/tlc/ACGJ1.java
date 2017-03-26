@@ -116,7 +116,7 @@ public class ACGJ1 extends TLController implements XMLSerializable, TwoStageLoad
 		return tld;
 	}
 
-	public void updateRoaduserMove(Roaduser _ru, DriveLaneTemp _prevlane, Sign _prevsign, int _prevpos, DriveLaneTemp _dlanenow, Sign _signnow, int _posnow, PosMov[] posMovs, DriveLaneTemp desired)
+	public void updateRoaduserMove(Roaduser _ru, DriveLane _prevlane, Sign _prevsign, int _prevpos, DriveLane _dlanenow, Sign _signnow, int _posnow, PosMov[] posMovs, DriveLane desired)
 	{
 	    ruMoves++;
 	}
@@ -399,8 +399,8 @@ public class ACGJ1 extends TLController implements XMLSerializable, TwoStageLoad
 				// Stimulate green waves, if a next lane is also green, give an extra reward
 				for (int l=0; l<config.length; l++)
 				{
-					DriveLaneTemp dl = config[l].getLane();
-					DriveLaneTemp [] dls = dl.getSign().getNode().getLanesLeadingFrom(dl,0);
+					DriveLane dl = config[l].getLane();
+					DriveLane [] dls = dl.getSign().getNode().getLanesLeadingFrom(dl,0);
 					for (int j=0; j<dls.length; j++)
 					{
 						Sign s2       = dls[j].getSign();

@@ -136,7 +136,7 @@ public class ACGJ2 extends TLController implements XMLSerializable,TwoStageLoade
 				
 		return result;
 	}
-	public void updateRoaduserMove(Roaduser _ru, DriveLaneTemp _prevlane, Sign _prevsign, int _prevpos, DriveLaneTemp _dlanenow, Sign _signnow, int _posnow, PosMov[] posMovs, DriveLaneTemp desired)
+	public void updateRoaduserMove(Roaduser _ru, DriveLane _prevlane, Sign _prevsign, int _prevpos, DriveLane _dlanenow, Sign _signnow, int _posnow, PosMov[] posMovs, DriveLane desired)
 	{
 		// No implementation necessary
 	}
@@ -207,14 +207,14 @@ public class ACGJ2 extends TLController implements XMLSerializable,TwoStageLoade
 			for (int i=0; i<lastConfigs.length; i++) lastConfigs[i]=null;
 			
 			// create dli
-			DriveLaneTemp [] dls;
+			DriveLane [] dls;
 			try 
 			{
 				dls = nd.getInboundLanes();
 			}
 			catch(Exception e)
 			{
-				dls = new DriveLaneTemp[0];
+				dls = new DriveLane[0];
 			}
 			dli = new DrivelaneInfo[dls.length];
 			for (int i=0; i<dli.length; i++)
@@ -228,7 +228,7 @@ public class ACGJ2 extends TLController implements XMLSerializable,TwoStageLoade
 		}
 		catch(Exception e)
 		{
-			dls = new DriveLaneTemp[0];
+			dls = new DriveLane[0];
 		}
 		dlo = new DrivelaneInfo[dls.length];
 		for (int i=0; i<dlo.length; i++)
@@ -248,14 +248,14 @@ public class ACGJ2 extends TLController implements XMLSerializable,TwoStageLoade
 		{
 			// update waiting and busyness
 			currentWaiting = 0;
-			DriveLaneTemp [] dls;
+			DriveLane [] dls;
 			try 
 			{
 				dls = nd.getInboundLanes();
 			}
 			catch(Exception e)
 			{
-				dls = new DriveLaneTemp[0];
+				dls = new DriveLane[0];
 			}
 			for (int i=0; i<dls.length; i++)
 			{
@@ -453,7 +453,7 @@ public class ACGJ2 extends TLController implements XMLSerializable,TwoStageLoade
 	
 	private class DrivelaneInfo implements XMLSerializable,TwoStageLoader
 	{
-		DriveLaneTemp dl;
+		DriveLane dl;
 		NodeInfo ndi;	// node with sign at this DL
 		private NodeInfo otherNode; // node without sign at this DL
 		int [] target;   // 0 = left 1= straight 2=right
@@ -470,7 +470,7 @@ public class ACGJ2 extends TLController implements XMLSerializable,TwoStageLoade
 		{	this.acgj=acgj;
 		}
 		
-		public DrivelaneInfo(DriveLaneTemp dl, NodeInfo ndi, ACGJ2 acgj)
+		public DrivelaneInfo(DriveLane dl, NodeInfo ndi, ACGJ2 acgj)
 		{	
 			this.dl=dl;
 			this.ndi=ndi;
@@ -593,7 +593,7 @@ public class ACGJ2 extends TLController implements XMLSerializable,TwoStageLoade
 		public void loadSecondStage (Dictionary dictionaries)
 		{	otherNode=(NodeInfo)((Dictionary)dictionaries.get("node-info")).get(new Integer 
 				(loadData.nodeId));
-			dl=(DriveLaneTemp)((Dictionary)dictionaries.get("lane")).get(new Integer
+			dl=(DriveLane)((Dictionary)dictionaries.get("lane")).get(new Integer
 				(loadData.laneId));	
 		}	
 		

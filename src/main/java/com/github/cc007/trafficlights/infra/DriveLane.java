@@ -36,17 +36,17 @@ import java.util.*;
  * Possible speedup: cache 'numRoadUsersWaiting'
  */
 
-public class DriveLaneTemp
+public class DriveLane
     implements XMLSerializable, TwoStageLoader, Selectable {
   /** The Id of this drivelane. */
   protected int Id;
   /** The type of drivelane. This is a combination of Roaduser types that may use this drivelane */
   protected int type;
-  /** The Road this DriveLaneTemp is part of */
+  /** The Road this DriveLane is part of */
   protected Road road;
-  /** The roadusers currently on this DriveLaneTemp */
+  /** The roadusers currently on this DriveLane */
   protected LinkedList queue;
-  /** The Sign at the end of this DriveLaneTemp */
+  /** The Sign at the end of this DriveLane */
   protected Sign sign;
   /** The directions Roadusers switch lanes to: left, straight ahead and right. */
   protected boolean[] targets = {
@@ -54,9 +54,9 @@ public class DriveLaneTemp
   /** The directions that were before lane was disabled (DOAS 05)*/
   protected int[] targetsOriginal = { -1 , -1 , -1};
 
-  /** The last cycle this DriveLaneTemp was asked if it had moved its Roadusers yet */
+  /** The last cycle this DriveLane was asked if it had moved its Roadusers yet */
   protected int cycleAsked;
-  /** The last cycle this DriveLaneTemp moved its Roadusers */
+  /** The last cycle this DriveLane moved its Roadusers */
   protected int cycleMoved;
   /** Data for loading the second stage */
   protected TwoStageLoaderData loadData = new TwoStageLoaderData();
@@ -64,7 +64,7 @@ public class DriveLaneTemp
   /** A Shape array holding this drivelane's boundaries */
   protected Shape[] bounds = null;
 
-  public DriveLaneTemp(Road _road) {
+  public DriveLane(Road _road) {
     road = _road;
     sign = null;
     cycleAsked = -1;
@@ -75,7 +75,7 @@ public class DriveLaneTemp
   }
 
   /** Empty constructor for loading */
-  public DriveLaneTemp() {}
+  public DriveLane() {}
 
   /*============================================*/
   /* Basic GET and SET methods                  */
@@ -92,42 +92,42 @@ public class DriveLaneTemp
     Id = newid;
   }
 
-  /** Returns the queue of this DriveLaneTemp */
+  /** Returns the queue of this DriveLane */
   public LinkedList getQueue() {
     return queue;
   }
 
-  /** Sets the queue of this DriveLaneTemp */
+  /** Sets the queue of this DriveLane */
   public void setQueue(LinkedList q) {
     queue = q;
   }
 
-  /** Returns the type of this DriveLaneTemp */
+  /** Returns the type of this DriveLane */
   public int getType() {
     return type;
   }
 
-  /** Sets the type of this DriveLaneTemp */
+  /** Sets the type of this DriveLane */
   public void setType(int t) {
     type = t;
   }
 
-  /** Returns the Road that this DriveLaneTemp belongs to */
+  /** Returns the Road that this DriveLane belongs to */
   public Road getRoad() {
     return road;
   }
 
-  /** Sets the Road that this DriveLaneTemp belongs to */
+  /** Sets the Road that this DriveLane belongs to */
   public void setRoad(Road r) {
     road = r;
   }
 
-  /** Returns the Sign that regulates the traffic on this DriveLaneTemp */
+  /** Returns the Sign that regulates the traffic on this DriveLane */
   public Sign getSign() {
     return sign;
   }
 
-  /** Sets the Sign that regulates the traffic on this DriveLaneTemp */
+  /** Sets the Sign that regulates the traffic on this DriveLane */
   public void setSign(Sign s) {
     sign = s;
   }
@@ -142,27 +142,27 @@ public class DriveLaneTemp
     targets = r;
   }
 
-  /** Return the last cycle this DriveLaneTemp has moved its Roadusers */
+  /** Return the last cycle this DriveLane has moved its Roadusers */
   public int getCycleMoved() {
     return cycleMoved;
   }
 
-  /** Sets the last cycle this DriveLaneTemp has moved its Roadusers */
+  /** Sets the last cycle this DriveLane has moved its Roadusers */
   public void setCycleMoved(int cycle) {
     cycleMoved = cycle;
   }
 
-  /** Return the last cycle this DriveLaneTemp was last asked about the movements of its Roadusers */
+  /** Return the last cycle this DriveLane was last asked about the movements of its Roadusers */
   public int getCycleAsked() {
     return cycleAsked;
   }
 
-  /** Sets the last cycle this DriveLaneTemp was last asked about the movements of its Roadusers */
+  /** Sets the last cycle this DriveLane was last asked about the movements of its Roadusers */
   public void setCycleAsked(int cycle) {
     cycleAsked = cycle;
   }
 
-  /** Returns the length of the tail of this DriveLaneTemp */
+  /** Returns the length of the tail of this DriveLane */
   public int getTailLength() {
     if (getNodeComesFrom() instanceof Junction) {
       return getNodeComesFrom().getWidth(); // Nice and easy
@@ -177,7 +177,7 @@ public class DriveLaneTemp
     return "Drivelane " + Id;
   }
 
-  /** Returns the length of this DriveLaneTemp including tail*/
+  /** Returns the length of this DriveLane including tail*/
   public int getCompleteLength() {
     return getLength() + getTailLength();
   }
@@ -316,7 +316,7 @@ public class DriveLaneTemp
 
 
   /**
-   * Resets this DriveLaneTemp.
+   * Resets this DriveLane.
    * This will remove all Roadusers on this lane,
    * reset the cycleMoved and cycleAsked counters,
    * and reset the sign.
@@ -431,27 +431,27 @@ public class DriveLaneTemp
   /*============================================*/
 
 
-  /** Returns an array of primitive Roaduser types that may roam this DriveLaneTemp */
+  /** Returns an array of primitive Roaduser types that may roam this DriveLane */
   public int[] getTypes() {
     return Typeutils.getTypes(type);
   }
 
-  /** Returns if a Roaduser of type ruType may use this DriveLaneTemp */
+  /** Returns if a Roaduser of type ruType may use this DriveLane */
   public boolean mayUse(int ruType) {
     return (type & ruType) == ruType;
   }
 
-  /** Returns the length of the Road of this DriveLaneTemp */
+  /** Returns the length of the Road of this DriveLane */
   public int getLength() {
     return road.getLength();
   }
 
-  /** Returns the first Roaduser on this DriveLaneTemp */
+  /** Returns the first Roaduser on this DriveLane */
   public Roaduser getFirstRoaduser() {
     return (Roaduser) queue.getFirst();
   }
 
-  /** Returns the number of Roadusers that are waiting for the Sign of this DriveLaneTemp */
+  /** Returns the number of Roadusers that are waiting for the Sign of this DriveLane */
   public int getNumRoadusersWaiting() {
     /* old
        ListIterator li = queue.listIterator();
@@ -525,7 +525,7 @@ public class DriveLaneTemp
     return false;
   }
 
-  /** Returns the number of Passengers in the Roadusers that are waiting for the Sign of this DriveLaneTemp */
+  /** Returns the number of Passengers in the Roadusers that are waiting for the Sign of this DriveLane */
   public int getNumPassengersWaiting() {
     ListIterator li = queue.listIterator();
     Roaduser ru = null;
@@ -547,7 +547,7 @@ public class DriveLaneTemp
     return count;
   }
 
-  /** Returns the number of blocks taken by Roadusers that are waiting for the Sign of this DriveLaneTemp */
+  /** Returns the number of blocks taken by Roadusers that are waiting for the Sign of this DriveLane */
   public int getNumBlocksWaiting() {
     ListIterator li = queue.listIterator();
     Roaduser ru = null;
@@ -569,7 +569,7 @@ public class DriveLaneTemp
     return count;
   }
 
-  /** Returns the number of blocks taken by Roadusers on this DriveLaneTemp */
+  /** Returns the number of blocks taken by Roadusers on this DriveLane */
   public int getNumBlocksTaken() {
     ListIterator li = queue.listIterator();
     Roaduser ru = null;
@@ -583,7 +583,7 @@ public class DriveLaneTemp
     return count;
   }
 
-  /** Returns the Node that this DriveLaneTemp comes from */
+  /** Returns the Node that this DriveLane comes from */
   public Node getNodeComesFrom() {
     if (road.getAlphaNode() == getNodeLeadsTo()) {
       return road.getBetaNode();
@@ -593,7 +593,7 @@ public class DriveLaneTemp
     }
   }
 
-  /** Returns Node that this DriveLaneTemp leads to */
+  /** Returns Node that this DriveLane leads to */
   public Node getNodeLeadsTo() {
     return sign.getNode();
   }
@@ -637,7 +637,7 @@ public class DriveLaneTemp
   /**
    * Checks whether length blocks from the given position are free.
    *
-   * @param position The position in the Queue of this DriveLaneTemp.
+   * @param position The position in the Queue of this DriveLane.
    * @param length The amount of blocks that need to be free.
    */
   public boolean isPosFree(int position, int length) {
@@ -664,7 +664,7 @@ public class DriveLaneTemp
   /**
    * Checks whether length blocks from the given position, before the given roaduser, are free.
    *
-   * @param position The position in the Queue of this DriveLaneTemp
+   * @param position The position in the Queue of this DriveLane
    * @param length The amount of blocks that need to be free.
    * @param me The roaduser
    * @return whether or not the requested position and <code>length</code> blocks are free for the supplied RU
@@ -695,7 +695,7 @@ public class DriveLaneTemp
     return true;
   }
 
-  /** Returns whether or not the 'tail' of this DriveLaneTemp has any Roadusers on it. */
+  /** Returns whether or not the 'tail' of this DriveLane has any Roadusers on it. */
   public boolean isTailFree() {
     if (!queue.isEmpty()) {
       Roaduser ru = (Roaduser) queue.getLast();
@@ -728,7 +728,7 @@ public class DriveLaneTemp
         }
       }
       if (dlSize + length > getLength()) {
-        // See if the current inhabitants already fill up the DriveLaneTemp
+        // See if the current inhabitants already fill up the DriveLane
         return false;
       }
       else {
@@ -773,8 +773,8 @@ public class DriveLaneTemp
   /**
    * Returns the best reacheable position for the supplied Roaduser on the Queue given in the ListIterator
    *
-   * @param li The Queue of this DriveLaneTemp represented in a ListIterator. li.previous() is the current RoadUser
-   * @param position The position on the DriveLaneTemp of the Roaduser
+   * @param li The Queue of this DriveLane represented in a ListIterator. li.previous() is the current RoadUser
+   * @param position The position on the DriveLane of the Roaduser
    * @param length The amount of blocks that have to be free
    * @param speed_left the number of 'moves' this Roaduser has left in this turn
    * @param ru The Roaduser to be checked

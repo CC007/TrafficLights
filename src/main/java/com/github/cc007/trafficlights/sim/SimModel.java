@@ -425,10 +425,10 @@ public class SimModel extends Model implements XMLSerializable {
     public void moveAllRoadusers() throws InfraException {
         // Line below is faster than the obvious alternative
         Iterator lanes = infra.getAllInboundLanes().iterator();
-        DriveLaneTemp lane;
+        DriveLane lane;
 
         while (lanes.hasNext()) {
-            lane = (DriveLaneTemp) (lanes.next());
+            lane = (DriveLane) (lanes.next());
             // First you should check wheter they are already moved ......
             if (lane.getCycleMoved() != curCycle) {
                 moveLane(lane);
@@ -446,10 +446,10 @@ public class SimModel extends Model implements XMLSerializable {
      * outside
      * @version 1.0
      */
-    protected void moveLane(DriveLaneTemp lane) throws InfraException {
+    protected void moveLane(DriveLane lane) throws InfraException {
         LinkedList queue;
         ListIterator li;
-        DriveLaneTemp sourceLane, destLane;
+        DriveLane sourceLane, destLane;
         Node node;
         Sign sign;
         Roaduser ru;
@@ -647,7 +647,7 @@ public class SimModel extends Model implements XMLSerializable {
 
     /* Moves a roaduser on it's present lane as far as it can go. */
     protected int moveRoaduserOnLane(ListIterator li, Roaduser ru,
-            int speed_left, DriveLaneTemp lane) {
+            int speed_left, DriveLane lane) {
         int ru_pos = ru.getPosition();
         int ru_len = ru.getLength();
         int best_pos = ru_pos;
@@ -688,7 +688,7 @@ public class SimModel extends Model implements XMLSerializable {
         }
     }
 
-    protected PosMov[] calcPosMovs(Node node, Sign sign, DriveLaneTemp lane,
+    protected PosMov[] calcPosMovs(Node node, Sign sign, DriveLane lane,
             Roaduser ru, ListIterator li) {
         // =======================================
         // Calculating the ranges per drivelane to where roaduser could get to
@@ -712,11 +712,11 @@ public class SimModel extends Model implements XMLSerializable {
 
         // Now figure out the other possible lanes
         if (bestPos == 0 && speedLeft > 0) {
-            DriveLaneTemp[] possiblelanes = node.getShortestPaths(ru_des, ru_type);
+            DriveLane[] possiblelanes = node.getShortestPaths(ru_des, ru_type);
             int lanes = possiblelanes.length;
             for (int j = 0; j < lanes; j++) {
                 // For each possible lane
-                DriveLaneTemp testLane = possiblelanes[j];
+                DriveLane testLane = possiblelanes[j];
 
                 if (testLane.isLastPosFree(ru_len)) {
                     bestPos = -1;
@@ -827,7 +827,7 @@ public class SimModel extends Model implements XMLSerializable {
      * queued
      */
     private boolean placeRoaduser(Roaduser r, SpecialNode edge) {
-        DriveLaneTemp found = findDrivelaneForRU(r, edge);
+        DriveLane found = findDrivelaneForRU(r, edge);
         if (found == null) {
             return false;
         } else {
@@ -845,9 +845,9 @@ public class SimModel extends Model implements XMLSerializable {
         }
     }
 
-    private DriveLaneTemp findDrivelaneForRU(Roaduser r, SpecialNode e) {
+    private DriveLane findDrivelaneForRU(Roaduser r, SpecialNode e) {
         SpecialNode dest = (SpecialNode) r.getDestNode();
-        DriveLaneTemp[] lanes = (DriveLaneTemp[]) e.getShortestPaths(dest.getId(),
+        DriveLane[] lanes = (DriveLane[]) e.getShortestPaths(dest.getId(),
                 r.getType()).clone();
         Arrayutils.randomizeArray(lanes);
         int num_lanes = lanes.length;
@@ -917,7 +917,7 @@ public class SimModel extends Model implements XMLSerializable {
     }
 
     /*Get a random index out of the lanes*/
-    private int getRandomLaneNr(DriveLaneTemp[] lanes) {
+    private int getRandomLaneNr(DriveLane[] lanes) {
         int ind = (int) Math.floor(generator.nextFloat() * (lanes.length));
         while (ind != lanes.length) {
             ind = (int) Math.floor(generator.nextFloat() * (lanes.length));

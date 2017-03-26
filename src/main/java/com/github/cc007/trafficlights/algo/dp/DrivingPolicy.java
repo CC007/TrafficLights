@@ -58,13 +58,13 @@ public abstract class DrivingPolicy implements XMLSerializable,TwoStageLoader
 	 * @param shortest All the lanes which are in a shortest path to the car's destination
 	 * @return The chosen lane.
 	 */
-	public DriveLaneTemp getDirection(Roaduser r, DriveLaneTemp lane_now, Node node_now) throws InfraException {
-                DriveLaneTemp[] lanesleadingfrom = node_now.getLanesLeadingFrom(
+	public DriveLane getDirection(Roaduser r, DriveLane lane_now, Node node_now) throws InfraException {
+                DriveLane[] lanesleadingfrom = node_now.getLanesLeadingFrom(
                         lane_now, r.getType());
-                DriveLaneTemp[] shortestpaths = node_now.getShortestPaths(r.
+                DriveLane[] shortestpaths = node_now.getShortestPaths(r.
                         getDestNode().getId(), r.getType());
                 
-                DriveLaneTemp result = getDirectionLane(r, lane_now, lanesleadingfrom,
+                DriveLane result = getDirectionLane(r, lane_now, lanesleadingfrom,
                                         shortestpaths);
 
                 //Because of the accidents the shortest path might not be among the possible directions (DOAS 06)
@@ -77,11 +77,11 @@ public abstract class DrivingPolicy implements XMLSerializable,TwoStageLoader
                         //random lane; TODO: find smarter solution
                         //look for the line which does not lead to the EndgeNode (not even two steps ahead)
                         //return lanesleadingfrom[0];
-                        DriveLaneTemp[] possible = new DriveLaneTemp[lanesleadingfrom.length];
+                        DriveLane[] possible = new DriveLane[lanesleadingfrom.length];
                         int cnt = 0;
                         for(int i = 0; i < lanesleadingfrom.length; i++){
                             if(lanesleadingfrom[i].getNodeLeadsTo().getType() != Node.EDGE){
-                                DriveLaneTemp[] lanesTwoStepsAhead = lanesleadingfrom[i].getNodeLeadsTo().getLanesLeadingFrom(lanesleadingfrom[i], r.getType());
+                                DriveLane[] lanesTwoStepsAhead = lanesleadingfrom[i].getNodeLeadsTo().getLanesLeadingFrom(lanesleadingfrom[i], r.getType());
                                 for(int j = 0; j < lanesTwoStepsAhead.length; j++){
                                     if(lanesTwoStepsAhead[j].getNodeLeadsTo().getType() != Node.EDGE){
                                         possible[cnt] = lanesleadingfrom[i];
@@ -92,7 +92,7 @@ public abstract class DrivingPolicy implements XMLSerializable,TwoStageLoader
                             }
                         }
                         if(cnt > 0){
-                            DriveLaneTemp selectedLane = possible[random.nextInt(cnt)];
+                            DriveLane selectedLane = possible[random.nextInt(cnt)];
                             //System.out.println("Forced way out [" + node_now.getId() + ":" + selectedLane.getId() + "]" + i);
                             return selectedLane;
                         } else {
@@ -112,7 +112,7 @@ public abstract class DrivingPolicy implements XMLSerializable,TwoStageLoader
                 }
 	}
 
-	public abstract DriveLaneTemp getDirectionLane(Roaduser r, DriveLaneTemp lane_now, DriveLaneTemp[] allOutgoing, DriveLaneTemp[] shortest);
+	public abstract DriveLane getDirectionLane(Roaduser r, DriveLane lane_now, DriveLane[] allOutgoing, DriveLane[] shortest);
 
 	// Generic XMLSerializable implementation
 	/**Empty for Drivingpolicy*/

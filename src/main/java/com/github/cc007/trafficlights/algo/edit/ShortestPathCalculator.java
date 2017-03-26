@@ -76,10 +76,10 @@ public class ShortestPathCalculator
         d = new int[num_nodes]; // To keep track of the length of the shortest path, necessary for this algorithm.
 
         // To get all the types of Roadusers that can reach this ExitNode
-        DriveLaneTemp[] lanes = node.getInboundLanes();
-        DriveLaneTemp[] edgelanes = exit.getInboundLanes();
-        DriveLaneTemp[] splanes; // For looping, no need to recreate the Object all over
-        DriveLaneTemp l;
+        DriveLane[] lanes = node.getInboundLanes();
+        DriveLane[] edgelanes = exit.getInboundLanes();
+        DriveLane[] splanes; // For looping, no need to recreate the Object all over
+        DriveLane l;
         Node newNode;
         int newId;
         int types = 0;

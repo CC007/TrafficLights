@@ -43,7 +43,7 @@ public class SignConfigCalculator
 		Config cfg1 = null, cfg2 = null, newcfg = null;
 		
 		// add all possibilities of only one lane green
-		DriveLaneTemp [] dls = nd.getInboundLanes();
+		DriveLane [] dls = nd.getInboundLanes();
 		
 		for (int i=0; i<dls.length; i++)
 		{
@@ -163,10 +163,10 @@ public class SignConfigCalculator
 				for (int j=0; j<gr2.outlanes.length;j++)
 				{
 					boolean collision=false;
-					DriveLaneTemp il1=gr1.inlane, il2=gr2.inlane, ol1=gr1.outlanes[i], ol2=gr2.outlanes[j];
+					DriveLane il1=gr1.inlane, il2=gr2.inlane, ol1=gr1.outlanes[i], ol2=gr2.outlanes[j];
 					if (il1==null || il2==null || ol1==null || ol2==null) throw new InfraException("il/ol 1/2 shouldn't be null");
 					if (il1.getRoad()==il2.getRoad()) continue;  // Buggy solution, crossing some invalid configs are valid with this.
-					DriveLaneTemp [] cw = ((Junction) nd).getAllLanesCW(il1); // TO DO: it shouldn't be always Junction
+					DriveLane [] cw = ((Junction) nd).getAllLanesCW(il1); // TO DO: it shouldn't be always Junction
 
 					int k=0;
 					while (k<cw.length)
@@ -192,9 +192,9 @@ public class SignConfigCalculator
 	
 
 		
-		public void addLane(DriveLaneTemp dl) throws InfraException
+		public void addLane(DriveLane dl) throws InfraException
 		{
-			DriveLaneTemp [] leadingfr=nd.getLanesLeadingFrom(dl,0);
+			DriveLane [] leadingfr=nd.getLanesLeadingFrom(dl,0);
 
 			Green gr = new Green(dl,leadingfr);
 			if (!green.contains(gr)) green.add(gr);
@@ -245,10 +245,10 @@ public class SignConfigCalculator
 		
 		private class Green
 		{
-			DriveLaneTemp inlane;
-			DriveLaneTemp [] outlanes;
+			DriveLane inlane;
+			DriveLane [] outlanes;
 			
-			public Green(DriveLaneTemp inl, DriveLaneTemp [] outl)
+			public Green(DriveLane inl, DriveLane [] outl)
 			{
 				this.inlane   = inl;
 				this.outlanes = outl;

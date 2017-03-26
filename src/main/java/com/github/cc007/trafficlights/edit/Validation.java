@@ -154,7 +154,7 @@ public class Validation
          for(int j=0;j<num_nroads;j++)
          {
           Road road = nroads[j];
-          DriveLaneTemp[] dlanes = road.getAllLanes();
+          DriveLane[] dlanes = road.getAllLanes();
           int num_lanes = dlanes.length;
 
           for(int k=0;k<num_lanes;k++)
@@ -168,7 +168,7 @@ public class Validation
              road_index=r;
 
            boolean[] targets = dlanes[k].getTargets();
-           System.out.println("DriveLaneTemp towards Node:"+danode.getId()+" at pos "+road_index+" with targets ("+targets[0]+","+targets[1]+","+targets[2]+")");
+           System.out.println("DriveLane towards Node:"+danode.getId()+" at pos "+road_index+" with targets ("+targets[0]+","+targets[1]+","+targets[2]+")");
           }
          }
            }*/
@@ -239,7 +239,7 @@ public class Validation
         while (edgeNodes.hasNext())
         {
             EdgeNode edge = (EdgeNode) (edgeNodes.next());
-            DriveLaneTemp[] lanes = edge.getOutboundLanes();
+            DriveLane[] lanes = edge.getOutboundLanes();
             int lanetypes = 0;
             for (int j = 0; j < lanes.length; j++)
             {
@@ -318,12 +318,12 @@ public class Validation
         for (int i = 0; i < num_nodes; i++)
         {
             Node node = allNodes[i];
-            DriveLaneTemp[] inboundlanes = node.getInboundLanes();
+            DriveLane[] inboundlanes = node.getInboundLanes();
             int num_ibl = inboundlanes.length;
 
             for (int j = 0; j < num_ibl; j++)
             {
-                DriveLaneTemp lane = inboundlanes[j];
+                DriveLane lane = inboundlanes[j];
                 lane.setId(laneID++);
 
                 //als het goed is, is een sign nu nooit meer null
@@ -356,7 +356,7 @@ public class Validation
             for (int j = 0; j < num_nroads; j++)
             {
                 Road road = nroads[j];
-                DriveLaneTemp[] dlanes = road.getAllLanes();
+                DriveLane[] dlanes = road.getAllLanes();
                 int num_lanes = dlanes.length;
 
                 for (int k = 0; k < num_lanes; k++)
@@ -393,7 +393,7 @@ public class Validation
                                      danode.getAllRoads()[(road_index + 3) % 4] +
                                      "" : "-";
 
-                        //System.out.println("DriveLaneTemp towards Node:"+danode.getId()+" at pos "+road_index+" orig targets ("+dtargets[0]+","+dtargets[1]+","+dtargets[2]+") ("+tg1+","+tg2+","+tg3+")");
+                        //System.out.println("DriveLane towards Node:"+danode.getId()+" at pos "+road_index+" orig targets ("+dtargets[0]+","+dtargets[1]+","+dtargets[2]+") ("+tg1+","+tg2+","+tg3+")");
 
                         if (dtargets[0])
                         {
@@ -429,7 +429,7 @@ public class Validation
                             }
                         }
 
-                        //System.out.println("DriveLaneTemp towards Node:"+danode.getId()+" at pos "+road_index+"  new targets ("+dtargets[0]+","+dtargets[1]+","+dtargets[2]+") "+num_turns);
+                        //System.out.println("DriveLane towards Node:"+danode.getId()+" at pos "+road_index+"  new targets ("+dtargets[0]+","+dtargets[1]+","+dtargets[2]+") "+num_turns);
 
                         if (num_turns == 0)
                         {
@@ -456,11 +456,11 @@ public class Validation
                     }
                     else
                     {
-                        //System.out.println("DriveLaneTemp towards EdgeNode:"+danode.getId()+" at pos "+road_index+" orig targets ("+dtargets[0]+","+dtargets[1]+","+dtargets[2]+")");
+                        //System.out.println("DriveLane towards EdgeNode:"+danode.getId()+" at pos "+road_index+" orig targets ("+dtargets[0]+","+dtargets[1]+","+dtargets[2]+")");
                         dtargets[0] = false;
                         dtargets[1] = true;
                         dtargets[2] = false;
-                        //System.out.println("DriveLaneTemp towards EdgeNode:"+danode.getId()+" at pos "+road_index+"  new targets ("+dtargets[0]+","+dtargets[1]+","+dtargets[2]+")");
+                        //System.out.println("DriveLane towards EdgeNode:"+danode.getId()+" at pos "+road_index+"  new targets ("+dtargets[0]+","+dtargets[1]+","+dtargets[2]+")");
                     }
                     dlanes[k].setTargets(dtargets);
                 }
@@ -472,7 +472,7 @@ public class Validation
     private int getRUTypes(SpecialNode mn) throws InfraException
     {
         int type = 0;
-        DriveLaneTemp[] dls = mn.getOutboundLanes();
+        DriveLane[] dls = mn.getOutboundLanes();
         for (int i = 0; i < dls.length; i++)
         {
             type |= dls[i].getType();
@@ -498,7 +498,7 @@ public class Validation
                     en2 = specialNodes[j];
                     if ((getRUTypes(en2) & type) != 0)
                     {
-                        DriveLaneTemp[] dl = en1.getShortestPaths(en2.getId(), type);
+                        DriveLane[] dl = en1.getShortestPaths(en2.getId(), type);
                         if (dl.length == 0)
                         {
                             errors.add("ERROR: specialNode " + en1.getId() +

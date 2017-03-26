@@ -480,7 +480,7 @@ public class Junction extends Node {
     /*============================================*/
  /* LARGE GET                                  */
  /*============================================*/
-    public DriveLaneTemp[] getLanesLeadingTo(DriveLaneTemp lane, int ruType) throws InfraException {
+    public DriveLane[] getLanesLeadingTo(DriveLane lane, int ruType) throws InfraException {
         Road road = lane.getRoad();
         // Road[] which will contain the Roads of this Node in a sorted fashion:
         // [0] == the drivelanes on this Road will have to turn left to get to 'road', ..
@@ -505,7 +505,7 @@ public class Junction extends Node {
         }
 
         ArrayList v = new ArrayList();
-        DriveLaneTemp[] lanes;
+        DriveLane[] lanes;
         int num_lanes;
         int cnt_lanes = 0;
         boolean[] targets;
@@ -515,7 +515,7 @@ public class Junction extends Node {
                 lanes = srt_rarr[i].getInboundLanes(this);
                 num_lanes = lanes.length;
                 for (int j = 0; j < num_lanes; j++) {
-                    DriveLaneTemp l = lanes[j];
+                    DriveLane l = lanes[j];
                     targets = l.getTargets();
                     if (targets[i] == true && l.mayUse(ruType)) {
                         v.add(l);
@@ -525,11 +525,11 @@ public class Junction extends Node {
             }
         }
 
-        return (DriveLaneTemp[]) v.toArray(new DriveLaneTemp[cnt_lanes]);
+        return (DriveLane[]) v.toArray(new DriveLane[cnt_lanes]);
     }
 
     /* Needs Testing! */
-    public DriveLaneTemp[] getLanesLeadingFrom(DriveLaneTemp lane, int ruType) throws InfraException {
+    public DriveLane[] getLanesLeadingFrom(DriveLane lane, int ruType) throws InfraException {
         Road road = lane.getRoad();
         // Road[] which will contain the Roads of this Node in a sorted fashion:
         // [0] == the drivelanes on this Road will have to turn left to get to 'road', ..
@@ -555,7 +555,7 @@ public class Junction extends Node {
 
         //System.out.println("Junction getLanesLeadingFrom "+nodeId);		
         ArrayList v = new ArrayList();
-        DriveLaneTemp[] lanes;
+        DriveLane[] lanes;
         int num_lanes;
         int cnt_lanes = 0;
         boolean[] targets = lane.getTargets();
@@ -567,7 +567,7 @@ public class Junction extends Node {
                 num_lanes = lanes.length;
                 //System.out.println("Num lanes :"+num_lanes);
                 for (int j = 0; j < num_lanes; j++) {
-                    DriveLaneTemp l = lanes[j];
+                    DriveLane l = lanes[j];
                     //System.out.println("Lane"+j+" being checked now. Has type:"+l.getType());
                     if (l.mayUse(ruType)) {
                         v.add(l);
@@ -576,10 +576,10 @@ public class Junction extends Node {
                 }
             }
         }
-        return (DriveLaneTemp[]) v.toArray(new DriveLaneTemp[cnt_lanes]);
+        return (DriveLane[]) v.toArray(new DriveLane[cnt_lanes]);
     }
 
-    public DriveLaneTemp[] getLanesLeadingFrom(DriveLaneTemp lane) throws InfraException {
+    public DriveLane[] getLanesLeadingFrom(DriveLane lane) throws InfraException {
         Road road = lane.getRoad();
         // Road[] which will contain the Roads of this Node in a sorted fashion:
         // [0] == the drivelanes on this Road will have to turn left to get to 'road', ..
@@ -605,7 +605,7 @@ public class Junction extends Node {
 
         //System.out.println("Junction getLanesLeadingFrom "+nodeId);		
         ArrayList v = new ArrayList();
-        DriveLaneTemp[] lanes;
+        DriveLane[] lanes;
         int num_lanes;
         int cnt_lanes = 0;
         boolean[] targets = lane.getTargets();
@@ -622,17 +622,17 @@ public class Junction extends Node {
                 }
             }
         }
-        return (DriveLaneTemp[]) v.toArray(new DriveLaneTemp[cnt_lanes]);
+        return (DriveLane[]) v.toArray(new DriveLane[cnt_lanes]);
     }
 
     /**
      * Returns an array of all outbound lanes on this junction
      */
-    public DriveLaneTemp[] getOutboundLanes() throws InfraException {
+    public DriveLane[] getOutboundLanes() throws InfraException {
         int pointer = 0;
         //System.out.println("NewNumOutboundLanes: "+getNumOutboundLanes());
-        DriveLaneTemp[] lanes = new DriveLaneTemp[getNumOutboundLanes()];
-        DriveLaneTemp[] temp;
+        DriveLane[] lanes = new DriveLane[getNumOutboundLanes()];
+        DriveLane[] temp;
         for (int i = 0; i < allRoads.length; i++) {
             if (allRoads[i] != null) {
                 temp = allRoads[i].getOutboundLanes(this);
@@ -646,11 +646,11 @@ public class Junction extends Node {
     /**
      * Returns an array of all inbound lanes on this junction
      */
-    public DriveLaneTemp[] getInboundLanes() throws InfraException {
+    public DriveLane[] getInboundLanes() throws InfraException {
         //System.out.println("Junction.getInboundLanes()");
         int pointer = 0;
-        DriveLaneTemp[] lanes = new DriveLaneTemp[getNumInboundLanes()];
-        DriveLaneTemp[] temp;
+        DriveLane[] lanes = new DriveLane[getNumInboundLanes()];
+        DriveLane[] temp;
         for (int i = 0; i < allRoads.length; i++) {
             if (allRoads[i] != null) {
                 temp = allRoads[i].getInboundLanes(this);
@@ -663,10 +663,10 @@ public class Junction extends Node {
 
 
     /* clockwise order guaranteed */
-    public DriveLaneTemp[] getAllLanes() throws InfraException {
+    public DriveLane[] getAllLanes() throws InfraException {
         int pointer = 0;
-        DriveLaneTemp[] lanes = new DriveLaneTemp[getNumAllLanes()];
-        DriveLaneTemp[] temp;
+        DriveLane[] lanes = new DriveLane[getNumAllLanes()];
+        DriveLane[] temp;
         Road road;
         for (int i = 0; i < allRoads.length; i++) {
             road = allRoads[i];
@@ -686,8 +686,8 @@ public class Junction extends Node {
      * Returns an array of all lanes connected to this node, in clock-wise
      * order, starting at the given lane
      */
-    public DriveLaneTemp[] getAllLanesCW(DriveLaneTemp lane) throws InfraException {
-        DriveLaneTemp[] lanes = getAllLanes(); // in clockwise order starting at road 0, lane 0
+    public DriveLane[] getAllLanesCW(DriveLane lane) throws InfraException {
+        DriveLane[] lanes = getAllLanes(); // in clockwise order starting at road 0, lane 0
 
         // find the starting-lane
         int i = Arrayutils.findElement(lanes, lane);
@@ -696,7 +696,7 @@ public class Junction extends Node {
         }
 
         // shift all the lanes i places and remove the i-th element
-        DriveLaneTemp[] result = new DriveLaneTemp[lanes.length - 1];
+        DriveLane[] result = new DriveLane[lanes.length - 1];
         System.arraycopy(lanes, i + 1, result, 0, lanes.length - i - 1);
         System.arraycopy(lanes, 0, result, lanes.length - i - 1, i);
 
@@ -707,7 +707,7 @@ public class Junction extends Node {
     public boolean areOtherTailsFree(Sign[] mayUse) {
         boolean[] pos = new boolean[4];
         Road[] roads = getAllRoads();
-        DriveLaneTemp lane;
+        DriveLane lane;
         int thisRoad;
         boolean[] targets;
 
@@ -739,11 +739,11 @@ public class Junction extends Node {
         int num_check = 0;
         for (int i = 0; i < 4; i++) {
             if (pos[i] && roads[i] != null) {
-                DriveLaneTemp[] check = new DriveLaneTemp[0];
+                DriveLane[] check = new DriveLane[0];
                 try {
                     check = roads[i].getOutboundLanes(this);
                 } catch (Exception e) {
-                    check = new DriveLaneTemp[0];
+                    check = new DriveLane[0];
                     System.out.println("Something went wrong in areOtherTailsFree() 2");
                 }
 
@@ -919,7 +919,7 @@ public class Junction extends Node {
     }
 
     protected Sign getSign(Dictionary laneDictionary, int id) {
-        DriveLaneTemp tmp = (DriveLaneTemp) (laneDictionary.get(new Integer(id)));
+        DriveLane tmp = (DriveLane) (laneDictionary.get(new Integer(id)));
         if (tmp == null) {
             return null;
         } else {

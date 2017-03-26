@@ -66,7 +66,7 @@ public class EditModel extends Model
 		Object o;
 		while (it.hasNext()) {
 			o = it.next();
-			if (o instanceof DriveLaneTemp) remLane((DriveLaneTemp)o);
+			if (o instanceof DriveLane) remLane((DriveLane)o);
 		}
 		it = list.listIterator();
 		while (it.hasNext()) {
@@ -126,7 +126,7 @@ public class EditModel extends Model
 		beta.addRoad(r, posb);
 		
 		r.setId(roadNumbers.get());
-		DriveLaneTemp[] lanes = r.getAlphaLanes();
+		DriveLane[] lanes = r.getAlphaLanes();
 		for (int i=0; i < lanes.length; i++) lanes[i].setId(laneNumbers.get());
 		lanes = r.getBetaLanes();
 		for (int i=0; i < lanes.length; i++) lanes[i].setId(laneNumbers.get());
@@ -220,7 +220,7 @@ public class EditModel extends Model
 	 * @throw InfraException If the given road is not connected to the given node.
 	 * @throw InfraException If the lane could not be added for any other reason.
 	 */
-	public void addLane(DriveLaneTemp lane, Road r, Node to) throws InfraException
+	public void addLane(DriveLane lane, Road r, Node to) throws InfraException
 	{
 		if (r.getNumInboundLanes(to) >= 4) throw new InfraException("Cannot add more than 4 lanes at one side to a road");
 		r.addLane(lane, to);
@@ -242,7 +242,7 @@ public class EditModel extends Model
 	 * @param t The new type.
 	 * @throw InfraException If the type could not be set.
 	 */
-	public void setLaneType(DriveLaneTemp lane, int t) throws InfraException {
+	public void setLaneType(DriveLane lane, int t) throws InfraException {
 		lane.setType(t);
 		setChanged();
 		notifyObservers();
@@ -258,7 +258,7 @@ public class EditModel extends Model
 	 * @param state True to set the target, false to clear it.
 	 * @throw InfraException If the target could not be set.
 	 */
-	public void setLaneTarget(DriveLaneTemp lane, int target, boolean state) throws InfraException {
+	public void setLaneTarget(DriveLane lane, int target, boolean state) throws InfraException {
 		lane.setTarget(target, state);
 		setChanged();
 		notifyObservers();
@@ -315,7 +315,7 @@ public class EditModel extends Model
 	 * @param lane The drivelane to remove
 	 * @throw InfraException If something bad happens.
 	 */
-	public void remLane(DriveLaneTemp lane) throws InfraException
+	public void remLane(DriveLane lane) throws InfraException
 	{
 		Road road = lane.getRoad();
 		if (road.getNumAllLanes() <= 1) { remRoad(road); return; }
@@ -339,7 +339,7 @@ public class EditModel extends Model
 	 * Makes sure all inbound lanes on given node have correct signs.
 	 */
 	private void updateSigns(Node node, int type) throws InfraException {
-		DriveLaneTemp[] lanes = node.getInboundLanes();
+		DriveLane[] lanes = node.getInboundLanes();
 		Sign[] signs = new Sign[lanes.length];
 		for (int i=0; i < lanes.length; i++) {
 			signs[i] = Sign.getInstance(type);

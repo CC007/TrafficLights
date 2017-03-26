@@ -53,10 +53,10 @@ public class SmarterShortestPathDP extends DrivingPolicy
 	 * @param shortest All the lanes which are in a shortest path to the car's destination
 	 * @return The chosen lane.
 	 */
-	public DriveLaneTemp getDirectionLane(Roaduser r, DriveLaneTemp lane_now, DriveLaneTemp[] allOutgoing, DriveLaneTemp[] shortest)
+	public DriveLane getDirectionLane(Roaduser r, DriveLane lane_now, DriveLane[] allOutgoing, DriveLane[] shortest)
 	{	//Create a subset from the 2 sets allOutgoing and shortest
-		DriveLaneTemp current;
-		DriveLaneTemp best_lane = null;
+		DriveLane current;
+		DriveLane best_lane = null;
 		int best_waiting = Integer.MAX_VALUE;
 		int num_outgoing = allOutgoing.length;
 		int num_shortest = shortest.length;

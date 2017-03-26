@@ -53,7 +53,7 @@ public class SimPopupMenuFactory
 	{
 		if (obj instanceof Node) return getNodeMenu((Node)obj);
 		if (obj instanceof Road) return getRoadMenu((Road)obj);
-		if (obj instanceof DriveLaneTemp) return getDrivelaneMenu((DriveLaneTemp)obj);
+		if (obj instanceof DriveLane) return getDrivelaneMenu((DriveLane)obj);
 		throw new PopupException("Unknown object type");
 	}
 
@@ -265,9 +265,9 @@ public class SimPopupMenuFactory
 	}
 
 	
-	/* DriveLaneTemp popup menu & listeners */
+	/* DriveLane popup menu & listeners */
 	
-	protected PopupMenu getDrivelaneMenu(DriveLaneTemp l)
+	protected PopupMenu getDrivelaneMenu(DriveLane l)
 	{
 		PopupMenu menu = new PopupMenu();
 		PopupMenuListener pml = new LanePopupListener(l, controller);
@@ -282,9 +282,9 @@ public class SimPopupMenuFactory
 	protected static class LanePopupListener implements PopupMenuListener
 	{
 		SimController controller;
-		DriveLaneTemp lane;
+		DriveLane lane;
 		
-		public LanePopupListener(DriveLaneTemp l, SimController con) {
+		public LanePopupListener(DriveLane l, SimController con) {
 			controller = con;
 			lane = l;
 		}

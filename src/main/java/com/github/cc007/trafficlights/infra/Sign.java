@@ -32,7 +32,7 @@ public abstract class Sign implements XMLSerializable, TwoStageLoader
 {
 	protected boolean state = false;
 	protected Node node;
-	protected DriveLaneTemp lane;
+	protected DriveLane lane;
 	/** Data for loading the second stage */
 	protected TwoStageLoaderData loadData = new TwoStageLoaderData();
 	protected String parentName="model.infrastructure.lane";
@@ -42,7 +42,7 @@ public abstract class Sign implements XMLSerializable, TwoStageLoader
 	public static final int NO_SIGN = 2;
 
 
-	public Sign(Node _node, DriveLaneTemp _lane) {
+	public Sign(Node _node, DriveLane _lane) {
 		node = _node;
 		lane = _lane;
 		state = false;
@@ -66,7 +66,7 @@ public abstract class Sign implements XMLSerializable, TwoStageLoader
 	public abstract boolean needsExternalAlgorithm();
 	
 	/**
-	 * Returns true if the Roaduser at the start of the DriveLaneTemp may cross the Node.
+	 * Returns true if the Roaduser at the start of the DriveLane may cross the Node.
 	 * Default behavior is implemented to return state.
 	 * Any Sign using an external algorithm does not need to override this method.
 	 */
@@ -80,10 +80,10 @@ public abstract class Sign implements XMLSerializable, TwoStageLoader
 	/** Sets the current state */
 	public void setState(boolean b) { state = b; }
 
-	/** Returns the DriveLaneTemp this Sign is on */
-	public DriveLaneTemp getLane() { return lane; }
-	/** Sets the DriveLaneTemp this Sign is on */
-	public void setLane(DriveLaneTemp l) { lane = l; }
+	/** Returns the DriveLane this Sign is on */
+	public DriveLane getLane() { return lane; }
+	/** Sets the DriveLane this Sign is on */
+	public void setLane(DriveLane l) { lane = l; }
 	
 	/** Returns the Node this Sign is on */
 	public Node getNode() { return node; }

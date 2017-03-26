@@ -89,7 +89,7 @@ public class TCCBG extends TCRL implements Colearning,
 
             for (int i = 0; i < nodes.length; i++)
             {
-                DriveLaneTemp[] allInboundLanes = nodes[i].getInboundLanes();
+                DriveLane[] allInboundLanes = nodes[i].getInboundLanes();
                 for (int j = 0; j < allInboundLanes.length; j++)
                 {
                     allsigns.add(allInboundLanes[j].getSign().getId(),
@@ -107,10 +107,10 @@ public class TCCBG extends TCRL implements Colearning,
             for (int i = 0; i < num_nodes; i++)
             {
                 Node n = nodes[i];
-                DriveLaneTemp[] dls = n.getInboundLanes();
+                DriveLane[] dls = n.getInboundLanes();
                 for (int j = 0; j < dls.length; j++)
                 {
-                    DriveLaneTemp d = dls[j];
+                    DriveLane d = dls[j];
                     Sign s = d.getSign();
                     int id = s.getId();
                     int num_pos_on_dl = d.getCompleteLength();
@@ -173,7 +173,7 @@ public class TCCBG extends TCRL implements Colearning,
         int num_dec, waitingsize, pos, tlId, desId;
         float gain, passenger_factor;
         Sign tl;
-        DriveLaneTemp lane;
+        DriveLane lane;
         Roaduser ru;
         ListIterator queue;
         Node destination;
@@ -227,7 +227,7 @@ public class TCCBG extends TCRL implements Colearning,
                 // Debug info generator
                 if (trackNode != -1 && i == trackNode)
                 {
-                    DriveLaneTemp currentlane2 = tld[i][j].getTL().getLane();
+                    DriveLane currentlane2 = tld[i][j].getTL().getLane();
                     boolean[] targets = currentlane2.getTargets();
                     System.out.println("node: " + i + " light: " + j +
                                        " gain: " + gain +
@@ -253,12 +253,12 @@ public class TCCBG extends TCRL implements Colearning,
         return tld;
     }
 
-    public void updateRoaduserMove(Roaduser ru, DriveLaneTemp prevlane,
+    public void updateRoaduserMove(Roaduser ru, DriveLane prevlane,
                                    Sign prevsign,
-                                   int prevpos, DriveLaneTemp dlanenow,
+                                   int prevpos, DriveLane dlanenow,
                                    Sign signnow,
                                    int posnow, PosMov[] posMovs,
-                                   DriveLaneTemp desired,
+                                   DriveLane desired,
                                    int penalty)
     {
         // Roaduser has just left the building!
@@ -371,7 +371,7 @@ public class TCCBG extends TCRL implements Colearning,
 
     protected void recalcQ(int tlId, int pos, int desId, boolean light,
                            int tlNewId, int posNew, PosMov[] posMovs,
-                           int isCongested, DriveLaneTemp dlnow, Roaduser ru,
+                           int isCongested, DriveLane dlnow, Roaduser ru,
                            int penalty)
     {
         // Q([tl,p,d,isCongested],L)	= Sum(tl', p') [P([tl,p,d,isCongested],L,[tl',p'])(R([tl,p,isCongested],[tl',p'])+ yV([tl',p',d,isCongested']))
@@ -393,7 +393,7 @@ public class TCCBG extends TCRL implements Colearning,
 
             if (curPMTlId != tlId)
             { // In case RU just crossed a junction, a next sign has te be determened.
-                DriveLaneTemp dlnext = getNextDrivelaneByRu(ru, dlnow);
+                DriveLane dlnext = getNextDrivelaneByRu(ru, dlnow);
                 if (dlnext != null)
                 {
                     curNextSign = (Sign) dlnext.getSign();
@@ -518,10 +518,10 @@ public class TCCBG extends TCRL implements Colearning,
 
 
 
-    public int isCongested(Roaduser ru, DriveLaneTemp currentLane)
+    public int isCongested(Roaduser ru, DriveLane currentLane)
     {
 
-        DriveLaneTemp destLane = getNextDrivelaneByRu(ru, currentLane);
+        DriveLane destLane = getNextDrivelaneByRu(ru, currentLane);
 
         if (destLane == null)
         { //Edgenode, returns 0 because an edgenode is never congested;
@@ -535,10 +535,10 @@ public class TCCBG extends TCRL implements Colearning,
 
     }
 
-    public DriveLaneTemp getNextDrivelaneByRu(Roaduser ru, DriveLaneTemp currentLane)
+    public DriveLane getNextDrivelaneByRu(Roaduser ru, DriveLane currentLane)
     {
         DrivingPolicy dp = SimModel.getDrivingPolicy();
-        DriveLaneTemp destLane;
+        DriveLane destLane;
         try
         {
             destLane = dp.getDirection(ru, currentLane,

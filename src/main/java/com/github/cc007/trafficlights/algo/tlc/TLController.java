@@ -151,9 +151,9 @@ public abstract class TLController implements XMLSerializable,TwoStageLoader
 	}	
 
 	public abstract void updateRoaduserMove(
-				Roaduser _ru, DriveLaneTemp _prevlane, Sign _prevsign, int _prevpos, DriveLaneTemp _dlanenow, 
+				Roaduser _ru, DriveLane _prevlane, Sign _prevsign, int _prevpos, DriveLane _dlanenow, 
 				Sign _signnow, int _posnow, PosMov[] _posMovs,
-				DriveLaneTemp _desiredLane);
+				DriveLane _desiredLane);
 
         /** Loads arguments provided on command line (DOAS 06).
          *  This function should be overloaded and the overloading function should call super.loadArgs(args).

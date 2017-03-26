@@ -32,7 +32,7 @@ import com.github.cc007.trafficlights.utils.*;
 
 public class EditDrivelanePanel extends ConfigPanel implements ItemListener, ActionListener
 {
-	DriveLaneTemp lane;
+	DriveLane lane;
 
 	Hyperlink alphaLink, betaLink, roadLink;
 
@@ -42,7 +42,7 @@ public class EditDrivelanePanel extends ConfigPanel implements ItemListener, Act
 	Checkbox left, ahead, right;
 	Button delete;
 
-	public EditDrivelanePanel(ConfigDialog cd, DriveLaneTemp l) {
+	public EditDrivelanePanel(ConfigDialog cd, DriveLane l) {
 		super(cd);
 
 		Label rlab = new Label("Part of:");
@@ -133,7 +133,7 @@ public class EditDrivelanePanel extends ConfigPanel implements ItemListener, Act
 	}
 		
 	
-	public void setLane(DriveLaneTemp l) {
+	public void setLane(DriveLane l) {
 		lane = l;
 		confd.setTitle(lane.getName());
 		reset();

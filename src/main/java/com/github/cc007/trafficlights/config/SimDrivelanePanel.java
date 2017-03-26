@@ -37,7 +37,7 @@ import com.github.cc007.trafficlights.edit.*;
 
 public class SimDrivelanePanel extends ConfigPanel implements ActionListener, ItemListener
 {
-	DriveLaneTemp lane;
+	DriveLane lane;
 
 	Hyperlink alphaLink, betaLink, roadLink;
 
@@ -48,7 +48,7 @@ public class SimDrivelanePanel extends ConfigPanel implements ActionListener, It
 	ScrollPane sp;
 
 
-	public SimDrivelanePanel(ConfigDialog cd, DriveLaneTemp l) {
+	public SimDrivelanePanel(ConfigDialog cd, DriveLane l) {
 		super(cd);
 
 		Label rlab = new Label("Part of:");
@@ -111,7 +111,7 @@ public class SimDrivelanePanel extends ConfigPanel implements ActionListener, It
 			setLayout(null);
 		}
 		
-		public synchronized void setLane(DriveLaneTemp lane) {
+		public synchronized void setLane(DriveLane lane) {
 			removeAll();
 			
 			int len = lane.getCompleteLength();
@@ -244,7 +244,7 @@ public class SimDrivelanePanel extends ConfigPanel implements ActionListener, It
 		sp.doLayout();
 	}
 
-	public void setLane(DriveLaneTemp l) {
+	public void setLane(DriveLane l) {
 		lane = l;
 		confd.setTitle(lane.getName());
 		queue.setLane(lane);

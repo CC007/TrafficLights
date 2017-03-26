@@ -174,12 +174,12 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
         int maxTrialsCount = java.lang.Math.max(notYetDisabledLanes.size() / 4, 1);
         //while (true)
         for (int trial = 0; trial < maxTrialsCount; trial++) {
-            DriveLaneTemp toBeDisabledLane = null;
+            DriveLane toBeDisabledLane = null;
             // probability of an accident goes higher with the number of cars on the lane (DOAS 06)
             // upper bound of the cycles count because the simulation must not be slown down by infinite cycles
             for (int tr = 0; tr < 16; tr++) {
                 int randint = rnd.nextInt(notYetDisabledLanes.size());
-                toBeDisabledLane = (DriveLaneTemp) notYetDisabledLanes.get(randint);
+                toBeDisabledLane = (DriveLane) notYetDisabledLanes.get(randint);
                 if (rnd.nextInt(toBeDisabledLane.getLength()) < toBeDisabledLane.getNumBlocksTaken()) {
                     break;
                 }
@@ -202,7 +202,7 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
 
                 Road ro = toBeDisabledLane.getRoad();
                 //System.out.println(ro.getName() + " has been disabled [" + curCycle + "]");
-                DriveLaneTemp[] otherlanes;
+                DriveLane[] otherlanes;
 
                 // Determine if shared lanes (in the same direction) are on the alpha or beta Lane towards kruispunt
                 if (ro.getAlphaNode() == toBeDisabledLane.getNodeComesFrom()) {
@@ -238,7 +238,7 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
                         int dir = Node.getDirection(i, ro_num); // DIR: 1: left, 2: streight, 3: right
 
                         // be sure only to get the lanes leading to the crossing to have their targets disabled
-                        DriveLaneTemp[] il;
+                        DriveLane[] il;
                         if (ri.getAlphaNode() == kruispunt) {
                             //Road heeft kruispunt als Alpha node
                             il = ri.getAlphaLanes();
@@ -283,7 +283,7 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
 
                                         //check if target road is not diabled we are still on lane nr i.
                                         //possible lanes:
-                                        DriveLaneTemp[] pl;
+                                        DriveLane[] pl;
                                         if (incomingRoads[t].getAlphaNode()
                                                 == kruispunt) {
                                             pl = incomingRoads[t].getBetaLanes();
@@ -354,7 +354,7 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
 
     protected void enableLane(int disabledLaneIndex) throws InfraException {
         // Junctions only
-        DriveLaneTemp toBeEnabledLane = (DriveLaneTemp) disabledLanes.get(
+        DriveLane toBeEnabledLane = (DriveLane) disabledLanes.get(
                 disabledLaneIndex);
         Junction kruispunt = (Junction) toBeEnabledLane.
                 getNodeComesFrom();
@@ -363,7 +363,7 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
 
         Road ro = toBeEnabledLane.getRoad();
         //System.out.println(ro.getName() + " has been enabled [" + curCycle + "]");
-        DriveLaneTemp[] otherlanes;
+        DriveLane[] otherlanes;
         if (ro.getAlphaNode() == toBeEnabledLane.getNodeComesFrom()) {
             otherlanes = ro.getBetaLanes();
         } else {
@@ -385,7 +385,7 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
             if (incomingRoads[i] != null && i != ro_num) {
                 Road ri = incomingRoads[i];
                 int dir = Node.getDirection(i, ro_num);
-                DriveLaneTemp[] il;
+                DriveLane[] il;
 
                 if (ri.getAlphaNode() == kruispunt) { //Road heeft kruispunt als Alpha node
                     il = ri.getAlphaLanes();
@@ -410,7 +410,7 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
 
                         //check if target lane is not diabled we are still on lane nr i.
                         //possible lanes:
-                        DriveLaneTemp[] pl;
+                        DriveLane[] pl;
                         if (incomingRoads[t].getAlphaNode()
                                 == kruispunt) {
                             pl = incomingRoads[t].getBetaLanes();
@@ -439,9 +439,9 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
      * Checks if the lane leads to the accident area. (DOAS 06) Accident area
      * means that at least one of the lanes reachable from the lane is disabled.
      */
-    public boolean leadsToAccidentArea(Roaduser ru, DriveLaneTemp lane) {
+    public boolean leadsToAccidentArea(Roaduser ru, DriveLane lane) {
         try {
-            DriveLaneTemp[] lanes = lane.getNodeLeadsTo().getLanesLeadingFrom(lane, ru.getType());
+            DriveLane[] lanes = lane.getNodeLeadsTo().getLanesLeadingFrom(lane, ru.getType());
 
             for (int i = 0; i < lanes.length; i++) {
                 if (disabledLanes.contains(lanes[i])) {
@@ -836,7 +836,7 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
     public void cacheInboundLanes() throws InfraException {
         int num_nodes = allNodes.length;
         allLanes = new ArrayList(num_nodes * 3);
-        DriveLaneTemp[] temp;
+        DriveLane[] temp;
         int num_temp;
 
         for (int i = 0; i < num_nodes; i++) {
@@ -931,9 +931,9 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
     protected Dictionary getLaneSignDictionary() {
         Dictionary result = new Hashtable();
         Iterator lanes = allLanes.iterator();
-        DriveLaneTemp tmp;
+        DriveLane tmp;
         while (lanes.hasNext()) {
-            tmp = (DriveLaneTemp) (lanes.next());
+            tmp = (DriveLane) (lanes.next());
             result.put(new Integer(tmp.getId()), tmp);
         }
         return result;

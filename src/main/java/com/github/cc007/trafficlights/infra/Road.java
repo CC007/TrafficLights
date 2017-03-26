@@ -54,11 +54,11 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
     /**
      * Lanes where Roadusers move towards alphaNode.
      */
-    protected DriveLaneTemp[] alphaLanes = {};
+    protected DriveLane[] alphaLanes = {};
     /**
      * Lanes where Roadusers move towards betaNode.
      */
-    protected DriveLaneTemp[] betaLanes = {};
+    protected DriveLane[] betaLanes = {};
     /**
      * Turns in the Road.
      */
@@ -130,7 +130,7 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
         this.parentName = parentName;
     }
 
-    protected int[] getDrivelaneIdList(DriveLaneTemp[] list) {
+    protected int[] getDrivelaneIdList(DriveLane[] list) {
         int[] result = new int[list.length];
         for (int t = 0; t < list.length; t++) {
             if (list[t] == null) {
@@ -161,13 +161,13 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
          */
         // Load lanes
         Dictionary laneDictionary = (Dictionary) (dictionaries.get("lane"));
-        alphaLanes = new DriveLaneTemp[loadData.alphaLaneIds.length];
-        betaLanes = new DriveLaneTemp[loadData.betaLaneIds.length];
+        alphaLanes = new DriveLane[loadData.alphaLaneIds.length];
+        betaLanes = new DriveLane[loadData.betaLaneIds.length];
         for (int t = 0; t < alphaLanes.length; t++) {
-            alphaLanes[t] = (DriveLaneTemp) (laneDictionary.get(new Integer(loadData.alphaLaneIds[t])));
+            alphaLanes[t] = (DriveLane) (laneDictionary.get(new Integer(loadData.alphaLaneIds[t])));
         }
         for (int t = 0; t < betaLanes.length; t++) {
-            betaLanes[t] = (DriveLaneTemp) (laneDictionary.get(new Integer(loadData.betaLaneIds[t])));
+            betaLanes[t] = (DriveLane) (laneDictionary.get(new Integer(loadData.betaLaneIds[t])));
         }
     }
 
@@ -247,28 +247,28 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
     /**
      * Returns the Drivelanes where Roadusers move towards the alphaNode
      */
-    public DriveLaneTemp[] getAlphaLanes() {
+    public DriveLane[] getAlphaLanes() {
         return alphaLanes;
     }
 
     /**
      * Sets the Drivelanes where Roadusers move towards the alphaNode
      */
-    public void setAlphaLanes(DriveLaneTemp[] l) {
+    public void setAlphaLanes(DriveLane[] l) {
         alphaLanes = l;
     }
 
     /**
      * Returns the Drivelanes where Roadusers move towards the betaNode
      */
-    public DriveLaneTemp[] getBetaLanes() {
+    public DriveLane[] getBetaLanes() {
         return betaLanes;
     }
 
     /**
      * Sets the Drivelanes where Roadusers move towards the betaNode
      */
-    public void setBetaLanes(DriveLaneTemp[] l) {
+    public void setBetaLanes(DriveLane[] l) {
         betaLanes = l;
     }
 
@@ -333,7 +333,7 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
     /**
      * Resets the road. This will reset all Drivelanes.
      *
-     * @see DriveLaneTemp#reset()
+     * @see DriveLane#reset()
      */
     public void reset() {
         for (int i = 0; i < alphaLanes.length; i++) {
@@ -345,26 +345,26 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
     }
 
     /**
-     * Adds a DriveLaneTemp leading to the alpha node
+     * Adds a DriveLane leading to the alpha node
      *
      * @param l The drivelane to add
      * @throw InfraException if l is null
      */
-    public void addAlphaLane(DriveLaneTemp l) throws InfraException {
+    public void addAlphaLane(DriveLane l) throws InfraException {
         if (l == null) {
             throw new InfraException("Parameter l is null");
         }
-        alphaLanes = (DriveLaneTemp[]) Arrayutils.add(alphaLanes, l);
+        alphaLanes = (DriveLane[]) Arrayutils.add(alphaLanes, l);
     }
 
     /**
-     * Removes a DriveLaneTemp leading to the alpha node
+     * Removes a DriveLane leading to the alpha node
      *
      * @param l The drivelane to remove
      * @throw InfraException if l is null
      * @throw InfraException if the lane is not an alpha lane on this road
      */
-    public void remAlphaLane(DriveLaneTemp l) throws InfraException {
+    public void remAlphaLane(DriveLane l) throws InfraException {
         if (l == null) {
             throw new InfraException("Parameter l is null");
         }
@@ -372,30 +372,30 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
         if (i == -1) {
             throw new InfraException("Lane is not an alpha lane on this road");
         }
-        alphaLanes = (DriveLaneTemp[]) Arrayutils.remElement(alphaLanes, i);
+        alphaLanes = (DriveLane[]) Arrayutils.remElement(alphaLanes, i);
     }
 
     /**
-     * Adds a DriveLaneTemp leading to the beta node
+     * Adds a DriveLane leading to the beta node
      *
      * @param l The drivelane to add
      * @throw InfraException if l is null
      */
-    public void addBetaLane(DriveLaneTemp l) throws InfraException {
+    public void addBetaLane(DriveLane l) throws InfraException {
         if (l == null) {
             throw new InfraException("Parameter l is null");
         }
-        betaLanes = (DriveLaneTemp[]) Arrayutils.add(betaLanes, l);
+        betaLanes = (DriveLane[]) Arrayutils.add(betaLanes, l);
     }
 
     /**
-     * Removes a DriveLaneTemp leading to the beta node
+     * Removes a DriveLane leading to the beta node
      *
      * @param l The drivelane to remove
      * @throw InfraException if l is null
      * @throw InfraException if the lane is not a beta lane on this road
      */
-    public void remBetaLane(DriveLaneTemp l) throws InfraException {
+    public void remBetaLane(DriveLane l) throws InfraException {
         if (l == null) {
             throw new InfraException("Parameter l is null");
         }
@@ -403,7 +403,7 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
         if (i == -1) {
             throw new InfraException("Lane is not an beta lane on this road");
         }
-        alphaLanes = (DriveLaneTemp[]) Arrayutils.remElement(betaLanes, i);
+        alphaLanes = (DriveLane[]) Arrayutils.remElement(betaLanes, i);
     }
 
     /**
@@ -438,14 +438,14 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
     }
 
     /**
-     * Adds a DriveLaneTemp to this road
+     * Adds a DriveLane to this road
      *
      * @param lane The drivelane to add
-     * @param to The Node this DriveLaneTemp leads to
+     * @param to The Node this DriveLane leads to
      * @throw InfraException if lane or to is null
      * @throw InfraException if the road is not connected to the given node
      */
-    public void addLane(DriveLaneTemp lane, Node to) throws InfraException {
+    public void addLane(DriveLane lane, Node to) throws InfraException {
         if (lane == null) {
             throw new InfraException("Parameter lane is null");
         }
@@ -462,25 +462,25 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
     }
 
     /**
-     * Removes a DriveLaneTemp from this road
+     * Removes a DriveLane from this road
      *
      * @param lane The drivelane to remove
      * @throw InfraException if lane is null
      * @throw InfraException if lane is neither an alpha, nor a beta lane on
      * this road
      */
-    public void remLane(DriveLaneTemp lane) throws InfraException {
+    public void remLane(DriveLane lane) throws InfraException {
         if (lane == null) {
             throw new InfraException("Parameter lane is null");
         }
         int i = Arrayutils.findElement(alphaLanes, lane);
         if (i != -1) {
-            alphaLanes = (DriveLaneTemp[]) Arrayutils.remElement(alphaLanes, i);
+            alphaLanes = (DriveLane[]) Arrayutils.remElement(alphaLanes, i);
             return;
         }
         i = Arrayutils.findElement(betaLanes, lane);
         if (i != -1) {
-            betaLanes = (DriveLaneTemp[]) Arrayutils.remElement(betaLanes, i);
+            betaLanes = (DriveLane[]) Arrayutils.remElement(betaLanes, i);
             return;
         }
         throw new InfraException("Lane is neither an alpha, nor a beta lane on this road");
@@ -545,7 +545,7 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
      * @throw InfraException if n is null
      * @throw InfraException if this road is not connected to the given node
      */
-    public DriveLaneTemp[] getOutboundLanes(Node n) throws InfraException {
+    public DriveLane[] getOutboundLanes(Node n) throws InfraException {
         if (n == null) {
             throw new InfraException("Parameter n is null");
         } else if (n == alphaNode) {
@@ -562,7 +562,7 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
      * @throw InfraException if n is null
      * @throw InfraException if this road is not connected to the given node
      */
-    public DriveLaneTemp[] getInboundLanes(Node n) throws InfraException {
+    public DriveLane[] getInboundLanes(Node n) throws InfraException {
         //System.out.println("Requested Node.getId(): "+n.getId());
         //System.out.println("Alpha Node.getId(): "+((alphaNode==null)?"null!":""+alphaNode.getId()));
         //System.out.println("Beta Node.getId(): "+betaNode.getId());
@@ -579,8 +579,8 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
     /**
      * Returns an array of Drivelanes which are part of this road
      */
-    public DriveLaneTemp[] getAllLanes() {
-        return (DriveLaneTemp[]) Arrayutils.addArray(alphaLanes, betaLanes);
+    public DriveLane[] getAllLanes() {
+        return (DriveLane[]) Arrayutils.addArray(alphaLanes, betaLanes);
     }
 
     /**
@@ -604,7 +604,7 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
      * Paints an arbitrary segment of a drivelane and returns the outlines of
      * this segment as a Shape
      */
-    public Shape paintDrivelaneSegment(Graphics g, Point p1_1, Point p1_2, Point p2_1, Point p2_2, double a1, double a2, DriveLaneTemp dl) {
+    public Shape paintDrivelaneSegment(Graphics g, Point p1_1, Point p1_2, Point p2_1, Point p2_2, double a1, double a2, DriveLane dl) {
         switch (dl.getType()) {
             case 1:
                 g.setColor(new Color(230, 230, 255));
@@ -647,7 +647,7 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
     }
 
     /**
-     * Draws a Roaduser on a (segment of a) DriveLaneTemp
+     * Draws a Roaduser on a (segment of a) DriveLane
      *
      * @param g The Graphics object to draw onto
      * @param r The Roaduser to draw
@@ -681,15 +681,15 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
      * @param g The Graphics object to draw onto
      * @param ru The Roaduser to draw
      * @param node The Node this Roaduser is on
-     * @param p The first point of the new DriveLaneTemp the Roaduser will be on
+     * @param p The first point of the new DriveLane the Roaduser will be on
      * @param pos The position of the Roaduser on the Node
-     * @param d The new DriveLaneTemp
+     * @param d The new DriveLane
      */
-    public void paintRoaduserOnNode(Graphics g, Roaduser ru, Node node, Point p, int pos, DriveLaneTemp d) {
+    public void paintRoaduserOnNode(Graphics g, Roaduser ru, Node node, Point p, int pos, DriveLane d) {
         double na = 0.0;
         try {
             int id = ru.getPrevSign();
-            DriveLaneTemp[] dls = node.getLanesLeadingTo(d, 0);
+            DriveLane[] dls = node.getLanesLeadingTo(d, 0);
             for (int i = 0; i < dls.length; i++) {
                 if (dls[i].getId() == id) {
                     Road road = dls[i].getRoad();
@@ -739,7 +739,7 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
         }
     }
 
-    public void paintDrivelaneAttributes(Graphics g, Point p, double a, DriveLaneTemp d) {
+    public void paintDrivelaneAttributes(Graphics g, Point p, double a, DriveLane d) {
 // draw sign
         Point q = new Point((int) (p.x - 7 * Math.cos(a)), (int) (p.y + 7 * Math.sin(a)));
         Sign s = d.getSign();
@@ -969,7 +969,7 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
 
 // draw roadusers:
             for (int n = 0; n < alphaLanes.length; n++) {
-                DriveLaneTemp dl = alphaLanes[n];
+                DriveLane dl = alphaLanes[n];
                 LinkedList queue = dl.getQueue();
                 if (queue.size() > 0) {
                     ListIterator li = queue.listIterator();
@@ -1033,7 +1033,7 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
             }
 
             for (int n = 0; n < betaLanes.length; n++) {
-                DriveLaneTemp dl = betaLanes[n];
+                DriveLane dl = betaLanes[n];
                 LinkedList queue = dl.getQueue();
                 if (queue.size() > 0) {
                     ListIterator li = queue.listIterator();
@@ -1157,7 +1157,7 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
                 dlangle = Math.atan((double) (betaNode.coord.x - alphaNode.coord.x) / (double) (betaNode.coord.y - alphaNode.coord.y));
             }
 
-            DriveLaneTemp[] dls = getAllLanes();
+            DriveLane[] dls = getAllLanes();
             for (int n = 1; n < width + 1; n++) {
                 float part = (float) n / width;
                 float part2 = (float) (n - 1) / width;
@@ -1306,7 +1306,7 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
                     int pos = -1;
                     Roaduser ru = null;
                     ListIterator li = queue.listIterator();
-                    DriveLaneTemp lane = alphaLanes[n];
+                    DriveLane lane = alphaLanes[n];
                     while (li.hasNext()) {
                         ru = (Roaduser) li.next();
                         pos = ru.getPosition();

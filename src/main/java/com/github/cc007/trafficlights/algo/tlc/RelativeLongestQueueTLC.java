@@ -59,7 +59,7 @@ public class RelativeLongestQueueTLC extends TLController
 	public TLDecision[][] decideTLs()
 	{
 		TLDecision tldec;
-		DriveLaneTemp lane;
+		DriveLane lane;
 		int num_lanes;
 		
 		for (int i=0; i < num_nodes; i++) {
@@ -73,7 +73,7 @@ public class RelativeLongestQueueTLC extends TLController
 		return tld;
 	}
 
-	public void updateRoaduserMove(Roaduser _ru, DriveLaneTemp _prevlane, Sign _prevsign, int _prevpos, DriveLaneTemp _dlanenow, Sign _signnow, int _posnow, PosMov[] posMovs, DriveLaneTemp desired)
+	public void updateRoaduserMove(Roaduser _ru, DriveLane _prevlane, Sign _prevsign, int _prevpos, DriveLane _dlanenow, Sign _signnow, int _posnow, PosMov[] posMovs, DriveLane desired)
 	{    // No needed
 	}
 	

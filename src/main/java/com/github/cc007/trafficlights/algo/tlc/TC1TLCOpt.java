@@ -83,9 +83,9 @@ public class TC1TLCOpt extends TCRL implements Colearning, InstantiationAssistan
 			int num_specialnodes = infra.getNumSpecialNodes();
 			for (int i=0; i<num_nodes; i++)	{
 				Node n = nodes[i];
-				DriveLaneTemp [] dls = n.getInboundLanes();
+				DriveLane [] dls = n.getInboundLanes();
 				for (int j=0; j<dls.length; j++) {
-				    DriveLaneTemp d = dls[j];
+				    DriveLane d = dls[j];
 				    Sign s = d.getSign();
 				    int id = s.getId();
 				    int num_pos_on_dl = d.getCompleteLength();
@@ -132,7 +132,7 @@ public class TC1TLCOpt extends TCRL implements Colearning, InstantiationAssistan
 		 */
 		int num_dec, waitingsize, pos, tlId, desId;
 		float gain, passenger_factor;
-		Sign tl; DriveLaneTemp lane; Roaduser ru; ListIterator queue; Node destination;
+		Sign tl; DriveLane lane; Roaduser ru; ListIterator queue; Node destination;
 
 		//Determine wheter it should be random or not
 		boolean randomrun = false;
@@ -170,7 +170,7 @@ public class TC1TLCOpt extends TCRL implements Colearning, InstantiationAssistan
 
 				// Debug info generator
 				if(trackNode!=-1 && i==trackNode) {
-					DriveLaneTemp currentlane2 = tld[i][j].getTL().getLane();
+					DriveLane currentlane2 = tld[i][j].getTL().getLane();
 					boolean[] targets = currentlane2.getTargets();
 					System.out.println("node: "+i+" light: "+j+" gain: "+gain+" "+targets[0]+" "+targets[1]+" "+targets[2]+" "+currentlane2.getNumRoadusersWaiting());
 				}
@@ -187,7 +187,7 @@ public class TC1TLCOpt extends TCRL implements Colearning, InstantiationAssistan
 	    return tld;
 	}
 
-	public void updateRoaduserMove(Roaduser ru, DriveLaneTemp prevlane, Sign prevsign, int prevpos, DriveLaneTemp dlanenow, Sign signnow, int posnow, PosMov[] posMovs, DriveLaneTemp desired, int penalty)
+	public void updateRoaduserMove(Roaduser ru, DriveLane prevlane, Sign prevsign, int prevpos, DriveLane dlanenow, Sign signnow, int posnow, PosMov[] posMovs, DriveLane desired, int penalty)
 	{
 		// Roaduser has just left the building!
 		if(dlanenow == null || signnow == null) {

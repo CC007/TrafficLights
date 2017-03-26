@@ -57,7 +57,7 @@ public abstract class Node implements Selectable, XMLSerializable,
     /**
      * Caches for inbound and outbound lanes
      */
-    protected DriveLaneTemp[] inboundLanes, outboundLanes;
+    protected DriveLane[] inboundLanes, outboundLanes;
 
     protected String parentName = "model.infrastructure";
 
@@ -96,8 +96,8 @@ public abstract class Node implements Selectable, XMLSerializable,
     protected Node() {
         nodeId = -1;
         spdata = new SPData();
-        inboundLanes = new DriveLaneTemp[0];
-        outboundLanes = new DriveLaneTemp[0];
+        inboundLanes = new DriveLane[0];
+        outboundLanes = new DriveLane[0];
         initStats();
     }
 
@@ -670,7 +670,7 @@ public abstract class Node implements Selectable, XMLSerializable,
      * @throw InfraException if the given lane is not an outbound lane on this
      * node
      */
-    public abstract DriveLaneTemp[] getLanesLeadingTo(DriveLaneTemp lane, int ruType) throws
+    public abstract DriveLane[] getLanesLeadingTo(DriveLane lane, int ruType) throws
             InfraException;
 
     /**
@@ -683,23 +683,23 @@ public abstract class Node implements Selectable, XMLSerializable,
      * @throw InfraException if the given lane is not an inbound lane on this
      * node
      */
-    public abstract DriveLaneTemp[] getLanesLeadingFrom(DriveLaneTemp lane, int ruType) throws
+    public abstract DriveLane[] getLanesLeadingFrom(DriveLane lane, int ruType) throws
             InfraException;
 
     /**
      * Returns an array of all outbound lanes on this node
      */
-    public abstract DriveLaneTemp[] getOutboundLanes() throws InfraException;
+    public abstract DriveLane[] getOutboundLanes() throws InfraException;
 
     /**
      * Returns an array of all inbound lanes on this node
      */
-    public abstract DriveLaneTemp[] getInboundLanes() throws InfraException;
+    public abstract DriveLane[] getInboundLanes() throws InfraException;
 
     /**
      * Returns an array of all lanes on this node
      */
-    public abstract DriveLaneTemp[] getAllLanes() throws InfraException;
+    public abstract DriveLane[] getAllLanes() throws InfraException;
 
     // *** DEZE METHODEN NIET WEGHALEN AJB ***
     /**
@@ -731,7 +731,7 @@ public abstract class Node implements Selectable, XMLSerializable,
     /**
      * Sets the shortest path for an exitnode
      */
-    public void setShortestPath(DriveLaneTemp lane, int nodeId, int ruType,
+    public void setShortestPath(DriveLane lane, int nodeId, int ruType,
             int length) {
         spdata.setShortestPath(lane, nodeId, ruType, length);
     }
@@ -739,7 +739,7 @@ public abstract class Node implements Selectable, XMLSerializable,
     /**
      * Adds shortest path for an exitnode
      */
-    public void addShortestPath(DriveLaneTemp lane, int nodeId, int ruType,
+    public void addShortestPath(DriveLane lane, int nodeId, int ruType,
             int length) {
         spdata.addShortestPath(lane, nodeId, ruType, length);
     }
@@ -747,7 +747,7 @@ public abstract class Node implements Selectable, XMLSerializable,
     /**
      * Returns shortest paths for exitnode and Roaduser type
      */
-    public DriveLaneTemp[] getShortestPaths(int nodeID, int ruType) {
+    public DriveLane[] getShortestPaths(int nodeID, int ruType) {
         //System.out.println("Node.Getting the shortestpaths for nodeID:"+nodeID+" and ruType:"+ruType);
         return spdata.getShortestPaths(nodeID, ruType);
     }

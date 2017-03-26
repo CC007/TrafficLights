@@ -114,7 +114,7 @@ public class ACGJ5 extends TLController implements InstantiationAssistant,XMLSer
 				float gain = (ind.getFactor(i,j))*tld[i][j].getGain();
 	    		if(trackNode!=-1)
 					if(i==trackNode) {
-						DriveLaneTemp currentlane = tld[i][j].getTL().getLane();
+						DriveLane currentlane = tld[i][j].getTL().getLane();
 						boolean[] targets = currentlane.getTargets();
 						System.out.println("N:"+i+" L:"+j+" G:"+gain+" <:"+targets[0]+" |:"+targets[1]+" >:"+targets[2]+" W:"+currentlane.getNumRoadusersWaiting());
 					}
@@ -145,7 +145,7 @@ public class ACGJ5 extends TLController implements InstantiationAssistant,XMLSer
 	 * @param _possiblelanes
 	 * @param _ranges
 	 */
-	public void updateRoaduserMove(Roaduser _ru, DriveLaneTemp _prevlane, Sign _prevsign, int _prevpos, DriveLaneTemp _dlanenow, Sign _signnow, int _posnow, PosMov[] posMovs, DriveLaneTemp _desired)
+	public void updateRoaduserMove(Roaduser _ru, DriveLane _prevlane, Sign _prevsign, int _prevpos, DriveLane _dlanenow, Sign _signnow, int _posnow, PosMov[] posMovs, DriveLane _desired)
 	{
 		if(_prevsign == _signnow && _prevpos == _posnow) {
 			// Previous sign is the same as the current one

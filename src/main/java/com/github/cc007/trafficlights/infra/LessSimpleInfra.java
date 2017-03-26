@@ -69,28 +69,28 @@ public class LessSimpleInfra extends Infrastructure
 			Road road10 = new Road(edge3, node7, 10);
 			Road road11 = new Road(node9, node8, 10);
 		
-			DriveLaneTemp d11 = new DriveLaneTemp(road1);
+			DriveLane d11 = new DriveLane(road1);
 			d11.setType(1);
 			boolean[] d11targets = {false, true, true};
 			d11.setTargets(d11targets);
 			TrafficLight s11 = new TrafficLight(node4,d11);
 			d11.setSign(s11);
 		
-			DriveLaneTemp d12 = new DriveLaneTemp(road1);
+			DriveLane d12 = new DriveLane(road1);
 			d12.setType(1);
 			boolean[] d12targets = {false, true, false};
 			d12.setTargets(d12targets);
 			TrafficLight s12 = new TrafficLight(node4,d12);
 			d12.setSign(s12);
 
-			DriveLaneTemp d13 = new DriveLaneTemp(road1);
+			DriveLane d13 = new DriveLane(road1);
 			d13.setType(1);
 			boolean[] d13targets = {false, true, false};
 			d13.setTargets(d13targets);
 			TrafficLight s13 = new TrafficLight(edge0,d13);
 			d13.setSign(s13);
 
-			DriveLaneTemp d14 = new DriveLaneTemp(road1);
+			DriveLane d14 = new DriveLane(road1);
 			d14.setType(1);
 			boolean[] d14targets = {false, true, false};
 			d14.setTargets(d14targets);
@@ -98,28 +98,28 @@ public class LessSimpleInfra extends Infrastructure
 			d14.setSign(s14);
 		
 		
-			DriveLaneTemp d21 = new DriveLaneTemp(road2);
+			DriveLane d21 = new DriveLane(road2);
 			d21.setType(1);
 			boolean[] d21targets = {false, true, true};
 			d21.setTargets(d21targets);
 			TrafficLight s21 = new TrafficLight(node5,d21);
 			d21.setSign(s21);
 		
-			DriveLaneTemp d22 = new DriveLaneTemp(road2);
+			DriveLane d22 = new DriveLane(road2);
 			d22.setType(1);
 			boolean[] d22targets = {false, true, false};
 			d22.setTargets(d22targets);
 			TrafficLight s22 = new TrafficLight(node5,d22);
 			d22.setSign(s22);		
 		
-			DriveLaneTemp d23 = new DriveLaneTemp(road2);
+			DriveLane d23 = new DriveLane(road2);
 			d23.setType(1);
 			boolean[] d23targets = {true, false, false};
 			d23.setTargets(d23targets);
 			TrafficLight s23 = new TrafficLight(node4,d23);
 			d23.setSign(s23);
 		
-			DriveLaneTemp d24 = new DriveLaneTemp(road2);
+			DriveLane d24 = new DriveLane(road2);
 			d24.setType(1);
 			boolean[] d24targets = {false, true, false};
 			d24.setTargets(d24targets);
@@ -127,28 +127,28 @@ public class LessSimpleInfra extends Infrastructure
 			d24.setSign(s24);		
 
 		
-			DriveLaneTemp d31 = new DriveLaneTemp(road3);
+			DriveLane d31 = new DriveLane(road3);
 			d31.setType(1);
 			boolean[] d31targets = {false, true, false};
 			d31.setTargets(d31targets);
 			TrafficLight s31 = new TrafficLight(edge1,d31);
 			d31.setSign(s31);
 		
-			DriveLaneTemp d32 = new DriveLaneTemp(road3);
+			DriveLane d32 = new DriveLane(road3);
 			d32.setType(1);
 			boolean[] d32targets = {false, true, false};
 			d32.setTargets(d32targets);
 			TrafficLight s32 = new TrafficLight(edge1,d32);
 			d32.setSign(s32);		
 
-			DriveLaneTemp d33 = new DriveLaneTemp(road3);
+			DriveLane d33 = new DriveLane(road3);
 			d33.setType(1);
 			boolean[] d33targets = {true, false, false};
 			d33.setTargets(d33targets);
 			TrafficLight s33 = new TrafficLight(node5,d33);
 			d33.setSign(s33);
 		
-			DriveLaneTemp d34 = new DriveLaneTemp(road3);
+			DriveLane d34 = new DriveLane(road3);
 			d34.setType(1);
 			boolean[] d34targets = {false, true, false};
 			d34.setTargets(d34targets);
@@ -156,28 +156,28 @@ public class LessSimpleInfra extends Infrastructure
 			d34.setSign(s34);		
 
 
-			DriveLaneTemp d41 = new DriveLaneTemp(road4);
+			DriveLane d41 = new DriveLane(road4);
 			d41.setType(1);
 			boolean[] d41targets = {false, true, false};
 			d41.setTargets(d41targets);
 			TrafficLight s41 = new TrafficLight(node8, d41);
 			d41.setSign(s41);
 		
-			DriveLaneTemp d42 = new DriveLaneTemp(road4);
+			DriveLane d42 = new DriveLane(road4);
 			d42.setType(1);
 			boolean[] d42targets = {true, false, false};
 			d42.setTargets(d42targets);
 			TrafficLight s42 = new TrafficLight(node8, d42);
 			d42.setSign(s42);
 
-			DriveLaneTemp d43 = new DriveLaneTemp(road4);
+			DriveLane d43 = new DriveLane(road4);
 			d43.setType(1);
 			boolean[] d43targets = {true, false, false};
 			d43.setTargets(d43targets);
 			TrafficLight s43 = new TrafficLight(node4, d43);
 			d43.setSign(s43);
 		
-			DriveLaneTemp d44 = new DriveLaneTemp(road4);
+			DriveLane d44 = new DriveLane(road4);
 			d44.setType(1);
 			boolean[] d44targets = {false, false, true};
 			d44.setTargets(d44targets);
@@ -185,28 +185,28 @@ public class LessSimpleInfra extends Infrastructure
 			d44.setSign(s44);
 
 
-			DriveLaneTemp d51 = new DriveLaneTemp(road5);
+			DriveLane d51 = new DriveLane(road5);
 			d51.setType(1);
 			boolean[] d51targets = {false, true, true};
 			d51.setTargets(d51targets);
 			TrafficLight s51 = new TrafficLight(node9, d51);
 			d51.setSign(s51);
 		
-			DriveLaneTemp d52 = new DriveLaneTemp(road5);
+			DriveLane d52 = new DriveLane(road5);
 			d52.setType(1);
 			boolean[] d52targets = {false, true, false};
 			d52.setTargets(d52targets);
 			TrafficLight s52 = new TrafficLight(node9, d52);
 			d52.setSign(s52);		
 
-			DriveLaneTemp d53 = new DriveLaneTemp(road5);
+			DriveLane d53 = new DriveLane(road5);
 			d53.setType(1);
 			boolean[] d53targets = {true, false, false};
 			d53.setTargets(d53targets);
 			TrafficLight s53 = new TrafficLight(node5, d53);
 			d53.setSign(s53);
 		
-			DriveLaneTemp d54 = new DriveLaneTemp(road5);
+			DriveLane d54 = new DriveLane(road5);
 			d54.setType(1);
 			boolean[] d54targets = {false, false, true};
 			d54.setTargets(d54targets);
@@ -214,28 +214,28 @@ public class LessSimpleInfra extends Infrastructure
 			d54.setSign(s54);		
 	
 		
-			DriveLaneTemp d61 = new DriveLaneTemp(road6);
+			DriveLane d61 = new DriveLane(road6);
 			d61.setType(1);
 			boolean[] d61targets = {false, false, true};
 			d61.setTargets(d61targets);
 			TrafficLight s61 = new TrafficLight(node6, d61);
 			d61.setSign(s61);
 		
-			DriveLaneTemp d62 = new DriveLaneTemp(road6);
+			DriveLane d62 = new DriveLane(road6);
 			d62.setType(1);
 			boolean[] d62targets = {true, false, false};
 			d62.setTargets(d62targets);
 			TrafficLight s62 = new TrafficLight(node6, d62);
 			d62.setSign(s62);		
 
-			DriveLaneTemp d63 = new DriveLaneTemp(road6);
+			DriveLane d63 = new DriveLane(road6);
 			d63.setType(1);
 			boolean[] d63targets = {false, true, false};
 			d63.setTargets(d63targets);
 			TrafficLight s63 = new TrafficLight(node8, d63);
 			d63.setSign(s63);
 		
-			DriveLaneTemp d64 = new DriveLaneTemp(road6);
+			DriveLane d64 = new DriveLane(road6);
 			d64.setType(1);
 			boolean[] d64targets = {false, true, true};
 			d64.setTargets(d64targets);
@@ -243,28 +243,28 @@ public class LessSimpleInfra extends Infrastructure
 			d64.setSign(s64);
 		
 		
-			DriveLaneTemp d71 = new DriveLaneTemp(road7);
+			DriveLane d71 = new DriveLane(road7);
 			d71.setType(1);
 			boolean[] d71targets = {false, false, true};
 			d71.setTargets(d71targets);
 			TrafficLight s71 = new TrafficLight(node7,d71);
 			d71.setSign(s71);
 		
-			DriveLaneTemp d72 = new DriveLaneTemp(road7);
+			DriveLane d72 = new DriveLane(road7);
 			d72.setType(1);
 			boolean[] d72targets = {true, false, false};
 			d72.setTargets(d72targets);
 			TrafficLight s72 = new TrafficLight(node7,d72);
 			d72.setSign(s72);		
 
-			DriveLaneTemp d73 = new DriveLaneTemp(road7);
+			DriveLane d73 = new DriveLane(road7);
 			d73.setType(1);
 			boolean[] d73targets = {true, false, false};
 			d73.setTargets(d73targets);
 			TrafficLight s73 = new TrafficLight(node9,d73);
 			d73.setSign(s73);
 		
-			DriveLaneTemp d74 = new DriveLaneTemp(road7);
+			DriveLane d74 = new DriveLane(road7);
 			d74.setType(1);
 			boolean[] d74targets = {false, true, false};
 			d74.setTargets(d74targets);
@@ -272,28 +272,28 @@ public class LessSimpleInfra extends Infrastructure
 			d74.setSign(s74);
 		
 		
-			DriveLaneTemp d81 = new DriveLaneTemp(road8);
+			DriveLane d81 = new DriveLane(road8);
 			d81.setType(1);
 			boolean[] d81targets = {false, true, false};
 			d81.setTargets(d81targets);
 			TrafficLight s81 = new TrafficLight(node6,d81);
 			d81.setSign(s81);
 		
-			DriveLaneTemp d82 = new DriveLaneTemp(road8);
+			DriveLane d82 = new DriveLane(road8);
 			d82.setType(1);
 			boolean[] d82targets = {true, false, false};
 			d82.setTargets(d82targets);
 			TrafficLight s82 = new TrafficLight(node6,d82);
 			d82.setSign(s82);		
 
-			DriveLaneTemp d83 = new DriveLaneTemp(road8);
+			DriveLane d83 = new DriveLane(road8);
 			d83.setType(1);
 			boolean[] d83targets = {false, true, false};
 			d83.setTargets(d83targets);
 			TrafficLight s83 = new TrafficLight(edge2,d83);
 			d83.setSign(s83);
 		
-			DriveLaneTemp d84 = new DriveLaneTemp(road8);
+			DriveLane d84 = new DriveLane(road8);
 			d84.setType(1);
 			boolean[] d84targets = {false, true, false};
 			d84.setTargets(d84targets);
@@ -301,28 +301,28 @@ public class LessSimpleInfra extends Infrastructure
 			d84.setSign(s84);	
 		
 		
-			DriveLaneTemp d91 = new DriveLaneTemp(road9);
+			DriveLane d91 = new DriveLane(road9);
 			d91.setType(1);
 			boolean[] d91targets = {false, true, false};
 			d91.setTargets(d91targets);
 			TrafficLight s91 = new TrafficLight(node7,d91);
 			d91.setSign(s91);
 		
-			DriveLaneTemp d92 = new DriveLaneTemp(road9);
+			DriveLane d92 = new DriveLane(road9);
 			d92.setType(1);
 			boolean[] d92targets = {true, false, false};
 			d92.setTargets(d92targets);
 			TrafficLight s92 = new TrafficLight(node7,d92);
 			d92.setSign(s92);		
 
-			DriveLaneTemp d93 = new DriveLaneTemp(road9);
+			DriveLane d93 = new DriveLane(road9);
 			d93.setType(1);
 			boolean[] d93targets = {false, true, false};
 			d93.setTargets(d93targets);
 			TrafficLight s93 = new TrafficLight(node6,d93);
 			d93.setSign(s93);
 		
-			DriveLaneTemp d94 = new DriveLaneTemp(road9);
+			DriveLane d94 = new DriveLane(road9);
 			d94.setType(1);
 			boolean[] d94targets = {false, true, true};
 			d94.setTargets(d94targets);
@@ -330,28 +330,28 @@ public class LessSimpleInfra extends Infrastructure
 			d94.setSign(s94);
 		
 		
-			DriveLaneTemp d101 = new DriveLaneTemp(road10);
+			DriveLane d101 = new DriveLane(road10);
 			d101.setType(1);
 			boolean[] d101targets = {false, true, false};
 			d101.setTargets(d101targets);
 			TrafficLight s101 = new TrafficLight(edge3,d101);
 			d101.setSign(s101);
 		
-			DriveLaneTemp d102 = new DriveLaneTemp(road10);
+			DriveLane d102 = new DriveLane(road10);
 			d102.setType(1);
 			boolean[] d102targets = {false, true, false};
 			d102.setTargets(d102targets);
 			TrafficLight s102 = new TrafficLight(edge3,d102);
 			d102.setSign(s102);		
 
-			DriveLaneTemp d103 = new DriveLaneTemp(road10);
+			DriveLane d103 = new DriveLane(road10);
 			d103.setType(1);
 			boolean[] d103targets = {false, true, false};
 			d103.setTargets(d103targets);
 			TrafficLight s103 = new TrafficLight(node7,d103);
 			d103.setSign(s103);
 		
-			DriveLaneTemp d104 = new DriveLaneTemp(road10);
+			DriveLane d104 = new DriveLane(road10);
 			d104.setType(1);
 			boolean[] d104targets = {false, true, true};
 			d104.setTargets(d104targets);
@@ -359,28 +359,28 @@ public class LessSimpleInfra extends Infrastructure
 			d104.setSign(s104);	
 		
 		
-			DriveLaneTemp d111 = new DriveLaneTemp(road11);
+			DriveLane d111 = new DriveLane(road11);
 			d111.setType(1);
 			boolean[] d111targets = {false, false, true};
 			d111.setTargets(d111targets);
 			TrafficLight s111 = new TrafficLight(node9,d111);
 			d111.setSign(s111);
 		
-			DriveLaneTemp d112 = new DriveLaneTemp(road11);
+			DriveLane d112 = new DriveLane(road11);
 			d112.setType(1);
 			boolean[] d112targets = {true, false, false};
 			d112.setTargets(d112targets);
 			TrafficLight s112 = new TrafficLight(node9,d112);
 			d112.setSign(s112);		
 
-			DriveLaneTemp d113 = new DriveLaneTemp(road11);
+			DriveLane d113 = new DriveLane(road11);
 			d113.setType(1);
 			boolean[] d113targets = {true, false, false};
 			d113.setTargets(d113targets);
 			TrafficLight s113 = new TrafficLight(node8,d113);
 			d113.setSign(s113);
 		
-			DriveLaneTemp d114 = new DriveLaneTemp(road11);
+			DriveLane d114 = new DriveLane(road11);
 			d114.setType(1);
 			boolean[] d114targets = {false, false, true};
 			d114.setTargets(d114targets);

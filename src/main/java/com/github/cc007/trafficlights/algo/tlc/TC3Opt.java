@@ -96,13 +96,13 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
 
             for (int i = 0; i < num_nodes; i++) {
                 Node n = nodes[i];
-                DriveLaneTemp[] dls = dls = n.getInboundLanes();
+                DriveLane[] dls = dls = n.getInboundLanes();
                 int num_dls = num_dls = dls.length;
                 // huh?
-                DriveLaneTemp[] lanes = (DriveLaneTemp[]) infra.getAllInboundLanes().toArray();
+                DriveLane[] lanes = (DriveLane[]) infra.getAllInboundLanes().toArray();
 
                 for (int j = 0; j < num_dls; j++) {
-                    DriveLaneTemp d = dls[j];
+                    DriveLane d = dls[j];
                     Sign s = d.getSign();
                     int id = d.getId();
                     int num_pos_on_dl = d.getCompleteLength();
@@ -157,7 +157,7 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
         int num_dec, currenttlID, waitingsize, pos, destID;
         float gain = 0, passenger_factor;
         Sign currenttl;
-        DriveLaneTemp currentlane;
+        DriveLane currentlane;
         ListIterator queue;
         Roaduser ru;
 
@@ -188,7 +188,7 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
                 }
 
                 if (trackNode != -1 && i == trackNode) {
-                    DriveLaneTemp currentlane2 = tld[i][j].getTL().getLane();
+                    DriveLane currentlane2 = tld[i][j].getTL().getLane();
                     boolean[] targets = currentlane2.getTargets();
                     System.out.println("node: " + i + " light: " + j + " gain: " + gain + " " + targets[0] + " " + targets[1] + " " + targets[2] + " " + currentlane2.getNumRoadusersWaiting());
                 }
@@ -203,7 +203,7 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
         return tld;
     }
 
-    public void updateRoaduserMove(Roaduser ru, DriveLaneTemp prevlane, Sign prevsign, int prevpos, DriveLaneTemp dlanenow, Sign signnow, int posnow, PosMov[] posMovs, DriveLaneTemp desired, int penalty) {
+    public void updateRoaduserMove(Roaduser ru, DriveLane prevlane, Sign prevsign, int prevpos, DriveLane dlanenow, Sign signnow, int posnow, PosMov[] posMovs, DriveLane desired, int penalty) {
         // Roaduser has just left the building
         if (dlanenow == null || signnow == null) {
             return;
@@ -660,14 +660,14 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
         public void loadSecondStage(Dictionary dictionaries) throws XMLInvalidInputException {
             Dictionary laneDictionary = (Dictionary) (dictionaries.get("lane")),
                     nodeDictionary = (Dictionary) (dictionaries.get("node"));
-            DriveLaneTemp lane = (DriveLaneTemp) (laneDictionary.get(new Integer(loadData.oldTlId)));
+            DriveLane lane = (DriveLane) (laneDictionary.get(new Integer(loadData.oldTlId)));
             if (!((Hashtable) (laneDictionary)).containsKey(new Integer(loadData.oldTlId))) {
                 throw new XMLInvalidInputException("Trying to load non-existant TL with id "
                         + loadData.oldTlId);
             }
-            tl = ((DriveLaneTemp) (laneDictionary.get(
+            tl = ((DriveLane) (laneDictionary.get(
                     new Integer(loadData.oldTlId)))).getSign();
-            tl_new = ((DriveLaneTemp) (laneDictionary.get(
+            tl_new = ((DriveLane) (laneDictionary.get(
                     new Integer(loadData.newTlId)))).getSign();
             destination = (Node) (nodeDictionary.get(
                     new Integer(loadData.destNodeId)));
@@ -785,9 +785,9 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
         public void loadSecondStage(Dictionary dictionaries) {
             Dictionary laneDictionary = (Dictionary) (dictionaries.get("lane")),
                     nodeDictionary = (Dictionary) (dictionaries.get("node"));
-            tl = ((DriveLaneTemp) (laneDictionary.get(
+            tl = ((DriveLane) (laneDictionary.get(
                     new Integer(loadData.oldTlId)))).getSign();
-            tl_new = ((DriveLaneTemp) (laneDictionary.get(
+            tl_new = ((DriveLane) (laneDictionary.get(
                     new Integer(loadData.newTlId)))).getSign();
             destination = (Node) (nodeDictionary.get(
                     new Integer(loadData.destNodeId)));
@@ -919,9 +919,9 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
         public void loadSecondStage(Dictionary dictionaries) throws XMLInvalidInputException, XMLTreeException {
             Dictionary laneDictionary = (Dictionary) (dictionaries.get("lane")),
                     nodeDictionary = (Dictionary) (dictionaries.get("node"));
-            tl = ((DriveLaneTemp) (laneDictionary.get(
+            tl = ((DriveLane) (laneDictionary.get(
                     new Integer(loadData.oldTlId)))).getSign();
-            tl_new = ((DriveLaneTemp) (laneDictionary.get(
+            tl_new = ((DriveLane) (laneDictionary.get(
                     new Integer(loadData.newTlId)))).getSign();
             destination = (Node) (nodeDictionary.get(
                     new Integer(loadData.destNodeId)));
@@ -995,7 +995,7 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
 
         public void loadSecondStage(Dictionary dictionaries) {
             Dictionary laneDictionary = (Dictionary) (dictionaries.get("lane"));
-            tl = ((DriveLaneTemp) (laneDictionary.get(
+            tl = ((DriveLane) (laneDictionary.get(
                     new Integer(loadData.tlId)))).getSign();
         }
 
