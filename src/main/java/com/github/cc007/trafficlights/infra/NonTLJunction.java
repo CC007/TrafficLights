@@ -40,7 +40,7 @@ public class NonTLJunction extends Junction
 	/** The type of this node */
 	protected static final int type = Node.NON_TL;
 	
-	/** A Vector containing all Signs on this node */
+	/** A ArrayList containing all Signs on this node */
 	protected NoSign[] signs = { };
 	
 	/** Creates an empty junction (for loading) */

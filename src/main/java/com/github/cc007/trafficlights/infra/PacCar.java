@@ -27,13 +27,9 @@ import java.util.*;
  * PacCar, not standard...
  *
  * @author Group Datastructures
-<<<<<<< PacCar.java
- * @version 0.02
-=======
  * @version 1.0
  *
  * PacCar, not standard...
->>>>>>> 1.4
  */
 
 public class PacCar extends Car

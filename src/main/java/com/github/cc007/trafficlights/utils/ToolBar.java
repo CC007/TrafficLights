@@ -13,83 +13,120 @@
  * See the GNU General Public License for more details.
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
-
 package com.github.cc007.trafficlights.utils;
 
 import java.awt.*;
 import java.util.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URL;
+import javax.imageio.ImageIO;
 
 /**
  *
- * Basic ToolBar class.
- * Designed on Windows, so it may not look as good on other platforms...
+ * Basic ToolBar class. Designed on Windows, so it may not look as good on other
+ * platforms...
  *
  * @author Group Joep Moritz (No, I'm really not schizo.)
  * @version 1.0
  */
+public class ToolBar extends Panel {
+//	ArrayList tools;
 
-public class ToolBar extends Panel
-{
-//	Vector tools;
-	protected int separatorWidth = 8;
-	protected int buttonWidth = 24;
-	protected int buttonHeight = 24;
-	protected int totalWidth = 0;
-	
-	public ToolBar() {
-		super();
-//		tools = new Vector(3);
+    protected int separatorWidth = 8;
+    protected int buttonWidth = 24;
+    protected int buttonHeight = 24;
+    protected int totalWidth = 0;
 
-		setLayout(null);
-		setBackground(Color.lightGray);
-	}
-	
-	public int getSeparatorWidth() { return separatorWidth; }
-	public void setSeparatorWidth(int w) { separatorWidth = w; }
-	public int getButtonWidth() { return buttonWidth; }
-	public void setButtonWidth(int w) { buttonWidth = w; }
-	public int getButtonHeight() { return buttonHeight; }
-	public void setButtonHeight(int h) { buttonHeight = h; }
-	
-	
-	/**
-	 * Adds an IconButton to this toolbar.
-	 *
-	 * @param imgurl The url of the image for the new IconButton
-	 * @param al The ActionListener to add to the new IconButton
-	 * @param id The id for the new button
-	 */
-	public void addButton(String imgurl, ActionListener al, int id) {
-  	Toolkit tk = Toolkit.getDefaultToolkit();
-  	IconButton b = new IconButton(tk.getImage(imgurl).
-  		getScaledInstance(buttonWidth - 6, buttonHeight - 6, Image.SCALE_SMOOTH), id);
-  	b.setBounds(totalWidth, 0, buttonWidth, buttonHeight);
-  	b.addActionListener(al);
-  	add(b);
-  	
-  	totalWidth += buttonWidth;
-	}
-	
-	/** Adds a separator to this toolbar */
-	public void addSeparator() {
-		Panel p = new Panel(null);
-		p.setSize(separatorWidth, buttonHeight);
-		add(p);
-		
-		totalWidth += separatorWidth;
-	}
-	
-	/** Adds a component to this toolbar */
-	public void addComponent(Component c) {
-		add(c);
-		c.setLocation(totalWidth, 0);
-		totalWidth += c.getWidth();
-	}
-	
-	public void remComponent(Component c) {
-		remove(c);
-		
-		totalWidth -= c.getWidth();
-	}
+    public ToolBar() {
+        super();
+//		tools = new ArrayList(3);
+
+        setLayout(null);
+        setBackground(Color.lightGray);
+    }
+
+    public int getSeparatorWidth() {
+        return separatorWidth;
+    }
+
+    public void setSeparatorWidth(int w) {
+        separatorWidth = w;
+    }
+
+    public int getButtonWidth() {
+        return buttonWidth;
+    }
+
+    public void setButtonWidth(int w) {
+        buttonWidth = w;
+    }
+
+    public int getButtonHeight() {
+        return buttonHeight;
+    }
+
+    public void setButtonHeight(int h) {
+        buttonHeight = h;
+    }
+
+    /**
+     * Adds an IconButton to this toolbar.
+     *
+     * @param imgurl The url of the image for the new IconButton
+     * @param al The ActionListener to add to the new IconButton
+     * @param id The id for the new button
+     */
+    public void addButton(String imgurl, ActionListener al, int id) {
+        Image img;
+        URL url = this.getClass().getClassLoader().getResource(imgurl);
+        if (url == null) {
+            img = null;
+        } else {
+            try {
+                final BufferedImage result = ImageIO.read(url);
+
+                if (result == null) {
+                    final String message = "Could not load image: " + imgurl;
+                    throw new Error();
+                }
+                img = result;
+            } catch (IOException e) {
+                img = null;
+            }
+        }
+        IconButton b = new IconButton(img.getScaledInstance(buttonWidth - 6, buttonHeight - 6, Image.SCALE_SMOOTH), id);
+        b.setBounds(totalWidth, 0, buttonWidth, buttonHeight);
+        b.addActionListener(al);
+        add(b);
+
+        totalWidth += buttonWidth;
+    }
+
+    /**
+     * Adds a separator to this toolbar
+     */
+    public void addSeparator() {
+        Panel p = new Panel(null);
+        p.setSize(separatorWidth, buttonHeight);
+        add(p);
+
+        totalWidth += separatorWidth;
+    }
+
+    /**
+     * Adds a component to this toolbar
+     */
+    public void addComponent(Component c) {
+        add(c);
+        c.setLocation(totalWidth, 0);
+        totalWidth += c.getWidth();
+    }
+
+    public void remComponent(Component c) {
+        remove(c);
+
+        totalWidth -= c.getWidth();
+    }
 }

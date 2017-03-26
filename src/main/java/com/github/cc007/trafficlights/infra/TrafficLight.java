@@ -33,7 +33,7 @@ public class TrafficLight extends Sign
 {
 	protected final static int type = Sign.TRAFFICLIGHT;
 
-	public TrafficLight(Node _node, Drivelane _lane) {
+	public TrafficLight(Node _node, DriveLaneTemp _lane) {
 		super(_node, _lane);
 	}
 	

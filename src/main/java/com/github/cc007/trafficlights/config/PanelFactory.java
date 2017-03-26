@@ -58,7 +58,7 @@ public class PanelFactory
 			Object firstObject = s.getSelectedObjects().getFirst();
 			if (firstObject instanceof Node) return getNodePanel((Node)firstObject);
 			if (firstObject instanceof Road) return getRoadPanel((Road)firstObject);
-			if (firstObject instanceof Drivelane) return getDrivelanePanel((Drivelane)firstObject);
+			if (firstObject instanceof DriveLaneTemp) return getDrivelanePanel((DriveLaneTemp)firstObject);
 			throw new ConfigException("Unknown object type");
 		}
 		if (gp == null) {
@@ -92,7 +92,7 @@ public class PanelFactory
 		throw new ConfigException("Unknown object type");
 	}
 	
-	private ConfigPanel getDrivelanePanel(Drivelane l) throws ConfigException
+	private ConfigPanel getDrivelanePanel(DriveLaneTemp l) throws ConfigException
 	{
 		if (TYPE == TYPE_SIM) return createSDP(l);
 		if (TYPE == TYPE_EDIT) return createEDP(l);
@@ -142,12 +142,12 @@ public class PanelFactory
 		return erp;
 	}
 
-	private ConfigPanel createSDP(Drivelane l) {
+	private ConfigPanel createSDP(DriveLaneTemp l) {
 		if (sdp == null) sdp = new SimDrivelanePanel(confd, l);
 		else sdp.setLane(l);
 		return sdp;
 	}
-	private ConfigPanel createEDP(Drivelane l) {
+	private ConfigPanel createEDP(DriveLaneTemp l) {
 		if (edp == null) edp = new EditDrivelanePanel(confd, l);
 		else edp.setLane(l);
 		return edp;

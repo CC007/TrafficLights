@@ -136,7 +136,7 @@ public class ACGJ2 extends TLController implements XMLSerializable,TwoStageLoade
 				
 		return result;
 	}
-	public void updateRoaduserMove(Roaduser _ru, Drivelane _prevlane, Sign _prevsign, int _prevpos, Drivelane _dlanenow, Sign _signnow, int _posnow, PosMov[] posMovs, Drivelane desired)
+	public void updateRoaduserMove(Roaduser _ru, DriveLaneTemp _prevlane, Sign _prevsign, int _prevpos, DriveLaneTemp _dlanenow, Sign _signnow, int _posnow, PosMov[] posMovs, DriveLaneTemp desired)
 	{
 		// No implementation necessary
 	}
@@ -207,14 +207,14 @@ public class ACGJ2 extends TLController implements XMLSerializable,TwoStageLoade
 			for (int i=0; i<lastConfigs.length; i++) lastConfigs[i]=null;
 			
 			// create dli
-			Drivelane [] dls;
+			DriveLaneTemp [] dls;
 			try 
 			{
 				dls = nd.getInboundLanes();
 			}
 			catch(Exception e)
 			{
-				dls = new Drivelane[0];
+				dls = new DriveLaneTemp[0];
 			}
 			dli = new DrivelaneInfo[dls.length];
 			for (int i=0; i<dli.length; i++)
@@ -228,7 +228,7 @@ public class ACGJ2 extends TLController implements XMLSerializable,TwoStageLoade
 		}
 		catch(Exception e)
 		{
-			dls = new Drivelane[0];
+			dls = new DriveLaneTemp[0];
 		}
 		dlo = new DrivelaneInfo[dls.length];
 		for (int i=0; i<dlo.length; i++)
@@ -248,14 +248,14 @@ public class ACGJ2 extends TLController implements XMLSerializable,TwoStageLoade
 		{
 			// update waiting and busyness
 			currentWaiting = 0;
-			Drivelane [] dls;
+			DriveLaneTemp [] dls;
 			try 
 			{
 				dls = nd.getInboundLanes();
 			}
 			catch(Exception e)
 			{
-				dls = new Drivelane[0];
+				dls = new DriveLaneTemp[0];
 			}
 			for (int i=0; i<dls.length; i++)
 			{
@@ -392,13 +392,13 @@ public class ACGJ2 extends TLController implements XMLSerializable,TwoStageLoade
 			tldIndex=myElement.getAttribute("tld-index").getIntValue();
 			loadData.nodeId=myElement.getAttribute("node-id").getIntValue();
 			// Set NodeInfo in DrivelaneInfo
-			Enumeration di1=new ArrayEnumeration(dli);
-			while (di1.hasMoreElements())
-			{	((DrivelaneInfo)(di1.nextElement())).setNodeInfo(this);
+			Iterator it1=new ArrayIterator(dli);
+			while (it1.hasNext())
+			{	((DrivelaneInfo)(it1.next())).setNodeInfo(this);
 			}
-			Enumeration di2=new ArrayEnumeration(dlo);
-			while (di2.hasMoreElements())
-			{	((DrivelaneInfo)(di2.nextElement())).setNodeInfo(this);
+			Iterator it2=new ArrayIterator(dlo);
+			while (it2.hasNext())
+			{	((DrivelaneInfo)(it2.next())).setNodeInfo(this);
 			}
 		}
 	
@@ -417,7 +417,7 @@ public class ACGJ2 extends TLController implements XMLSerializable,TwoStageLoade
 			XMLArray.saveArray(dli,this,saver,"dl-inbound");
 			XMLArray.saveArray(dlo,this,saver,"dl-outbound");
 			if (bestSignSoFar != null)			
-			{	XMLUtils.setParentName(new	ArrayEnumeration(bestSignSoFar),getXMLName());
+			{	XMLUtils.setParentName(new	ArrayIterator(bestSignSoFar),getXMLName());
 				XMLArray.saveArray(bestSignSoFar,this,saver,"best-sign");
 			}
 			XMLArray.saveArray(pat,this,saver,"pat");
@@ -441,19 +441,19 @@ public class ACGJ2 extends TLController implements XMLSerializable,TwoStageLoade
 		{	nd=(Node)((Dictionary)dictionaries.get("node")).get(new Integer 
 				(loadData.nodeId));
 			if (bestSignSoFar != null )
-				XMLUtils.loadSecondStage(new ArrayEnumeration(bestSignSoFar),dictionaries);	
+				XMLUtils.loadSecondStage(new ArrayIterator(bestSignSoFar),dictionaries);	
 		}	
 		
 		public void loadThirdStage (Dictionary dictionaries) throws XMLInvalidInputException,XMLTreeException
-		{	XMLUtils.loadSecondStage(new ArrayEnumeration(dli),dictionaries);	
-			XMLUtils.loadSecondStage(new ArrayEnumeration(dlo),dictionaries);
+		{	XMLUtils.loadSecondStage(new ArrayIterator(dli),dictionaries);	
+			XMLUtils.loadSecondStage(new ArrayIterator(dlo),dictionaries);
 		}	
 		
 	}
 	
 	private class DrivelaneInfo implements XMLSerializable,TwoStageLoader
 	{
-		Drivelane dl;
+		DriveLaneTemp dl;
 		NodeInfo ndi;	// node with sign at this DL
 		private NodeInfo otherNode; // node without sign at this DL
 		int [] target;   // 0 = left 1= straight 2=right
@@ -470,7 +470,7 @@ public class ACGJ2 extends TLController implements XMLSerializable,TwoStageLoade
 		{	this.acgj=acgj;
 		}
 		
-		public DrivelaneInfo(Drivelane dl, NodeInfo ndi, ACGJ2 acgj)
+		public DrivelaneInfo(DriveLaneTemp dl, NodeInfo ndi, ACGJ2 acgj)
 		{	
 			this.dl=dl;
 			this.ndi=ndi;
@@ -593,7 +593,7 @@ public class ACGJ2 extends TLController implements XMLSerializable,TwoStageLoade
 		public void loadSecondStage (Dictionary dictionaries)
 		{	otherNode=(NodeInfo)((Dictionary)dictionaries.get("node-info")).get(new Integer 
 				(loadData.nodeId));
-			dl=(Drivelane)((Dictionary)dictionaries.get("lane")).get(new Integer
+			dl=(DriveLaneTemp)((Dictionary)dictionaries.get("lane")).get(new Integer
 				(loadData.laneId));	
 		}	
 		
@@ -720,25 +720,26 @@ public class ACGJ2 extends TLController implements XMLSerializable,TwoStageLoade
 	}
 	
 	// TwoStageLoader implementation
+    @Override
 	public void loadSecondStage (Dictionary dictionaries) throws XMLInvalidInputException,XMLTreeException
 	{	super.loadSecondStage(dictionaries);
-		XMLUtils.loadSecondStage(new ArrayEnumeration(ndinf),dictionaries);
+		XMLUtils.loadSecondStage(new ArrayIterator(ndinf),dictionaries);
 		loadThirdStage(dictionaries);
 	}
 	
 	// Yeah. Baby. A three-stage loader
 	public void loadThirdStage (Dictionary dictionaries) throws XMLInvalidInputException,XMLTreeException
-	{	Enumeration ni=new ArrayEnumeration(ndinf);
+	{	Iterator it=new ArrayIterator(ndinf);
 		Dictionary nodeInfo=new Hashtable();
 		NodeInfo tmp;
-		while (ni.hasMoreElements())
-		{	tmp=(NodeInfo)ni.nextElement();
-			nodeInfo.put(new Integer(tmp.getId()),tmp);
+		while (it.hasNext())
+		{	tmp=(NodeInfo)it.next();
+			nodeInfo.put(tmp.getId(),tmp);
 		}
 		dictionaries.put("node-info",nodeInfo);
-		ni=new ArrayEnumeration(ndinf);
-		while (ni.hasMoreElements())
-			((NodeInfo)(ni.nextElement())).loadThirdStage(dictionaries);
+		it=new ArrayIterator(ndinf);
+		while (it.hasNext())
+			((NodeInfo)(it.next())).loadThirdStage(dictionaries);
 	}
 	
 	// InstantiationAssistant implementation

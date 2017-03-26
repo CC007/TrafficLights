@@ -51,7 +51,7 @@ public class TC2B1 extends TCRL implements Colearning,InstantiationAssistant
 	protected final static int BUCK = 0, WAIT = 1;
 
 	// TC2 vars
-	protected Vector [][][] count, pTable, pKtlTable;
+	protected ArrayList [][][] count, pTable, pKtlTable;
 	protected float [][][][] qTable;						//SignId, Position, DestinationNodeId, LightColor
 	protected float [][][]   vTable;
 	protected static float gamma=0.95f;						//Discount Factor; used to decrease the influence of previous V values, that's why: 0 < gamma < 1
@@ -79,42 +79,42 @@ public class TC2B1 extends TCRL implements Colearning,InstantiationAssistant
 			int numSigns = infra.getAllInboundLanes().size();
 			qTable = new float [numSigns][][][];
 			vTable = new float [numSigns][][];
-			count	= new Vector[numSigns][][];
-			pTable = new Vector[numSigns][][];
-			pKtlTable = new Vector[numSigns][][];
+			count	= new ArrayList[numSigns][][];
+			pTable = new ArrayList[numSigns][][];
+			pKtlTable = new ArrayList[numSigns][][];
 
 			bucket = new float[numSigns][2];
 			int num_specialnodes = infra.getNumSpecialNodes();
 			for (int i=0; i<num_nodes; i++)	{
 				Node n = nodes[i];
-				Drivelane [] dls = n.getInboundLanes();
+				DriveLaneTemp [] dls = n.getInboundLanes();
 				for (int j=0; j<dls.length; j++) {
-				    Drivelane d = dls[j];
+				    DriveLaneTemp d = dls[j];
 				    Sign s = d.getSign();
 				    int id = s.getId();
 				    int num_pos_on_dl = d.getCompleteLength();
 
 				    qTable[id] = new float [num_pos_on_dl][][];
 				    vTable[id] = new float [num_pos_on_dl][];
-				    count[id] = new Vector[num_pos_on_dl][];
-					pTable[id] = new Vector[num_pos_on_dl][];
-					pKtlTable[id] = new Vector[num_pos_on_dl][];
+				    count[id] = new ArrayList[num_pos_on_dl][];
+					pTable[id] = new ArrayList[num_pos_on_dl][];
+					pKtlTable[id] = new ArrayList[num_pos_on_dl][];
 
 				    for (int k=0; k<num_pos_on_dl; k++)	{
 					    qTable[id][k]=new float[num_specialnodes][];
 					    vTable[id][k]=new float[num_specialnodes];
-					    count[id][k] = new Vector[num_specialnodes];
-					    pTable[id][k] = new Vector[num_specialnodes];
-						pKtlTable[id][k] = new Vector[num_specialnodes];
+					    count[id][k] = new ArrayList[num_specialnodes];
+					    pTable[id][k] = new ArrayList[num_specialnodes];
+						pKtlTable[id][k] = new ArrayList[num_specialnodes];
 
 					    for (int l=0; l<num_specialnodes;l++)	{
 						    qTable[id][k][l]	= new float [2];
 						    qTable[id][k][l][0] = 0.0f;
 						    qTable[id][k][l][1] = 0.0f;
 						    vTable[id][k][l]	= 0.0f;
-						    count[id][k][l] 	= new Vector();
-						    pTable[id][k][l] = new Vector();
-							pKtlTable[id][k][l] = new Vector();
+						    count[id][k][l] 	= new ArrayList();
+						    pTable[id][k][l] = new ArrayList();
+							pKtlTable[id][k][l] = new ArrayList();
 					    }
 				    }
 					bucket[id][BUCK]=0;
@@ -145,7 +145,7 @@ public class TC2B1 extends TCRL implements Colearning,InstantiationAssistant
 		int num_dec, waitingsize, pos, tlId, desId;
 		float gain, passenger_factor;
 		Sign tl;
-		Drivelane lane;
+		DriveLaneTemp lane;
 		Roaduser ru;
 		ListIterator queue;
 		Node destination;
@@ -177,7 +177,7 @@ public class TC2B1 extends TCRL implements Colearning,InstantiationAssistant
 
 				// Debug info generator
 				if(trackNode!=-1 && i==trackNode) {
-					Drivelane currentlane2 = tld[i][j].getTL().getLane();
+					DriveLaneTemp currentlane2 = tld[i][j].getTL().getLane();
 					boolean[] targets = currentlane2.getTargets();
 					System.out.println("node: "+i+" light: "+j+" gain: "+gain+" "+targets[0]+" "+targets[1]+" "+targets[2]+" "+currentlane2.getNumRoadusersWaiting());
 				}
@@ -197,7 +197,7 @@ public class TC2B1 extends TCRL implements Colearning,InstantiationAssistant
 	    return tld;
 	}
 
-	public void updateRoaduserMove(Roaduser ru, Drivelane prevlane, Sign prevsign, int prevpos, Drivelane dlanenow, Sign signnow, int posnow, PosMov[] posMovs, Drivelane desired, int penalty)
+	public void updateRoaduserMove(Roaduser ru, DriveLaneTemp prevlane, Sign prevsign, int prevpos, DriveLaneTemp dlanenow, Sign signnow, int posnow, PosMov[] posMovs, DriveLaneTemp desired, int penalty)
 	{
 		//When a roaduser leaves the city; this will
 		if(dlanenow == null || signnow == null) {
@@ -235,9 +235,9 @@ public class TC2B1 extends TCRL implements Colearning,InstantiationAssistant
 	 * Empties the 'gain-value' bucket partly, which is being filled when Roadusers are
 	 * waiting/voting for their TrafficLight to be set to green.
 	 *
-	 * @param prevlane The Drivelane the Roaduser was on just before.
+	 * @param prevlane The DriveLaneTemp the Roaduser was on just before.
 	 */
-	protected void relaxBucket(Drivelane prevlane, int prevpos) {
+	protected void relaxBucket(DriveLaneTemp prevlane, int prevpos) {
 		int laneId = prevlane.getId();
 		float curWait = bucket[laneId][WAIT];
 		float curBuck = bucket[laneId][BUCK];
@@ -255,15 +255,15 @@ public class TC2B1 extends TCRL implements Colearning,InstantiationAssistant
 	}
 
 	/**
-		* When a Roaduser may drive according to it's Sign, but cant as the desired Drivelane
-		* is full, (some/all) of the current gain-bucket of it's current TrafficLight is
-		* siphoned over to the desired Drivelane, making it more probable that that lane will
-		* move, making it possible for this Drivelane to move.
+		* When a Roaduser may drive according to it's Sign, but cant as the desired DriveLaneTemp
+ is full, (some/all) of the current gain-bucket of it's current TrafficLight is
+ siphoned over to the desired DriveLaneTemp, making it more probable that that lane will
+ move, making it possible for this DriveLaneTemp to move.
 		*
 		* @param here the Id of the drivelane the Roaduser is waiting at
 		* @param there the Id of the drivelane where the Roaduser wants to go now
 		*/
-	protected void siphonGainToOtherBucket(Drivelane here, Drivelane there)
+	protected void siphonGainToOtherBucket(DriveLaneTemp here, DriveLaneTemp there)
 	{
 		int hereId = here.getId();
 		int thereId = there.getId();
@@ -300,12 +300,12 @@ public class TC2B1 extends TCRL implements Colearning,InstantiationAssistant
 
 		if(c_index >= 0) {
 			// Entry found
-			thisSituation = (CountEntry) count[tlId][pos][desId].elementAt(c_index);
+			thisSituation = (CountEntry) count[tlId][pos][desId].get(c_index);
 			thisSituation.incrementValue();
 		}
 		else {
 			// Entry not found
-			count[tlId][pos][desId].addElement(thisSituation);
+			count[tlId][pos][desId].add(thisSituation);
 			c_index = count[tlId][pos][desId].indexOf(thisSituation);
 		}
 
@@ -319,7 +319,7 @@ public class TC2B1 extends TCRL implements Colearning,InstantiationAssistant
 		CountEntry curC;
 		int num_c = count[tlId][pos][desId].size();
 		for(int i=0;i<num_c;i++) {
-			curC = (CountEntry) count[tlId][pos][desId].elementAt(i);
+			curC = (CountEntry) count[tlId][pos][desId].get(i);
 			sameSituationKtl		+= curC.sameSituationWithKtl(thisSituation);
 			sameStartSituationKtl	+= curC.sameStartSituationWithKtl(thisSituation);
 			sameSituation			+= curC.sameSituationDiffKtl(thisSituation);
@@ -331,9 +331,9 @@ public class TC2B1 extends TCRL implements Colearning,InstantiationAssistant
 		int p_index = pTable[tlId][pos][desId].indexOf(thisChance);
 
 		if(p_index >= 0)
-			thisChance = (PEntry) pTable[tlId][pos][desId].elementAt(p_index);
+			thisChance = (PEntry) pTable[tlId][pos][desId].get(p_index);
 		else {
-			pTable[tlId][pos][desId].addElement(thisChance);
+			pTable[tlId][pos][desId].add(thisChance);
 			p_index = pTable[tlId][pos][desId].indexOf(thisChance);
 		}
 
@@ -344,7 +344,7 @@ public class TC2B1 extends TCRL implements Colearning,InstantiationAssistant
 		int num_p = pTable[tlId][pos][desId].size();
 		PEntry curP;
 		for(int i=0;i<num_p;i++) {
-			curP = (PEntry) pTable[tlId][pos][desId].elementAt(i);
+			curP = (PEntry) pTable[tlId][pos][desId].get(i);
 			if(curP.sameStartSituation(thisSituation) && i!=p_index)
 				curP.addSameStartSituation();
 		}
@@ -354,9 +354,9 @@ public class TC2B1 extends TCRL implements Colearning,InstantiationAssistant
 		int pKtl_index = pKtlTable[tlId][pos][desId].indexOf(thisChanceKtl);
 
 		if(pKtl_index >= 0)
-			thisChanceKtl = (PKtlEntry) pKtlTable[tlId][pos][desId].elementAt(pKtl_index);
+			thisChanceKtl = (PKtlEntry) pKtlTable[tlId][pos][desId].get(pKtl_index);
 		else {
-			pKtlTable[tlId][pos][desId].addElement(thisChanceKtl);
+			pKtlTable[tlId][pos][desId].add(thisChanceKtl);
 			pKtl_index = pKtlTable[tlId][pos][desId].indexOf(thisChanceKtl);
 		}
 
@@ -367,7 +367,7 @@ public class TC2B1 extends TCRL implements Colearning,InstantiationAssistant
 		int num_pKtl = pKtlTable[tlId][pos][desId].size();
 		PKtlEntry curPKtl;
 		for(int i=0;i<num_pKtl;i++) {
-			curPKtl = (PKtlEntry) pKtlTable[tlId][pos][desId].elementAt(i);
+			curPKtl = (PKtlEntry) pKtlTable[tlId][pos][desId].get(i);
 			if(curPKtl.sameStartSituationWithKtl(thisSituation) && i!=pKtl_index)
 				curPKtl.addSameStartSituation();
 		}
@@ -398,7 +398,7 @@ public class TC2B1 extends TCRL implements Colearning,InstantiationAssistant
 				PKtlEntry P = new PKtlEntry(tlId,pos,desId,light,curPMTlId,curPMPos,Ktl);
 				int p_index = pKtlTable[tlId][pos][desId].indexOf(P);
 				if(p_index >= 0) {
-					P = (PKtlEntry) pKtlTable[tlId][pos][desId].elementAt(p_index);
+					P = (PKtlEntry) pKtlTable[tlId][pos][desId].get(p_index);
 					R = calcReward(tlId,pos,curPMTlId,curPMPos);
 					V = vTable[curPMTlId][curPMPos][desId];
 					Q += P.getChance() * (R + (gamma * V));
@@ -422,7 +422,7 @@ public class TC2B1 extends TCRL implements Colearning,InstantiationAssistant
 				CountEntry C = new CountEntry(tlId,pos,desId,light,curPMTlId,curPMPos,-1);
 				int numC = count[tlId][pos][desId].size()-1;
 				for(;numC>=0;numC--) {
-					CountEntry curC = (CountEntry) count[tlId][pos][desId].elementAt(numC);
+					CountEntry curC = (CountEntry) count[tlId][pos][desId].get(numC);
 					noem += curC.sameSituationDiffKtl(C);
 					deel += curC.sameStartSituationDiffKtl(C);
 				}
@@ -474,7 +474,7 @@ public class TC2B1 extends TCRL implements Colearning,InstantiationAssistant
 		int pKtlsize = pKtlTable[tlId][pos][desId].size()-1;
 		float pKtlGC2=0,pKtlRC2=0;
 		for(;pKtlsize>=0;pKtlsize--) {
-			PKtlEntry cur = (PKtlEntry) pKtlTable[tlId][pos][desId].elementAt(pKtlsize);
+			PKtlEntry cur = (PKtlEntry) pKtlTable[tlId][pos][desId].get(pKtlsize);
 			if(cur.light==green)
 				pKtlGC2 += cur.getSameSituation();
 			else
@@ -521,7 +521,7 @@ public class TC2B1 extends TCRL implements Colearning,InstantiationAssistant
 			int p_index = pKtlTable[sign.getId()][0][destination.getId()].indexOf(P);
 
 			if(p_index>=0) {
-				P = (PKtlEntry) pKtlTable[sign.getId()][0][destination.getId()].elementAt(p_index);
+				P = (PKtlEntry) pKtlTable[sign.getId()][0][destination.getId()].get(p_index);
 				V = vTable[sign.getId()][size][destination.getId()];
 				newCovalue += P.getChance() * V;
 			}
@@ -928,8 +928,8 @@ public class TC2B1 extends TCRL implements Colearning,InstantiationAssistant
 		vTable=(float[][][])XMLArray.loadArray(this,loader);
 		gamma=myElement.getAttribute("gamma").getFloatValue();
 		random_chance=myElement.getAttribute("random-chance").getFloatValue();
-		count=(Vector[][][])XMLArray.loadArray(this,loader,this);
-		pKtlTable=(Vector[][][])XMLArray.loadArray(this,loader,this);
+		count=(ArrayList[][][])XMLArray.loadArray(this,loader,this);
+		pKtlTable=(ArrayList[][][])XMLArray.loadArray(this,loader,this);
 	}
 
 	public XMLElement saveSelf () throws XMLCannotSaveException

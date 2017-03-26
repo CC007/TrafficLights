@@ -91,7 +91,7 @@ public class SimRoadPanel extends ConfigPanel implements ActionListener, ItemLis
 		alphaList.removeAll();
 		betaList.removeAll();
 
-		Drivelane[] lanes = road.getAlphaLanes();
+		DriveLaneTemp[] lanes = road.getAlphaLanes();
 		
 		for (int i=0; i < lanes.length; i++)
 			alphaList.add(lanes[i].getName());

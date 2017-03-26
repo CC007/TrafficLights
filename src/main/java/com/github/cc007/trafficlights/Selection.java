@@ -135,8 +135,8 @@ public class Selection extends Observable implements Overlay
 	 */
 	private void selectAllObjects(SelectionStarter ss) {
 		Selectable child = null;
-		for (Enumeration e = ss.getChildren(); e.hasMoreElements(); ) {
-			child = (Selectable)e.nextElement();
+		for (Iterator it = ss.getChildren(); it.hasNext(); ) {
+			child = (Selectable)it.next();
 			if (child.isSelectable()) selectedObjects.add(child);
 			selectAllObjects(child);
 		}
@@ -326,8 +326,8 @@ public class Selection extends Observable implements Overlay
 		LinkedList list = new LinkedList();
 		Selectable child;
 		if (ss.hasChildren()) {
-			for (Enumeration e = ss.getChildren(); e.hasMoreElements(); ) {
-				child = (Selectable)e.nextElement();
+			for (Iterator it = ss.getChildren(); it.hasNext(); ) {
+				child = (Selectable)it.next();
 				if (selects(p, child)) list.add(child);
 				list.addAll(selectItems(child, p));
 			}
@@ -351,8 +351,8 @@ public class Selection extends Observable implements Overlay
 		LinkedList list = new LinkedList();
 		Selectable child;
 		if (ss.hasChildren()) {
-			for (Enumeration e = ss.getChildren(); e.hasMoreElements(); ) {
-				child = (Selectable)e.nextElement();
+			for (Iterator it = ss.getChildren(); it.hasNext(); ) {
+				child = (Selectable)it.next();
 				if (selects(r, child)) list.add(child);
 				list.addAll(selectItems(child, r));
 			}

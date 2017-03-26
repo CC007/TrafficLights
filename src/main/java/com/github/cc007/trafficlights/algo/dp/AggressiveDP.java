@@ -53,10 +53,10 @@ public class AggressiveDP extends DrivingPolicy
 	 * @param shortest All the lanes which are in a shortest path to the car's destination
 	 * @return The chosen lane.
 	 */
-	public Drivelane getDirectionLane(Roaduser r, Drivelane lane_now, Drivelane[] allOutgoing, Drivelane[] shortest) {
+	public DriveLaneTemp getDirectionLane(Roaduser r, DriveLaneTemp lane_now, DriveLaneTemp[] allOutgoing, DriveLaneTemp[] shortest) {
 		//Create a subset from the 2 sets allOutgoing and shortest
-		Drivelane current;
-		Drivelane best_lane = null;
+		DriveLaneTemp current;
+		DriveLaneTemp best_lane = null;
 		int best_waiting = Integer.MAX_VALUE;
 		int num_outgoing = allOutgoing.length;
 		int num_shortest = shortest.length;
@@ -75,7 +75,7 @@ public class AggressiveDP extends DrivingPolicy
 	}
 	
 	
-	private int determineDirection(Drivelane fromLane, Drivelane toLane) throws InfraException  // 0=left, 1=straight ahead 2=right
+	private int determineDirection(DriveLaneTemp fromLane, DriveLaneTemp toLane) throws InfraException  // 0=left, 1=straight ahead 2=right
 	{
 		Node n = fromLane.getSign().getNode();
 		Road [] rds = n.getAllRoads();
@@ -87,7 +87,7 @@ public class AggressiveDP extends DrivingPolicy
 			Road r = rds[k];
 			if (r!=null)
 			{
-				Drivelane [] dls = r.getInboundLanes(n);
+				DriveLaneTemp [] dls = r.getInboundLanes(n);
 				for (int l=0; l<dls.length; l++)
 				{
 					if (dls[l]==fromLane) fromIndex = k;
@@ -108,13 +108,13 @@ public class AggressiveDP extends DrivingPolicy
 		return dir;
 	}
 	
-	private boolean checkDrivelane(Drivelane testLane, Drivelane origLane, Roaduser ru, Drivelane[] shortest) throws InfraException
+	private boolean checkDrivelane(DriveLaneTemp testLane, DriveLaneTemp origLane, Roaduser ru, DriveLaneTemp[] shortest) throws InfraException
 	{
 		if (testLane==null) return false;
 
 		// Test if the drivelane has the same or more targets as the original dl.
 		boolean found = true;
-		Drivelane nextDL = getDirectionLane(ru, origLane, origLane.getSign().getNode().getOutboundLanes(), shortest);
+		DriveLaneTemp nextDL = getDirectionLane(ru, origLane, origLane.getSign().getNode().getOutboundLanes(), shortest);
 		int direction = determineDirection(testLane, nextDL);
 		if (origLane.getTarget(direction) && !testLane.getTarget(direction)) found = false;
 		
@@ -146,10 +146,10 @@ public class AggressiveDP extends DrivingPolicy
 	 * @param shortest All the lanes which are in a shortest path to the car's destination
 	 * @return True when the roaduser has switched, false otherwise.
 	 */
-	public boolean checkNeighbourLanes(Drivelane lane, Roaduser ru, int speed_left, Drivelane[] shortest) throws InfraException
+	public boolean checkNeighbourLanes(DriveLaneTemp lane, Roaduser ru, int speed_left, DriveLaneTemp[] shortest) throws InfraException
 	{
 		Road r = lane.getRoad();
-		Drivelane [] lanes = r.getAlphaLanes();
+		DriveLaneTemp [] lanes = r.getAlphaLanes();
 		
 		// search for this lane
 		int index=-1;
@@ -160,7 +160,7 @@ public class AggressiveDP extends DrivingPolicy
 			for (int i=0; i<lanes.length; i++) if (lanes[i]==lane) index=i;
 		}
 		
-		Drivelane leftDL = null, rightDL = null;
+		DriveLaneTemp leftDL = null, rightDL = null;
 		
 		if (index>0) leftDL = lanes[index-1];
 		if (index<lanes.length-1) rightDL= lanes[index+1];

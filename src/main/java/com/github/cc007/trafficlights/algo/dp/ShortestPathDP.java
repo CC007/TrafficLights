@@ -52,17 +52,17 @@ public class ShortestPathDP extends DrivingPolicy
 	 * @param shortest All the lanes which are in a shortest path to the car's destination
 	 * @return The chosen lane.
 	 */
-	public Drivelane getDirectionLane(Roaduser r, Drivelane lane_now, Drivelane[] allOutgoing, Drivelane[] shortest){
+	public DriveLaneTemp getDirectionLane(Roaduser r, DriveLaneTemp lane_now, DriveLaneTemp[] allOutgoing, DriveLaneTemp[] shortest){
 		//Create a subset from the 2 sets allOutgoing and shortest
-		Drivelane[] subset;
+		DriveLaneTemp[] subset;
 		int index = 0;
 		int num_outgoing = allOutgoing.length;
 		int num_shortest = shortest.length;
 
 		if(num_shortest < num_outgoing)
-		    subset = new Drivelane[num_shortest];
+		    subset = new DriveLaneTemp[num_shortest];
 		else
-		    subset = new Drivelane[num_outgoing];
+		    subset = new DriveLaneTemp[num_outgoing];
 		
 		for(int i=0; i<num_outgoing; i++) {
 			for(int j=0; j<num_shortest; j++) {

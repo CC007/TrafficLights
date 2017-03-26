@@ -26,7 +26,7 @@ import java.awt.Graphics;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.*;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.SortedSet;
 
 /**
@@ -76,10 +76,10 @@ public class EdgeNode extends SpecialNode
                     Integer key = new Integer(dSpawnFreq[i].cycle);
                     if (spawnCyclesHash.get(key) == null)
                     {
-                      spawnCyclesHash.put(key, new Vector( ));
+                      spawnCyclesHash.put(key, new ArrayList( ));
                     }
 
-                    ((Vector)spawnCyclesHash.get(key)).add((Object)dSpawnFreq[i]);
+                    ((ArrayList)spawnCyclesHash.get(key)).add((Object)dSpawnFreq[i]);
 
                   }
                 }
@@ -100,12 +100,12 @@ public class EdgeNode extends SpecialNode
 	public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
 	{	super.saveChilds(saver);
 
-                Vector temp = new Vector();
+                ArrayList temp = new ArrayList();
 
 
-                for (Enumeration e = spawnCyclesHash.keys(); e.hasMoreElements();)
+                for (Iterator it = spawnCyclesHash.keySet().iterator(); it.hasNext();)
                 {
-                    Vector hashelem = (Vector)spawnCyclesHash.get(e.nextElement());
+                    ArrayList hashelem = (ArrayList)spawnCyclesHash.get(it.next());
                     temp.addAll(hashelem);
                 }
                 SpawnFrequencyCycles[] dSpawnArray = new SpawnFrequencyCycles[temp.size()];
@@ -135,16 +135,16 @@ public class EdgeNode extends SpecialNode
            Integer key = new Integer(_cycle);
            if (spawnCyclesHash.get(key) == null)
            {
-             spawnCyclesHash.put(key, new Vector( ));
+             spawnCyclesHash.put(key, new ArrayList( ));
            }
 
-           ((Vector)spawnCyclesHash.get(key)).add((Object)sf);
+           ((ArrayList)spawnCyclesHash.get(key)).add((Object)sf);
 
 
         }
         public void deleteDSpawnCycles (int _rutype, int _cycle)
         {
-           Vector cyvec = (Vector)spawnCyclesHash.get(new Integer(_cycle));
+           ArrayList cyvec = (ArrayList)spawnCyclesHash.get(new Integer(_cycle));
            for (int i = 0; i < cyvec.size(); i++)
            {
              SpawnFrequencyCycles elem = (SpawnFrequencyCycles)cyvec.get(i);
@@ -154,12 +154,12 @@ public class EdgeNode extends SpecialNode
            }
         }
 
-        public Vector dSpawnCyclesForRu(int _rutype)
+        public ArrayList dSpawnCyclesForRu(int _rutype)
         {
-           Vector dSpawnVec = new Vector();
-           for (Enumeration e = spawnCyclesHash.keys(); e.hasMoreElements();)
+           ArrayList dSpawnVec = new ArrayList();
+           for (Iterator it = spawnCyclesHash.keySet().iterator(); it.hasNext();)
            {
-              Vector hashelem = (Vector)spawnCyclesHash.get(e.nextElement());
+              ArrayList hashelem = (ArrayList)spawnCyclesHash.get(it.next());
               for (int i = 0; i < hashelem.size(); i++)
               {
                  SpawnFrequencyCycles sf = (SpawnFrequencyCycles)hashelem.get(i);
@@ -178,7 +178,7 @@ public class EdgeNode extends SpecialNode
            Integer curCycle = new Integer(model.getCurCycle());
            if(spawnCyclesHash.containsKey(curCycle))
            {
-              Vector sfcsCurCycle = (Vector)spawnCyclesHash.get(curCycle);
+              ArrayList sfcsCurCycle = (ArrayList)spawnCyclesHash.get(curCycle);
               for (int i = 0; i < sfcsCurCycle.size(); i++)
               {
                  SpawnFrequencyCycles sfcs = (SpawnFrequencyCycles)sfcsCurCycle.get(i);

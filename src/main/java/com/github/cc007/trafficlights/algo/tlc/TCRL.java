@@ -7,7 +7,7 @@
 
 package com.github.cc007.trafficlights.algo.tlc;
 
-import com.github.cc007.trafficlights.infra.Drivelane;
+import com.github.cc007.trafficlights.infra.DriveLaneTemp;
 import com.github.cc007.trafficlights.infra.Infrastructure;
 import com.github.cc007.trafficlights.infra.Roaduser;
 import com.github.cc007.trafficlights.infra.Sign;
@@ -23,10 +23,10 @@ public abstract class TCRL extends TLController{
         super(infra);
     }
     
-    public void updateRoaduserMove(Roaduser ru, Drivelane prevlane, Sign prevsign, int prevpos, Drivelane dlanenow, Sign signnow, int posnow, PosMov[] posMovs, Drivelane desired){
+    public void updateRoaduserMove(Roaduser ru, DriveLaneTemp prevlane, Sign prevsign, int prevpos, DriveLaneTemp dlanenow, Sign signnow, int posnow, PosMov[] posMovs, DriveLaneTemp desired){
         updateRoaduserMove(ru, prevlane, prevsign, prevpos, dlanenow, signnow, posnow, posMovs, desired, 0);
     }
     
-    public abstract void updateRoaduserMove(Roaduser ru, Drivelane prevlane, Sign prevsign, int prevpos, Drivelane dlanenow, Sign signnow, int posnow, PosMov[] posMovs, Drivelane desired, int penalty);
+    public abstract void updateRoaduserMove(Roaduser ru, DriveLaneTemp prevlane, Sign prevsign, int prevpos, DriveLaneTemp dlanenow, Sign signnow, int posnow, PosMov[] posMovs, DriveLaneTemp desired, int penalty);
     
 }

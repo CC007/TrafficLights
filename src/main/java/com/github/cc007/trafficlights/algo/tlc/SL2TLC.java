@@ -44,7 +44,7 @@ public class SL2TLC extends TCRL implements InstantiationAssistant
 	protected Node[] allnodes;
 	protected int num_nodes;
 
-	protected Vector count; //, p_table;
+	protected ArrayList count; //, p_table;
 	protected float [][][][] q_table; //sign, pos, des, color (red=0, green=1)
 	protected static float gamma=0.95f;				//Discount Factor; used to decrease the influence of previous V values, that's why: 0 < gamma < 1
 	protected static float random_chance=0.01f;				//A random gain setting is chosen instead of the on the TLC dictates with this chance
@@ -66,7 +66,7 @@ public class SL2TLC extends TCRL implements InstantiationAssistant
 		Node[] nodes = infra.getAllNodes(); //Moet Edge zijn eigenlijk, alleen testSimModel knalt er dan op
 		int num_nodes = nodes.length;
 
-		count = new Vector();
+		count = new ArrayList();
 
 		int numSigns = infra.getAllInboundLanes().size();
 		q_table = new float [numSigns+1][][][];
@@ -74,10 +74,10 @@ public class SL2TLC extends TCRL implements InstantiationAssistant
 		for (int i=0; i<nodes.length; i++)
 		{
 			Node n = nodes[i];
-			Drivelane [] dls = n.getInboundLanes();
+			DriveLaneTemp [] dls = n.getInboundLanes();
 			for (int j=0; j<dls.length; j++)
 			{
-				Drivelane d = dls[j];
+				DriveLaneTemp d = dls[j];
 				Sign s = d.getSign();
 				int id = s.getId();
 				int num_pos_on_dl = d.getCompleteLength();
@@ -148,7 +148,7 @@ public class SL2TLC extends TCRL implements InstantiationAssistant
 	    		Sign currenttl = tld[i][j].getTL();
 	    		float gain=0;
 
-	    		Drivelane currentlane = currenttl.getLane();
+	    		DriveLaneTemp currentlane = currenttl.getLane();
 	    		int waitingsize = currentlane.getNumRoadusersWaiting();
 	    		ListIterator queue = currentlane.getQueue().listIterator();
 
@@ -171,7 +171,7 @@ public class SL2TLC extends TCRL implements InstantiationAssistant
 	    return tld;
 	}
 
-	public void updateRoaduserMove(Roaduser ru, Drivelane prevlane, Sign prevsign, int prevpos, Drivelane dlanenow, Sign signnow, int posnow, PosMov[] posMovs, Drivelane desired, int penalty)
+	public void updateRoaduserMove(Roaduser ru, DriveLaneTemp prevlane, Sign prevsign, int prevpos, DriveLaneTemp dlanenow, Sign signnow, int posnow, PosMov[] posMovs, DriveLaneTemp desired, int penalty)
 	{
 		//When a roaduser leaves the city; this will
 		if(dlanenow == null || signnow == null)
@@ -263,22 +263,20 @@ public class SL2TLC extends TCRL implements InstantiationAssistant
 
 		CountEntry dummy = new CountEntry(tl, pos, des, light, tl, pos);
 		Target[] ownedtargets;
-		Vector candidate_targets;
-		candidate_targets = new Vector();
+		ArrayList candidate_targets;
+		candidate_targets = new ArrayList();
 
 		//Use the count table to sort this out, we need all Targets from
 		//Only the elements in the count table are used, other  just give a P
 
-		Enumeration enumr = count.elements();
-		while(enumr.hasMoreElements()) {
-			CountEntry current_entry = (CountEntry) enumr.nextElement();
+		Iterator it = count.iterator();
+		while(it.hasNext()) {
+			CountEntry current_entry = (CountEntry) it.next();
 			if(current_entry.sameSource(dummy) != 0) {
-				candidate_targets.addElement(new Target(current_entry.tl_new , current_entry.pos_new));
+				candidate_targets.add(new Target(current_entry.tl_new , current_entry.pos_new));
 			}
 		}
-		ownedtargets = new Target[candidate_targets.size()];
-		candidate_targets.copyInto(ownedtargets);
-		return ownedtargets;
+        return (Target[]) candidate_targets.toArray();
 	}
 
 
@@ -391,9 +389,9 @@ public class SL2TLC extends TCRL implements InstantiationAssistant
 		public void loadSecondStage (Dictionary dictionaries)
 		{ Dictionary laneDictionary=(Dictionary)(dictionaries.get("lane")),
 		             nodeDictionary=(Dictionary)(dictionaries.get("node"));
-		  tl=((Drivelane)(laneDictionary.get(
+		  tl=((DriveLaneTemp)(laneDictionary.get(
 		      new Integer(loadData.oldTlId)))).getSign();
-		  tl_new=((Drivelane)(laneDictionary.get(
+		  tl_new=((DriveLaneTemp)(laneDictionary.get(
 		      new Integer(loadData.newTlId)))).getSign();
 		  destination=(Node)(nodeDictionary.get(
 		      new Integer(loadData.destNodeId)));
@@ -504,9 +502,9 @@ public class SL2TLC extends TCRL implements InstantiationAssistant
 		public void loadSecondStage (Dictionary dictionaries)
 		{ 	Dictionary laneDictionary=(Dictionary)(dictionaries.get("lane")),
            		     	nodeDictionary=(Dictionary)(dictionaries.get("node"));
-		  	tl=((Drivelane)(laneDictionary.get(
+		  	tl=((DriveLaneTemp)(laneDictionary.get(
 		       		new Integer(loadData.oldTlId)))).getSign();
-		  	tl_new=((Drivelane)(laneDictionary.get(
+		  	tl_new=((DriveLaneTemp)(laneDictionary.get(
 		        	new Integer(loadData.newTlId)))).getSign();
 		  	destination=(Node)(nodeDictionary.get(
 		        	new Integer(loadData.destNodeId)));
@@ -583,7 +581,7 @@ public class SL2TLC extends TCRL implements InstantiationAssistant
 
 		public void loadSecondStage (Dictionary dictionaries) throws XMLInvalidInputException,XMLTreeException
 		{ 	Dictionary laneDictionary=(Dictionary)(dictionaries.get("lane"));
-		  	tl=((Drivelane)(laneDictionary.get(
+		  	tl=((DriveLaneTemp)(laneDictionary.get(
 		                 new Integer(loadData.tlId)))).getSign();
 		}
 
@@ -610,8 +608,8 @@ public class SL2TLC extends TCRL implements InstantiationAssistant
 		random_chance=myElement.getAttribute("random-chance").getFloatValue();
 		q_table=(float[][][][])XMLArray.loadArray(this,loader);
 		//v_table=(float[][][])XMLArray.loadArray(this,loader);
-		count=(Vector)XMLArray.loadArray(this,loader,this);
-		//p_table=(Vector)XMLArray.loadArray(this,loader,this);
+		count=(ArrayList)XMLArray.loadArray(this,loader,this);
+		//p_table=(ArrayList)XMLArray.loadArray(this,loader,this);
 	}
 
 	public XMLElement saveSelf () throws XMLCannotSaveException
@@ -635,8 +633,8 @@ public class SL2TLC extends TCRL implements InstantiationAssistant
 	}
 
 	public void loadSecondStage (Dictionary dictionaries) throws XMLInvalidInputException,XMLTreeException
-	{ 	XMLUtils.loadSecondStage(count.elements(),dictionaries);
-		//XMLUtils.loadSecondStage(p_table.elements(),dictionaries);
+	{ 	XMLUtils.loadSecondStage(count.iterator(),dictionaries);
+		//XMLUtils.loadSecondStage(p_table.iterator(),dictionaries);
 		System.out.println("SL2 second stage load finished.");
 	}
 

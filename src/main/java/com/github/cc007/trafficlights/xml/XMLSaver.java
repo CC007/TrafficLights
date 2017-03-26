@@ -16,9 +16,6 @@
 
 package com.github.cc007.trafficlights.xml;
 
-import com.github.cc007.trafficlights.*;
-import com.github.cc007.trafficlights.xml.*;
-import com.github.cc007.trafficlights.utils.*;
 import java.io.*;
 import java.util.*;
 
@@ -112,7 +109,7 @@ public class XMLSaver
   }
 
  /** Save an enumeration of XML Serializables to file 
-    * @param e The enumeration of XML Serializables
+    * @param it The enumeration of XML Serializables
     * @throws IOException If the XMLSaver cannot write to the XML file because
     *         of an IO error.
     * @throws XMLTreeException If something goes wrong while the parser is 
@@ -122,9 +119,9 @@ public class XMLSaver
     * @throws ClassCastException If the enumeration contains an object that
     *         is not XMLSerializable
    */
-  public void saveEnumerationObjects (Enumeration e) throws ClassCastException,XMLTreeException,IOException,XMLCannotSaveException
-  { while (e.hasMoreElements())
-          saveObject((XMLSerializable)(e.nextElement()));
+  public void saveIteratorObjects (Iterator it) throws ClassCastException,XMLTreeException,IOException,XMLCannotSaveException
+  { while (it.hasNext())
+          saveObject((XMLSerializable)(it.next()));
   }
   
  /** Save an atomary XML element

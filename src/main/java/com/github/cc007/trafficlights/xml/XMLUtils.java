@@ -18,7 +18,7 @@ package com.github.cc007.trafficlights.xml;
 
 import com.github.cc007.trafficlights.utils.StringUtils;
 import java.util.Dictionary;
-import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.StringTokenizer;
 
 /** This class contains a few static utility methods that are
@@ -161,26 +161,26 @@ public class XMLUtils
   
 	/** Load the second stage of an enumeration of objects that implement
 	  * TwoStageLoader
-	  * @param e The enumeration of TwoStageLoaders
+	  * @param it The enumeration of TwoStageLoaders
 	  * @param dictionaries The main dictionary to load them with
 	  * @throws ClassCastException If one of the elements in the enumeration
 	  *         is not a TwoStageLoader
 	 */
-  	public static void loadSecondStage (Enumeration e,Dictionary dictionaries) throws XMLInvalidInputException,XMLTreeException
-	{ while (e.hasMoreElements())
-		((TwoStageLoader)(e.nextElement())).loadSecondStage(dictionaries);
+  	public static void loadSecondStage (Iterator it,Dictionary dictionaries) throws XMLInvalidInputException,XMLTreeException
+	{ while (it.hasNext())
+		((TwoStageLoader)(it.next())).loadSecondStage(dictionaries);
 	}
 		
 	/** Sets new parentNames for every element in an enumeration of
 	  * XMLSerializables.
-	  * @param e The enumeration of XMLSerializables
+	  * @param it The enumeration of XMLSerializables
 	  * @param newParentName The new p
 	  * @throws ClassCastException If one of the elements in the enumeration
 	  *         is not XMLSerializable
 	 */
-  	public static void setParentName(Enumeration e,String newParentName) throws XMLTreeException
-	{ while (e.hasMoreElements())
-		((XMLSerializable)(e.nextElement())).setParentName(newParentName);
+  	public static void setParentName(Iterator it,String newParentName) throws XMLTreeException
+	{ while (it.hasNext())
+		((XMLSerializable)(it.next())).setParentName(newParentName);
 	}
   
 }

@@ -18,21 +18,20 @@ package com.github.cc007.trafficlights.xml;
 /** This class represents XML elements and their attributes.
  */
 
-import com.github.cc007.trafficlights.xml.*;
 import java.util.*;
 
 // TODO:  - Write JUnit test
 
 public class XMLElement
 { protected String name;
-  protected Vector attributes;
+  protected ArrayList attributes;
   
   /** Make a new XMLElement
     * @param name The name of the new element
    */
   public XMLElement (String name)
   { this.name=name;
-    attributes=new Vector();
+    attributes=new ArrayList();
   }
 
   /** Make a new XMLElement with the specified name and attributes
@@ -42,7 +41,7 @@ public class XMLElement
    */
   public XMLElement (String name,XMLAttribute[] attList)
   { this.name=name;
-    attributes=new Vector();
+    attributes=new ArrayList();
     for (int t=0;t<attList.length;t++)
         attributes.add(attList[t]);
   }
@@ -73,7 +72,7 @@ public class XMLElement
     *         cannot be found.
    */
   public void removeAttribute (String name) throws NoSuchElementException
-  { attributes.removeElementAt(getAttributeIndex(name));
+  { attributes.remove(getAttributeIndex(name));
   }
 
   /** Get the index of an attribute in the attribute array
@@ -83,7 +82,7 @@ public class XMLElement
    */
   protected int getAttributeIndex (String name) throws NoSuchElementException
   { for (int t=0;t<attributes.size();t++)
-    { if (name.equals(((XMLAttribute)(attributes.elementAt(t))).name))
+    { if (name.equals(((XMLAttribute)(attributes.get(t))).name))
          return t;
     }
     throw new NoSuchElementException 
@@ -96,7 +95,7 @@ public class XMLElement
    * @return The found attribute
    */
   public XMLAttribute getAttribute (String name) throws NoSuchElementException
-  { return (XMLAttribute)(attributes.elementAt(getAttributeIndex(name)));
+  { return (XMLAttribute)(attributes.get(getAttributeIndex(name)));
   }
   
   /* @return A string which describes this XMLElemet
@@ -114,7 +113,7 @@ public class XMLElement
   /** Reset the attribute list (make it empty)
    */
   public void removeAllAttributes ()
-  { attributes=new Vector ();
+  { attributes=new ArrayList ();
   }
   
   /** @return The attribute list in array form
@@ -132,7 +131,7 @@ public class XMLElement
    */
   public void setAttribute (XMLAttribute attribute)
   { try
-    { ((XMLAttribute)(attributes.elementAt(getAttributeIndex(attribute.name)))).value
+    { ((XMLAttribute)(attributes.get(getAttributeIndex(attribute.name)))).value
                      =attribute.value;
     }
     catch (Exception e)

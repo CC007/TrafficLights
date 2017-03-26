@@ -19,7 +19,7 @@ package com.github.cc007.trafficlights.utils;
 import com.github.cc007.trafficlights.xml.*;
 import java.io.IOException;
 import java.util.Stack;
-import java.util.Vector;
+import java.util.ArrayList;
 
 // A very simple number dispenser for ID's. It sucks. It also works.
 
@@ -49,7 +49,7 @@ public class NumberDispenser implements XMLSerializable
 	
 	public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
 	{ 	stack=new Stack();
-		stack.addAll((Vector)(XMLArray.loadArray(this,loader)));
+		stack.addAll((ArrayList)(XMLArray.loadArray(this,loader)));
 		counter=myElement.getAttribute("counter").getIntValue();
 	}
 

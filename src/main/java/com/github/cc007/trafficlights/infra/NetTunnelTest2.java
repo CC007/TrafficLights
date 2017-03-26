@@ -50,42 +50,42 @@ public class NetTunnelTest2 extends Infrastructure
 			Road road2 = new Road(edge1, node3, 10);
 			Road road3 = new Road(node3, tunnel, 10);
 		
-			Drivelane d11 = new Drivelane(road1);
+			DriveLaneTemp d11 = new DriveLaneTemp(road1);
 			d11.setType(1);
 			boolean[] d11targets = {false, true, true};
 			d11.setTargets(d11targets);
 			TrafficLight s11 = new TrafficLight(node3,d11);
 			d11.setSign(s11);
 			
-			Drivelane d12 = new Drivelane(road1);
+			DriveLaneTemp d12 = new DriveLaneTemp(road1);
 			d12.setType(1);
 			boolean[] d12targets = {false, true, false};
 			d12.setTargets(d12targets);
 			TrafficLight s12 = new TrafficLight(edge0,d12);
 			d12.setSign(s12);
 		
-			Drivelane d21 = new Drivelane(road2);
+			DriveLaneTemp d21 = new DriveLaneTemp(road2);
 			d21.setType(1);
 			boolean[] d21targets = {false, true, false};
 			d21.setTargets(d21targets);
 			TrafficLight s21 = new TrafficLight(edge1,d21);
 			d21.setSign(s21);
 		
-			Drivelane d22 = new Drivelane(road2);
+			DriveLaneTemp d22 = new DriveLaneTemp(road2);
 			d22.setType(1);
 			boolean[] d22targets = {true, true, false};
 			d22.setTargets(d22targets);
 			TrafficLight s22 = new TrafficLight(node3,d22);
 			d22.setSign(s22);		
 		
-			Drivelane d41 = new Drivelane(road3);
+			DriveLaneTemp d41 = new DriveLaneTemp(road3);
 			d41.setType(1);
 			boolean[] d41targets = {false, false, false};
 			d41.setTargets(d41targets);
 			TrafficLight s41 = new TrafficLight(tunnel,d41);
 			d41.setSign(s41);
 		
-			Drivelane d44 = new Drivelane(road3);
+			DriveLaneTemp d44 = new DriveLaneTemp(road3);
 			d44.setType(1);
 			boolean[] d44targets = {true, false, true};
 			d44.setTargets(d44targets);

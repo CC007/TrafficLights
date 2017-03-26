@@ -30,5 +30,5 @@ public interface SelectionStarter
 	/** Returns true if this Selectable has any children */
 	public boolean hasChildren();
 	/** Returns all Selectables held by this Selectable */
-	public Enumeration getChildren();
+	public Iterator getChildren();
 }

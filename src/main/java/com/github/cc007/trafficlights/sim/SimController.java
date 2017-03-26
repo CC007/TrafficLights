@@ -78,9 +78,9 @@ public class SimController extends Controller implements Observer
 		m.setSimController(this);
 
 		speedChoice=new Choice();
-		Enumeration e=Arrayutils.getEnumeration(speedTexts);
-		while (e.hasMoreElements())
-			speedChoice.add((String)(e.nextElement()));
+		Iterator it=Arrays.asList(speedTexts).iterator();
+		while (it.hasNext())
+			speedChoice.add((String)(it.next()));
 
 		setSpeed((int)(speedTexts.length / 2));
 		setCycleCounterEnabled(true);
@@ -565,7 +565,7 @@ public class SimController extends Controller implements Observer
 			default: infra=new Infrastructure(); break;
 		}
 		try
-		{	Vector errors=(new Validation(infra)).validate();
+		{	ArrayList errors=(new Validation(infra)).validate();
 			if(!errors.isEmpty())
 				showError(errors.toString());
 		}

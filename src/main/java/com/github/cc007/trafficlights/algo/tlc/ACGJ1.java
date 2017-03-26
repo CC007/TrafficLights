@@ -116,13 +116,13 @@ public class ACGJ1 extends TLController implements XMLSerializable, TwoStageLoad
 		return tld;
 	}
 
-	public void updateRoaduserMove(Roaduser _ru, Drivelane _prevlane, Sign _prevsign, int _prevpos, Drivelane _dlanenow, Sign _signnow, int _posnow, PosMov[] posMovs, Drivelane desired)
+	public void updateRoaduserMove(Roaduser _ru, DriveLaneTemp _prevlane, Sign _prevsign, int _prevpos, DriveLaneTemp _dlanenow, Sign _signnow, int _posnow, PosMov[] posMovs, DriveLaneTemp desired)
 	{
 	    ruMoves++;
 	}
 
 	private class Population implements XMLSerializable, TwoStageLoader
-	{	Vector members;
+	{	ArrayList members;
 		Infrastructure infra;
 		Random rnd;
 		float currentMax;
@@ -130,7 +130,7 @@ public class ACGJ1 extends TLController implements XMLSerializable, TwoStageLoad
 
 		public Population(Infrastructure infra)	{
 			this.infra = infra;
-			members = new Vector();
+			members = new ArrayList();
 			rnd = new Random(GLDSim.seriesSeed[GLDSim.seriesSeedIndex]);
 			currentMax = 0;
 			numMaxTimes = 0;
@@ -139,12 +139,12 @@ public class ACGJ1 extends TLController implements XMLSerializable, TwoStageLoad
 
 		// Initializes this population
 		public void initialize() {
-			members.removeAllElements();
+			members.clear();
 			if (ACGJ1.populationSize<10) ACGJ1.populationSize = 10;
 			for (int i=0; i<ACGJ1.populationSize; i++) {
 				Person p = new Person(infra, rnd);
 				p.randomizeData();
-				members.addElement(p);
+				members.add(p);
 			}
 			currentMax=0;
 			numMaxTimes = 0;
@@ -153,8 +153,8 @@ public class ACGJ1 extends TLController implements XMLSerializable, TwoStageLoad
 		public void resetGeneration()
 		{	float total = members.size();
 			float current = 0;
-			for (Enumeration e=members.elements(); e.hasMoreElements();) {
-				Person p = (Person) e.nextElement();
+			for (Iterator it=members.iterator(); it.hasNext();) {
+				Person p = (Person) it.next();
 				if (rnd.nextFloat()<(current/total)) p.randomizeData();
 				current++;
 			}
@@ -187,16 +187,16 @@ public class ACGJ1 extends TLController implements XMLSerializable, TwoStageLoad
 					rand = rnd.nextFloat();
 					int p2 = (int) ((1.0f-rand*rand)*memSize);
 					if (p1>=memSize || p2 >=memSize) continue;
-					Person parent1 = (Person) members.elementAt(p1);
-					Person parent2 = (Person) members.elementAt(p2);
+					Person parent1 = (Person) members.get(p1);
+					Person parent2 = (Person) members.get(p2);
 					Person child = generateChild(parent1,parent2);
-					members.addElement(child);
+					members.add(child);
 				}
 			}
 
 			// Mutate this generation
-			for (Enumeration e=members.elements(); e.hasMoreElements();) {
-				Person p = (Person) e.nextElement();
+			for (Iterator it=members.iterator(); it.hasNext();) {
+				Person p = (Person) it.next();
 				mutatePerson(p);
 			}
 
@@ -204,8 +204,8 @@ public class ACGJ1 extends TLController implements XMLSerializable, TwoStageLoad
 		}
 
 		private void calcFitnesses() throws InfraException
-		{	for (Enumeration e=members.elements(); e.hasMoreElements();) {
-				Person p = (Person) e.nextElement();
+		{	for (Iterator it=members.iterator(); it.hasNext();) {
+				Person p = (Person) it.next();
 				p.calcFitness();
 			}
 		}
@@ -215,8 +215,8 @@ public class ACGJ1 extends TLController implements XMLSerializable, TwoStageLoad
 			float max = 0;
 
 			boolean first = true;
-			for (Enumeration e=members.elements(); e.hasMoreElements();) {
-				Person p = (Person) e.nextElement();
+			for (Iterator it=members.iterator(); it.hasNext();) {
+				Person p = (Person) it.next();
 				if (first || p.fitness<min) {
 					min = p.fitness;
 				}
@@ -228,8 +228,8 @@ public class ACGJ1 extends TLController implements XMLSerializable, TwoStageLoad
 			if (min==max) return true;
 			if (max-min<0.01) return true;
 
-			for (Enumeration e=members.elements(); e.hasMoreElements();) {
-				Person p = (Person) e.nextElement();
+			for (Iterator it=members.iterator(); it.hasNext();) {
+				Person p = (Person) it.next();
 				p.relFitness = (p.fitness-min)/(max-min);
 			}
 
@@ -283,15 +283,15 @@ public class ACGJ1 extends TLController implements XMLSerializable, TwoStageLoad
 
 			for (int i=0; i<members.size();i++)
 			{
-				p1 = (Person) members.elementAt(i);
+				p1 = (Person) members.get(i);
 				for (int j=members.size()-1; j>=i; j--)
 				{
-					p2 = (Person) members.elementAt(j);
+					p2 = (Person) members.get(j);
 					// if p2>p1...
 					if (p2.fitness>p1.fitness)
 					{
-						members.setElementAt(p2,i);
-						members.setElementAt(p1,j);
+						members.set(i,p2);
+						members.set(j,p1);
 						p1=p2;
 					}
 				}
@@ -302,7 +302,7 @@ public class ACGJ1 extends TLController implements XMLSerializable, TwoStageLoad
 		public Person getFirstPerson()
 		{
 			if (members.size()==0) return null;
-			return (Person)(members.elementAt(0));
+			return (Person)(members.get(0));
 		}
 
 		// XMLSerializable implementation of Population
@@ -310,7 +310,7 @@ public class ACGJ1 extends TLController implements XMLSerializable, TwoStageLoad
 		public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
 		{	numMaxTimes=myElement.getAttribute("max-times").getIntValue();
 			currentMax=myElement.getAttribute("current-max").getFloatValue();
-			members=(Vector)(XMLArray.loadArray(this,loader,assistant));
+			members=(ArrayList)(XMLArray.loadArray(this,loader,assistant));
 		}
 
 		public XMLElement saveSelf () throws XMLCannotSaveException
@@ -334,7 +334,7 @@ public class ACGJ1 extends TLController implements XMLSerializable, TwoStageLoad
 		}
 
 		public void loadSecondStage (Dictionary dictionaries) throws XMLTreeException,XMLInvalidInputException
-		{	XMLUtils.loadSecondStage(members.elements(),dictionaries);
+		{	XMLUtils.loadSecondStage(members.iterator(),dictionaries);
 		}
 	}
 
@@ -399,8 +399,8 @@ public class ACGJ1 extends TLController implements XMLSerializable, TwoStageLoad
 				// Stimulate green waves, if a next lane is also green, give an extra reward
 				for (int l=0; l<config.length; l++)
 				{
-					Drivelane dl = config[l].getLane();
-					Drivelane [] dls = dl.getSign().getNode().getLanesLeadingFrom(dl,0);
+					DriveLaneTemp dl = config[l].getLane();
+					DriveLaneTemp [] dls = dl.getSign().getNode().getLanesLeadingFrom(dl,0);
 					for (int j=0; j<dls.length; j++)
 					{
 						Sign s2       = dls[j].getSign();
@@ -472,7 +472,7 @@ public class ACGJ1 extends TLController implements XMLSerializable, TwoStageLoad
 		// TwoStageLoader implementation of Person
 
 		public void loadSecondStage (Dictionary dictionaries) throws XMLInvalidInputException,XMLTreeException
-		{	XMLUtils.loadSecondStage(new ArrayEnumeration(ndinf),dictionaries);
+		{	XMLUtils.loadSecondStage(new ArrayIterator(ndinf),dictionaries);
 		}
 
 

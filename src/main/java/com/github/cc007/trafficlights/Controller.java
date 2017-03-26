@@ -101,7 +101,7 @@ public abstract class Controller extends Frame implements XMLSerializable
 		add(viewScroller);
 
 		// Create main selection
-		Class[] filter = { Node.class, Drivelane.class };
+		Class[] filter = { Node.class, DriveLaneTemp.class };
 		currentSelection = new Selection(view, filter, model.getInfrastructure());
 		currentSelection.addObserver(view);
 		view.addOverlay(currentSelection);
@@ -363,12 +363,12 @@ public abstract class Controller extends Frame implements XMLSerializable
 	public boolean validateInfra() {
 		try {
 			Validation v = new Validation(getModel().getInfrastructure());
-			Vector errors = v.validate();
+			ArrayList errors = v.validate();
 			if (!errors.isEmpty()) {
 				String errorString ="";
-				for (Enumeration e = errors.elements(); e.hasMoreElements();)
+				for (Iterator it = errors.iterator(); it.hasNext();)
 				{
-					errorString+=e.nextElement()+"\n";
+					errorString+=it.next()+"\n";
 				}
 				showError("Validation error(s):\n\n" + errorString);
 				return false;
@@ -499,7 +499,7 @@ public abstract class Controller extends Frame implements XMLSerializable
 	 */
 	protected void trySave(String filename) {
 		try {
-			model.getInfrastructure().cachInboundLanes();
+			model.getInfrastructure().cacheInboundLanes();
 			doSave(filename);
 			setCurrentFilename(filename);
 		}

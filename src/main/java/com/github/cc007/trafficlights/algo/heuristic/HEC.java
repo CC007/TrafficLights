@@ -10,15 +10,15 @@ import com.github.cc007.trafficlights.infra.InfraException;
 import com.github.cc007.trafficlights.infra.Node;
 import com.github.cc007.trafficlights.algo.dp.DrivingPolicy;
 import com.github.cc007.trafficlights.sim.SimModel;
-import com.github.cc007.trafficlights.infra.Drivelane;
+import com.github.cc007.trafficlights.infra.DriveLaneTemp;
 import com.github.cc007.trafficlights.infra.Roaduser;
 
 public class HEC
 {
-       public static float getCongestion(Roaduser ru,Drivelane currentLane, Node currentNode)
+       public static float getCongestion(Roaduser ru,DriveLaneTemp currentLane, Node currentNode)
        {
          DrivingPolicy dp = SimModel.getDrivingPolicy();
-         Drivelane destLane;
+         DriveLaneTemp destLane;
          float percWaiting = 0;
 
          try

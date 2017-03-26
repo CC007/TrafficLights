@@ -103,7 +103,7 @@ public class XMLArray implements XMLSerializable
   
 
   /** Make a new XMLArray (constructor for saving)
-    * @param input The array,Vector or LinkedList to save
+    * @param input The array,ArrayList or LinkedList to save
     * @param parentName The XML name of the object that is going to save
     *        this array.
     * @throws XMLCannotSaveException If there is something wrong with the input
@@ -115,7 +115,7 @@ public class XMLArray implements XMLSerializable
   }
   
   /** Make a new XMLArray (constructor for saving)
-    * @param input The array,Vector or LinkedList to save
+    * @param input The array,ArrayList or LinkedList to save
     * @param parentName The XML name of the object that is going to save
     *        this array.
     * @param alias A short description of what this array contains. Mainly
@@ -128,9 +128,9 @@ public class XMLArray implements XMLSerializable
   { if ( input.getClass().isArray() )
     { containerType=CONTAINER_ARRAY;
     }
-    else if ( input instanceof Vector )
+    else if ( input instanceof ArrayList )
     { containerType=CONTAINER_VECTOR;
-      input=((Vector)(input)).toArray();
+      input=((ArrayList)(input)).toArray();
     }
     else if ( input instanceof LinkedList )
     { containerType=CONTAINER_LINKEDLIST;
@@ -147,7 +147,7 @@ public class XMLArray implements XMLSerializable
     this.alias=alias;
   }
     
-  /** Return the result array,Vector or LinkedList as an object. The XMLArray
+  /** Return the result array,ArrayList or LinkedList as an object. The XMLArray
     *  has to be loaded first.
     * @throws XMLInvalidInputException If the XMLArray was not loaded or if
     *         there is an internal problem.
@@ -160,7 +160,7 @@ public class XMLArray implements XMLSerializable
         parentName);
     switch (containerType)
     { case CONTAINER_ARRAY      : return data;
-      case CONTAINER_VECTOR     : return getResultVector();
+      case CONTAINER_VECTOR     : return getResultArrayList();
       case CONTAINER_LINKEDLIST : return getResultLinkedList();
     }
    throw new XMLInvalidInputException
@@ -168,11 +168,11 @@ public class XMLArray implements XMLSerializable
     containerType+")");
   }
   
-  /** Gets the result array in Vector form. Used by getResult()
+  /** Gets the result array in ArrayList form. Used by getResult()
    */
-  protected Vector getResultVector ()
+  protected ArrayList getResultArrayList ()
   { Object[] array=(Object[])(data);
-    Vector result=new Vector(array.length);
+    ArrayList result=new ArrayList(array.length);
     for (int t=0;t<array.length;t++)
         result.add(array[t]);
     return result;
@@ -202,7 +202,7 @@ public class XMLArray implements XMLSerializable
   {	watson=assistant;
   }	
   
-  /** Return the result array,Vector or LinkedList as an object. The XMLArray
+  /** Return the result array,ArrayList or LinkedList as an object. The XMLArray
     * has to be loaded first. First checks if the result class equals the
     * parameter class.
     * @param expectedClass The class with which the result has to match
@@ -235,7 +235,7 @@ public class XMLArray implements XMLSerializable
     { if (componentName.startsWith(lookUpTable[t])) 
          return t;
     }
-    if (componentName.startsWith("java.util.Vector"))
+    if (componentName.startsWith("java.util.ArrayList"))
     	return XMLArray.OTHER_ARRAY;
     else if (componentName.startsWith("java.util.LinkedList"))
     	return XMLArray.OTHER_ARRAY;
@@ -244,7 +244,7 @@ public class XMLArray implements XMLSerializable
   }  
   
   /** Save an arbitrary array/vector/LinkedList
-    * @param array An array to save (Vectors and LinkedLists are also accepted)
+    * @param array An array to save (ArrayLists and LinkedLists are also accepted)
     * @param parent The object which is trying to save this array
     * @param saver The XMLSaver to which the array has to be saved
     * @param description A short description of the array
@@ -256,7 +256,7 @@ public class XMLArray implements XMLSerializable
   }				
   
   /** Save an arbitrary array/vector/LinkedList
-    * @param array An array to save (Vectors and LinkedLists are also accepted)
+    * @param array An array to save (ArrayLists and LinkedLists are also accepted)
     * @param parent The object which is trying to save this array
     * @param saver The XMLSaver to which the array has to be saved
    */

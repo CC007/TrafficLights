@@ -101,7 +101,7 @@ public class LaneAction implements ToolAction
 				
 				if (road == null || road.getNumInboundLanes(betaNode) >= 4) { reset(); return false; }
 				
-				model.addLane(new Drivelane(road), road, betaNode);
+				model.addLane(new DriveLaneTemp(road), road, betaNode);
 
 				reset();
 			}

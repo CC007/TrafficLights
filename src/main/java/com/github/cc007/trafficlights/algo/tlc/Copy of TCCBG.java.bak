@@ -47,14 +47,14 @@ public class TCCBG extends TLController implements Colearning, InstantiationAssi
         protected Infrastructure infrastructure;
         protected TrafficLight[][] tls;
         protected Node[] allnodes;
-        protected Vector allsigns;
-        protected Vector prevCongested;
-        protected Vector checkedPrevSign;
+        protected ArrayList allsigns;
+        protected ArrayList prevCongested;
+        protected ArrayList checkedPrevSign;
         protected int num_nodes;
         protected double threshold = 0.5;
 
         // TC1 vars
-        protected Vector count[][][][], pTable[][][][];
+        protected ArrayList count[][][][], pTable[][][][];
         protected float [][][][][] qTable; //sign, pos, des, isCongested(no=0, yes=1), color (red=0, green=1)
         protected float [][][][]   vTable;
         protected static float gamma=0.90f;				//Discount Factor; used to decrease the influence of previous V values, that's why: 0 < gamma < 1
@@ -82,9 +82,9 @@ public class TCCBG extends TLController implements Colearning, InstantiationAssi
 
 
                         int numSigns = infra.getAllInboundLanes().size();
-                        allsigns = new Vector(numSigns);
-                        prevCongested = new Vector(numSigns);
-                        checkedPrevSign = new Vector(numSigns);
+                        allsigns = new ArrayList(numSigns);
+                        prevCongested = new ArrayList(numSigns);
+                        checkedPrevSign = new ArrayList(numSigns);
 
                         for (int i = 0; i < nodes.length; i++) {
                           Drivelane[] allInboundLanes = nodes[i].getInboundLanes();
@@ -98,8 +98,8 @@ public class TCCBG extends TLController implements Colearning, InstantiationAssi
 
                         qTable = new float [numSigns][][][][];
                         vTable = new float [numSigns][][][];
-                        count	= new Vector[numSigns][][][];
-                        pTable = new Vector[numSigns][][][];
+                        count	= new ArrayList[numSigns][][][];
+                        pTable = new ArrayList[numSigns][][][];
 
                         int num_specialnodes = infra.getNumSpecialNodes();
 
@@ -114,14 +114,14 @@ public class TCCBG extends TLController implements Colearning, InstantiationAssi
 
                                     qTable[id] = new float [num_pos_on_dl][][][];
                                     vTable[id] = new float [num_pos_on_dl][][];
-                                    count[id] = new Vector[num_pos_on_dl][][];
-                                    pTable[id] = new Vector[num_pos_on_dl][][];
+                                    count[id] = new ArrayList[num_pos_on_dl][][];
+                                    pTable[id] = new ArrayList[num_pos_on_dl][][];
 
                                     for (int k=0; k<num_pos_on_dl; k++)	{
                                             qTable[id][k]=new float[num_specialnodes][][];
                                             vTable[id][k]=new float[num_specialnodes][];
-                                            count[id][k] = new Vector[num_specialnodes][];
-                                            pTable[id][k] = new Vector[num_specialnodes][];
+                                            count[id][k] = new ArrayList[num_specialnodes][];
+                                            pTable[id][k] = new ArrayList[num_specialnodes][];
 
                                             for (int m = 0; m < num_specialnodes; m++)
                                             {
@@ -129,8 +129,8 @@ public class TCCBG extends TLController implements Colearning, InstantiationAssi
                                                 int isCongested = 2;
                                                 qTable[id][k][m]=new float[isCongested][];
                                                 vTable[id][k][m]=new float[isCongested];
-                                                count[id][k][m] =new Vector[isCongested];
-                                                pTable[id][k][m]=new Vector[isCongested];
+                                                count[id][k][m] =new ArrayList[isCongested];
+                                                pTable[id][k][m]=new ArrayList[isCongested];
 
                                                 for (int congest = 0; congest < isCongested; congest++)
                                                 {
@@ -138,8 +138,8 @@ public class TCCBG extends TLController implements Colearning, InstantiationAssi
                                                   qTable[id][k][m][congest][0] = 0.0f;
                                                   qTable[id][k][m][congest][1] = 0.0f;
                                                   vTable[id][k][m][congest] = 0.0f;
-                                                  count[id][k][m][congest] = new Vector();
-                                                  pTable[id][k][m][congest] = new Vector();
+                                                  count[id][k][m][congest] = new ArrayList();
+                                                  pTable[id][k][m][congest] = new ArrayList();
                                                 }
 
                                             }
@@ -262,12 +262,12 @@ public class TCCBG extends TLController implements Colearning, InstantiationAssi
                 int c_index = count[tlId][pos][desId][isCongested].indexOf(thisSituation);
                 if(c_index >= 0) {
                         // Entry found
-                        thisSituation = (CountEntry) count[tlId][pos][desId][isCongested].elementAt(c_index);
+                        thisSituation = (CountEntry) count[tlId][pos][desId][isCongested].get(c_index);
                         thisSituation.incrementValue();
                 }
                 else {
                         // Entry not found
-                        count[tlId][pos][desId][isCongested].addElement(thisSituation);
+                        count[tlId][pos][desId][isCongested].add(thisSituation);
                 }
 
                 // We now know how often this exact situation has occurred
@@ -278,7 +278,7 @@ public class TCCBG extends TLController implements Colearning, InstantiationAssi
                 CountEntry curC;
                 int num_c = count[tlId][pos][desId][isCongested].size();
                 for(int i=0;i<num_c;i++) {
-                        curC = (CountEntry) count[tlId][pos][desId][isCongested].elementAt(i);
+                        curC = (CountEntry) count[tlId][pos][desId][isCongested].get(i);
                         sameStartSituation	+= curC.sameStartSituation(thisSituation);
                 }
 
@@ -293,9 +293,9 @@ public class TCCBG extends TLController implements Colearning, InstantiationAssi
                 int p_index = pTable[tlId][pos][desId][isCongested].indexOf(thisChance);
 
                 if(p_index >= 0)
-                        thisChance = (PEntry) pTable[tlId][pos][desId][isCongested].elementAt(p_index);
+                        thisChance = (PEntry) pTable[tlId][pos][desId][isCongested].get(p_index);
                 else {
-                        pTable[tlId][pos][desId][isCongested].addElement(thisChance);
+                        pTable[tlId][pos][desId][isCongested].add(thisChance);
                         p_index = pTable[tlId][pos][desId][isCongested].indexOf(thisChance);
                 }
 
@@ -306,7 +306,7 @@ public class TCCBG extends TLController implements Colearning, InstantiationAssi
                 int num_p = pTable[tlId][pos][desId][isCongested].size();
                 PEntry curP;
                 for(int i=0;i<num_p;i++) {
-                        curP = (PEntry) pTable[tlId][pos][desId][isCongested].elementAt(i);
+                        curP = (PEntry) pTable[tlId][pos][desId][isCongested].get(i);
                         if(curP.sameStartSituation(thisSituation) && i!=p_index)
                                 curP.addSameStartSituation();
                 }
@@ -354,7 +354,7 @@ public class TCCBG extends TLController implements Colearning, InstantiationAssi
                         int p_index = pTable[tlId][pos][desId][isCongested].indexOf(P);
 
                         if(p_index>=0) {
-                                P = (PEntry) pTable[tlId][pos][desId][isCongested].elementAt(p_index);
+                                P = (PEntry) pTable[tlId][pos][desId][isCongested].get(p_index);
                                 R = rewardFunction(tlId, pos, curPMTlId, curPMPos, isCongested);
                                 V = vTable[curPMTlId][curPMPos][desId][curNextIsCongested];
 
@@ -401,7 +401,7 @@ public class TCCBG extends TLController implements Colearning, InstantiationAssi
 
                 int psize = pTable[tlId][pos][desId][isCongested].size()-1;
                 for(; psize>=0; psize--) {
-                        PEntry cur = (PEntry) pTable[tlId][pos][desId][isCongested].elementAt(psize);
+                        PEntry cur = (PEntry) pTable[tlId][pos][desId][isCongested].get(psize);
                         if(cur.light==green)
                                 countG += cur.getSameSituation();
                         else
@@ -721,8 +721,8 @@ public class TCCBG extends TLController implements Colearning, InstantiationAssi
                 random_chance=myElement.getAttribute("random-chance").getFloatValue();
                 qTable=(float[][][][][])XMLArray.loadArray(this,loader);
                 vTable=(float[][][][])XMLArray.loadArray(this,loader);
-                count=(Vector[][][][])XMLArray.loadArray(this,loader,this);
-                pTable=(Vector[][][][])XMLArray.loadArray(this,loader,this);
+                count=(ArrayList[][][][])XMLArray.loadArray(this,loader,this);
+                pTable=(ArrayList[][][][])XMLArray.loadArray(this,loader,this);
         }
 
         public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException

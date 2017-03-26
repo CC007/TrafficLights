@@ -96,7 +96,7 @@ public class ACGJ3FixedValue extends TLController implements InstantiationAssist
 				float q = ind.getQValue(i,j);
 	    		if(trackNode!=-1)
 				if(i==trackNode) {
-					Drivelane currentlane = tld[i][j].getTL().getLane();
+					DriveLaneTemp currentlane = tld[i][j].getTL().getLane();
 					boolean[] targets = currentlane.getTargets();
 					System.out.println("node: "+i+" light: "+j+" gain: "+q+" "+targets[0]+" "+targets[1]+" "+targets[2]+" "+currentlane.getNumRoadusersWaiting());
 				}
@@ -125,7 +125,7 @@ public class ACGJ3FixedValue extends TLController implements InstantiationAssist
 	 * @param _possiblelanes
 	 * @param _ranges
 	 */
-	public void updateRoaduserMove(Roaduser _ru, Drivelane _prevlane, Sign _prevsign, int _prevpos, Drivelane _dlanenow, Sign _signnow, int _posnow, PosMov[] posMovs, Drivelane _desired)
+	public void updateRoaduserMove(Roaduser _ru, DriveLaneTemp _prevlane, Sign _prevsign, int _prevpos, DriveLaneTemp _dlanenow, Sign _signnow, int _posnow, PosMov[] posMovs, DriveLaneTemp _desired)
 	{
 		if(_prevsign == _signnow && _prevpos == _posnow) {
 			// Previous sign is the same as the current one
@@ -251,14 +251,14 @@ public class ACGJ3FixedValue extends TLController implements InstantiationAssist
 		}
 
 		/**
-		 * When a Roaduser may drive according to it's Sign, but cant as the desired Drivelane
-		 * is full, (some/all) of the current gain-bucket of it's current TrafficLight is
-		 * siphoned over to the desired Drivelane, making it more probable that that lane will
-		 * move, making it possible for this Drivelane to move.
+		 * When a Roaduser may drive according to it's Sign, but cant as the desired DriveLaneTemp
+ is full, (some/all) of the current gain-bucket of it's current TrafficLight is
+ siphoned over to the desired DriveLaneTemp, making it more probable that that lane will
+ move, making it possible for this DriveLaneTemp to move.
 		 *
 		 * @param node the Id of the Node at which the Roaduser is waiting
 		 * @param sign The TrafficLight the Roaduser is waiting for
-		 * @param des The TrafficLight that controls the traffic on the desired Drivelane
+		 * @param des The TrafficLight that controls the traffic on the desired DriveLaneTemp
 		 */
 		protected void siphonToOtherBucket(TrafficLight here, TrafficLight there)
 		{

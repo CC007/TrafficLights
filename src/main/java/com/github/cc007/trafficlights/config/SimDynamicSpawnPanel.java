@@ -17,7 +17,7 @@ package com.github.cc007.trafficlights.config;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import com.github.cc007.trafficlights.*;
 import com.github.cc007.trafficlights.infra.*;
@@ -45,7 +45,7 @@ public class SimDynamicSpawnPanel extends ConfigPanel implements ActionListener,
         Button setSpawn;
         Button deleteSpawn;
 
-        Vector[] ruCyclesLists;
+        ArrayList[] ruCyclesLists;
 
         int deleteType = -1;
         int deleteCycle = -1;
@@ -144,11 +144,11 @@ public class SimDynamicSpawnPanel extends ConfigPanel implements ActionListener,
 
         public void reset() {
                int [] types = RoaduserFactory.getConcreteTypes();
-               ruCyclesLists = new Vector[types.length];
+               ruCyclesLists = new ArrayList[types.length];
                boolean containsAnyItem = false;
                for (int i = 0; i < types.length; i++) {
                    ruList[i].removeAll();
-                   Vector dSpawnList = eNode.dSpawnCyclesForRu(types[i]);
+                   ArrayList dSpawnList = eNode.dSpawnCyclesForRu(types[i]);
                    for (int j = 0; j < dSpawnList.size(); j++) {
                      SpawnFrequencyCycles sf = (SpawnFrequencyCycles)dSpawnList.get(j);
                      ruList[i].add(sf.toString());

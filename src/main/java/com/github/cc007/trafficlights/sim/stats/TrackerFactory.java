@@ -21,8 +21,8 @@ import com.github.cc007.trafficlights.sim.SimModel;
 import com.github.cc007.trafficlights.sim.SimController;
 import com.github.cc007.trafficlights.GLDException;
 
-import java.util.Vector;
-import java.util.Enumeration;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  *
@@ -63,7 +63,7 @@ public class TrackerFactory
 	public final static int REMOVEDCARS_COUNT = 12;
 
 	
-	protected static Vector trackingControllers = new Vector();
+	protected static ArrayList trackingControllers = new ArrayList();
 
 	/**
 	* Shows one of the 'global' tracking windows.
@@ -148,32 +148,32 @@ public class TrackerFactory
 
 	public static void purgeTrackers()
 	{
-		Enumeration enumr = trackingControllers.elements();
-		while(enumr.hasMoreElements())
-			((TrackingController)enumr.nextElement()).closeWindow();
+		Iterator it = trackingControllers.iterator();
+		while(it.hasNext())
+			((TrackingController)it.next()).closeWindow();
 	}
 
 	public static void disableTrackerViews()
 	{
-		Enumeration enumr = trackingControllers.elements();
-		while(enumr.hasMoreElements())
-			((TrackingController)enumr.nextElement()).setViewEnabled(false);
+		Iterator it = trackingControllers.iterator();
+		while(it.hasNext())
+			((TrackingController)it.next()).setViewEnabled(false);
 	}
 
 	public static void resetTrackers()
 	{
-		Enumeration enumr = trackingControllers.elements();
-		while(enumr.hasMoreElements())
-			((TrackingController)enumr.nextElement()).reset();
+		Iterator it = trackingControllers.iterator();
+		while(it.hasNext())
+			((TrackingController)it.next()).reset();
 	}
 
 	public static TrackingController[] getTrackingControllers()
 	{
 		TrackingController[] tca = new TrackingController[trackingControllers.size()];
-		Enumeration enumr = trackingControllers.elements();
+		Iterator it = trackingControllers.iterator();
 		int i=0;
-		while(enumr.hasMoreElements()) {
-			tca[i] = ((TrackingController)enumr.nextElement());
+		while(it.hasNext()) {
+			tca[i] = ((TrackingController)it.next());
 			i++;
 		}
 		return tca;

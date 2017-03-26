@@ -16,8 +16,7 @@
 
 package com.github.cc007.trafficlights.utils;
 
-import java.lang.reflect.Array;
-import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
@@ -28,25 +27,25 @@ import java.util.NoSuchElementException;
  * @version 1.0
  */
 
-public class ArrayEnumeration implements Enumeration
+public class ArrayIterator implements Iterator
 {
 	Object[][] ar;
 	int i, j;
 
-	public ArrayEnumeration(Object[] _ar) {
+	public ArrayIterator(Object[] _ar) {
 		ar = new Object[1][];
 		ar[0] = _ar;
 		i = 0;
 		j = 0;
 	}
 
-	public ArrayEnumeration(Object[][] _ar) {
+	public ArrayIterator(Object[][] _ar) {
 		ar = _ar;
 		i = 0;
 		j = 0;
 	}
 	
-	public ArrayEnumeration(Object[] _ar1, Object[] _ar2) {
+	public ArrayIterator(Object[] _ar1, Object[] _ar2) {
 		ar = new Object[2][];
 		ar[0] = _ar1;
 		ar[1] = _ar2;
@@ -54,12 +53,14 @@ public class ArrayEnumeration implements Enumeration
 		j = 0;
 	}
 
-	public boolean hasMoreElements() {
+    @Override
+	public boolean hasNext() {
 		return i < ar.length && j < ar[i].length;
 	}
 
-	public Object nextElement() throws NoSuchElementException {
-		if (!hasMoreElements()) throw new NoSuchElementException();
+    @Override
+	public Object next() throws NoSuchElementException {
+		if (!hasNext()) throw new NoSuchElementException();
 		Object o = ar[i][j++];
 		if (j >= ar[i].length) {
 			i++;
@@ -67,4 +68,6 @@ public class ArrayEnumeration implements Enumeration
 		}
 		return o;
 	}
+
+    
 }

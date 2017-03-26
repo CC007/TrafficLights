@@ -32,7 +32,7 @@ public class NoSign extends Sign
 {
 	protected final static int type = Sign.NO_SIGN;
     
-	public NoSign(Node _node, Drivelane _lane ) {
+	public NoSign(Node _node, DriveLaneTemp _lane ) {
 		super(_node, _lane);
 	}
 	

@@ -115,7 +115,7 @@ public class GenNeuralTLC extends TLController implements XMLSerializable,TwoSta
 				float q = ind[i].getQValue(j);
 	    		if(trackNode!=-1)
 				if(i==trackNode) {
-					Drivelane currentlane = tld[i][j].getTL().getLane();
+					DriveLaneTemp currentlane = tld[i][j].getTL().getLane();
 					boolean[] targets = currentlane.getTargets();
 					System.out.println("node: "+i+" light: "+j+" gain: "+q+" "+targets[0]+" "+targets[1]+" "+targets[2]+" "+currentlane.getNumRoadusersWaiting());
 				}
@@ -141,7 +141,7 @@ public class GenNeuralTLC extends TLController implements XMLSerializable,TwoSta
 	 * @param _possiblelanes
 	 * @param _ranges
 	 */
-	public void updateRoaduserMove(Roaduser _ru, Drivelane _prevlane, Sign _prevsign, int _prevpos, Drivelane _dlanenow, Sign _signnow, int _posnow, PosMov[] posMovs, Drivelane _desired)
+	public void updateRoaduserMove(Roaduser _ru, DriveLaneTemp _prevlane, Sign _prevsign, int _prevpos, DriveLaneTemp _dlanenow, Sign _signnow, int _posnow, PosMov[] posMovs, DriveLaneTemp _desired)
 	{
 		// Should keep track of waits and moves per Node
 		if(_prevsign == _signnow && _prevpos == _posnow) {
@@ -395,7 +395,7 @@ public class GenNeuralTLC extends TLController implements XMLSerializable,TwoSta
 		// GenNeuralPopulation TwoStageLoader implementation
 
 		public void loadSecondStage (Dictionary dictionaries) throws XMLTreeException,XMLInvalidInputException
-		{	XMLUtils.loadSecondStage(new ArrayEnumeration(inds),dictionaries);
+		{	XMLUtils.loadSecondStage(new ArrayIterator(inds),dictionaries);
 		}
 
 	}
@@ -589,7 +589,7 @@ public class GenNeuralTLC extends TLController implements XMLSerializable,TwoSta
 					int thisNodeId = my_nodes[i].getId();
 					int num_lanes = tld[thisNodeId].length;
 					for(int j=0;j<num_lanes;j++) {
-						Drivelane d;
+						DriveLaneTemp d;
 						input_set[input_index] = (float) tld[thisNodeId][j].getTL().getLane().getNumBlocksWaiting() / (float) tld[thisNodeId][j].getTL().getLane().getLength();
 						input_index++;
 					}
@@ -810,7 +810,7 @@ public class GenNeuralTLC extends TLController implements XMLSerializable,TwoSta
 	public void loadSecondStage (Dictionary dictionaries) throws XMLInvalidInputException,XMLTreeException
 	{	super.loadSecondStage(dictionaries);
 		pop.loadSecondStage(dictionaries);
-		XMLUtils.loadSecondStage(new ArrayEnumeration(ind),dictionaries);
+		XMLUtils.loadSecondStage(new ArrayIterator(ind),dictionaries);
 	}
 
 	// InstantiationAssistant implementation

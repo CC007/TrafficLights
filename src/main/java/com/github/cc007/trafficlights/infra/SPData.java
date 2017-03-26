@@ -20,8 +20,8 @@ import com.github.cc007.trafficlights.utils.Arrayutils;
 import com.github.cc007.trafficlights.xml.*;
 import java.io.IOException;
 import java.util.Dictionary;
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  *
@@ -35,15 +35,15 @@ import java.util.Vector;
 public class SPData implements XMLSerializable,TwoStageLoader,InstantiationAssistant
 {
 	/** The paths known */
-	protected Vector paths;
+	protected ArrayList paths;
 	protected String parentName="model.infrastructure.node";
 
 	public SPData() {
-		paths = new Vector(2);
+		paths = new ArrayList(2);
 	}
 	
 	public SPData(int size) {
-		paths = new Vector(size);
+		paths = new ArrayList(size);
 	}
 
 
@@ -61,7 +61,7 @@ public class SPData implements XMLSerializable,TwoStageLoader,InstantiationAssis
 	 * @param ruType The type of Roaduser.
 	 * @return an array of Drivelanes.
 	 */
-	public Drivelane[] getShortestPaths(int exitNodeId, int ruType) {
+	public DriveLaneTemp[] getShortestPaths(int exitNodeId, int ruType) {
 		//System.out.println("SPData.Getting shortestPath to:"+exitNodeId+" with type:"+ruType+" from "+paths.size());
 		Path p = getPath(exitNodeId, ruType);
 		/*System.out.println("SPData.Gotten:"+p.getNodeId()+","+p.getRUType());
@@ -70,7 +70,7 @@ public class SPData implements XMLSerializable,TwoStageLoader,InstantiationAssis
 		if (p != null)
 			return p.getLanes();
 		else
-			return new Drivelane[0];
+			return new DriveLaneTemp[0];
 	}
 	
 	public int[] getShortestPathDestinations(int ruType) {
@@ -99,20 +99,20 @@ public class SPData implements XMLSerializable,TwoStageLoader,InstantiationAssis
 
 	/**
 	 * Sets the shortest path to given exit node using roaduser type
-	 * to given Drivelane
+ to given DriveLaneTemp
 	 *
-	 * @param lane The Drivelane to set the path to
+	 * @param lane The DriveLaneTemp to set the path to
 	 * @param exitNodeId The Id of the exit node this path leads to
 	 * @param ruType The type of Roaduser
 	 */
-	public void setShortestPath(Drivelane lane, int exitNodeId, int ruType, int length)
+	public void setShortestPath(DriveLaneTemp lane, int exitNodeId, int ruType, int length)
 	{
 		Path p = getPath(exitNodeId, ruType);
 		if(p==null)
-			paths.addElement(new Path(exitNodeId, ruType, lane, length));
+			paths.add(new Path(exitNodeId, ruType, lane, length));
 		else {
 			p.empty();
-			Drivelane[] lanes = {lane};
+			DriveLaneTemp[] lanes = {lane};
 			Integer[] lengths = {new Integer(length)};
 			p.setLanes(lanes, lengths);
 		}
@@ -124,17 +124,17 @@ public class SPData implements XMLSerializable,TwoStageLoader,InstantiationAssis
 
   
 	/**
-	 * Adds a Drivelane to the lanes already found for exitNodeId and ruType.
+	 * Adds a DriveLaneTemp to the lanes already found for exitNodeId and ruType.
 	 *
-	 * @param lane The Drivelane to add to the path
+	 * @param lane The DriveLaneTemp to add to the path
 	 * @param exitnodeId The Id of the exit node this path leads to
 	 * @param ruType The type of Roaduser
 	 */
-	public void addShortestPath(Drivelane lane, int exitNodeId, int ruType, int length)
+	public void addShortestPath(DriveLaneTemp lane, int exitNodeId, int ruType, int length)
 	{
 		Path p = getPath(exitNodeId, ruType);
 		if(p==null)
-			paths.addElement(new Path(exitNodeId, ruType, lane, length));
+			paths.add(new Path(exitNodeId, ruType, lane, length));
 		else
 			p.addLane(lane, length);
 	}
@@ -189,7 +189,7 @@ public class SPData implements XMLSerializable,TwoStageLoader,InstantiationAssis
 	/*============================================*/
 
  	public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
- 	{ 	paths=(Vector)XMLArray.loadArray(this,loader,this);
+ 	{ 	paths=(ArrayList)XMLArray.loadArray(this,loader,this);
  	}
 
  	public XMLElement saveSelf () throws XMLCannotSaveException
@@ -212,9 +212,9 @@ public class SPData implements XMLSerializable,TwoStageLoader,InstantiationAssis
  
  
  	public void loadSecondStage (Dictionary dictionaries) throws XMLInvalidInputException,XMLTreeException
- 	{ 	Enumeration e=paths.elements();
-   		while (e.hasMoreElements())
-         	((Path)(e.nextElement())).loadSecondStage(dictionaries);
+ 	{ 	Iterator it=paths.iterator();
+   		while (it.hasNext())
+         	((Path)(it.next())).loadSecondStage(dictionaries);
  	}
 	
 	public boolean canCreateInstance (Class request)
@@ -251,7 +251,7 @@ public class SPData implements XMLSerializable,TwoStageLoader,InstantiationAssis
 		private int max_length = Integer.MAX_VALUE;
 		private int ruType;
 		private Integer[] lengths;
-		private Drivelane[] lanes;
+		private DriveLaneTemp[] lanes;
 		protected String parentName="model.infrastructure.node.spdata";
 		private TwoStageLoaderData loadData=new TwoStageLoaderData();
 		
@@ -260,7 +260,7 @@ public class SPData implements XMLSerializable,TwoStageLoader,InstantiationAssis
 		}
     
 		Path(int size) {
-			lanes = new Drivelane[size];
+			lanes = new DriveLaneTemp[size];
 			lengths = new Integer[size];
 		}
 		Path(int exitId, int ruT) {
@@ -269,19 +269,19 @@ public class SPData implements XMLSerializable,TwoStageLoader,InstantiationAssis
 			lanes = null;
 			lengths = new Integer[0];
 		}
-		Path(int exitId, int ruT, Drivelane l, int length) {
+		Path(int exitId, int ruT, DriveLaneTemp l, int length) {
 			exitNodeId = exitId;
 			ruType = ruT;
-			Drivelane[] nlanes = {l};
+			DriveLaneTemp[] nlanes = {l};
 			lanes = nlanes;
 			Integer[] nlengths = {new Integer(length)};
 			lengths = nlengths;
 		}
     
 		/** Returns all lanes */
-		public Drivelane[] getLanes() { return lanes; }
+		public DriveLaneTemp[] getLanes() { return lanes; }
 		/** Sets all lanes */
-		public void setLanes(Drivelane[] l, Integer[] lens) {
+		public void setLanes(DriveLaneTemp[] l, Integer[] lens) {
 			lanes = l;
 			lengths = lens;
 		}
@@ -296,18 +296,18 @@ public class SPData implements XMLSerializable,TwoStageLoader,InstantiationAssis
 		/** Sets the Roaduser type */
 		public void setRUType(int t) { ruType = t; }
 
-		/** Add one Drivelane */
-		public void addLane(Drivelane l, int length) {
+		/** Add one DriveLaneTemp */
+		public void addLane(DriveLaneTemp l, int length) {
 			int oldlen = lanes.length;
-			lanes = (Drivelane[])Arrayutils.addElementUnique(lanes, l);
+			lanes = (DriveLaneTemp[])Arrayutils.addUnique(lanes, l);
 			if(oldlen<lanes.length) {
 				// Something added
-				lengths = (Integer[])Arrayutils.addElement(lengths, new Integer(length));
+				lengths = (Integer[])Arrayutils.add(lengths, new Integer(length));
 			}
 		}
-		/** Remove a Drivelane */
-		public void remLane(Drivelane l) {
-			lanes = (Drivelane[])Arrayutils.remElement(lanes, l);
+		/** Remove a DriveLaneTemp */
+		public void remLane(DriveLaneTemp l) {
+			lanes = (DriveLaneTemp[])Arrayutils.remElement(lanes, l);
 		}
 		
 		/** Remove all Drivelanes with pathlength > length */
@@ -315,7 +315,7 @@ public class SPData implements XMLSerializable,TwoStageLoader,InstantiationAssis
 			for(int i=0;i<lanes.length;i++) {
 				if(lengths[i].intValue()>length) {
 					// Removing
-					lanes = (Drivelane[])Arrayutils.remElement(lanes, i);
+					lanes = (DriveLaneTemp[])Arrayutils.remElement(lanes, i);
 					lengths = (Integer[])Arrayutils.remElement(lengths, i);
 				}
 			}
@@ -366,9 +366,9 @@ public class SPData implements XMLSerializable,TwoStageLoader,InstantiationAssis
 		 
 		public void loadSecondStage (Dictionary dictionaries) throws XMLInvalidInputException,XMLTreeException
  		{ 	Dictionary laneDictionary=(Dictionary)(dictionaries.get("lane"));
-		  	lanes=new Drivelane[loadData.laneIds.length];
+		  	lanes=new DriveLaneTemp[loadData.laneIds.length];
 		  	for (int t=0;t<loadData.laneIds.length;t++)
-		      	lanes[t]=(Drivelane)(laneDictionary.get
+		      	lanes[t]=(DriveLaneTemp)(laneDictionary.get
 		                     (new Integer(loadData.laneIds[t])));		
  		}		 
 		
@@ -401,9 +401,9 @@ public class SPData implements XMLSerializable,TwoStageLoader,InstantiationAssis
 	 * @param exitNodeId The Id of the exit node that is your destination.
 	 * @return an array of Drivelanes.
 	 */
-/*	public Drivelane[] getShortestPaths(int exitNodeId) {
+/*	public DriveLaneTemp[] getShortestPaths(int exitNodeId) {
 		
-		Vector temp_vector = new Vector();
+		ArrayList temp_vector = new ArrayList();
 		Path p;
 		int lane_counter = 0;
 		for (int i=0; i < paths.size(); i++) {
@@ -411,18 +411,18 @@ public class SPData implements XMLSerializable,TwoStageLoader,InstantiationAssis
 			if (p.getNodeId() == exitNodeId)
 			{
 				lane_counter += p.getLanes().length;
-				temp_vector.addElement(p);
+				temp_vector.add(p);
 			}
 		}
 		int temp_length = temp_vector.size();
 		int pos_counter = 0;
 		
 		// duplicates!
-		Drivelane[] lanes = new Drivelane[lane_counter];
-		Drivelane[] temp_lanes;
+		DriveLaneTemp[] lanes = new DriveLaneTemp[lane_counter];
+		DriveLaneTemp[] temp_lanes;
 		for (int i=0;i<temp_length;i++)
 		{
-			p = (Path) temp_vector.elementAt(i);
+			p = (Path) temp_vector.get(i);
 			temp_lanes = p.getLanes();
 			System.arraycopy(temp_lanes, 0, lanes, pos_counter, temp_lanes.length);
 			pos_counter += temp_lanes.length;

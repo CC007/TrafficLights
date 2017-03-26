@@ -52,7 +52,7 @@ public class EditPopupMenuFactory
 	{
 		if (obj instanceof Node) return getNodeMenu((Node)obj);
 		if (obj instanceof Road) return getRoadMenu((Road)obj);
-		if (obj instanceof Drivelane) return getDrivelaneMenu((Drivelane)obj);
+		if (obj instanceof DriveLaneTemp) return getDrivelaneMenu((DriveLaneTemp)obj);
 		throw new PopupException("Unknown object type");
 	}
 
@@ -68,7 +68,7 @@ public class EditPopupMenuFactory
 		return getGenericMenu(new DefaultGUIObjectListener());
 	}
 	
-	protected PopupMenu getDrivelaneMenu(Drivelane l) throws PopupException
+	protected PopupMenu getDrivelaneMenu(DriveLaneTemp l) throws PopupException
 	{
 		return getGenericMenu(new DefaultGUIObjectListener());
 	}

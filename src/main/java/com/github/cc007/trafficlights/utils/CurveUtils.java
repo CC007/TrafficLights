@@ -140,7 +140,7 @@ public class CurveUtils
 	 */
 	public static double calcLength(TurnCurve c, int step)
 	{
-		Vector points = new Vector();
+		ArrayList points = new ArrayList();
 		c.rewind();
 		Point p;
 		points.add(c.getFirst());

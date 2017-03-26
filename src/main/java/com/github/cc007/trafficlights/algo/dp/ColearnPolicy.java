@@ -57,13 +57,13 @@ public class ColearnPolicy extends DrivingPolicy
 	 * @param shortest All the lanes which are in a shortest path to the car's destination
 	 * @return The chosen lane.
 	 */
-	public Drivelane getDirectionLane(Roaduser r, Drivelane now_here, Drivelane[] allOutgoing, Drivelane[] shortest)
+	public DriveLaneTemp getDirectionLane(Roaduser r, DriveLaneTemp now_here, DriveLaneTemp[] allOutgoing, DriveLaneTemp[] shortest)
 	{
 		int num_sp = shortest.length;
 		int num_out = allOutgoing.length;
 		int laneI;
-		Drivelane best = null;
-		Drivelane lane;
+		DriveLaneTemp best = null;
+		DriveLaneTemp lane;
 		Node dest = r.getDestNode();
 		float bestV = Float.MAX_VALUE;
 		float laneV;

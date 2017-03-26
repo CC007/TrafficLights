@@ -20,7 +20,7 @@ package com.github.cc007.trafficlights.config;
 import java.awt.*;
 import java.util.ListIterator;
 import java.util.ConcurrentModificationException;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.awt.event.*;
 
 import com.github.cc007.trafficlights.*;
@@ -37,7 +37,7 @@ import com.github.cc007.trafficlights.edit.*;
 
 public class SimDrivelanePanel extends ConfigPanel implements ActionListener, ItemListener
 {
-	Drivelane lane;
+	DriveLaneTemp lane;
 
 	Hyperlink alphaLink, betaLink, roadLink;
 
@@ -48,7 +48,7 @@ public class SimDrivelanePanel extends ConfigPanel implements ActionListener, It
 	ScrollPane sp;
 
 
-	public SimDrivelanePanel(ConfigDialog cd, Drivelane l) {
+	public SimDrivelanePanel(ConfigDialog cd, DriveLaneTemp l) {
 		super(cd);
 
 		Label rlab = new Label("Part of:");
@@ -111,7 +111,7 @@ public class SimDrivelanePanel extends ConfigPanel implements ActionListener, It
 			setLayout(null);
 		}
 		
-		public synchronized void setLane(Drivelane lane) {
+		public synchronized void setLane(DriveLaneTemp lane) {
 			removeAll();
 			
 			int len = lane.getCompleteLength();
@@ -244,7 +244,7 @@ public class SimDrivelanePanel extends ConfigPanel implements ActionListener, It
 		sp.doLayout();
 	}
 
-	public void setLane(Drivelane l) {
+	public void setLane(DriveLaneTemp l) {
 		lane = l;
 		confd.setTitle(lane.getName());
 		queue.setLane(lane);

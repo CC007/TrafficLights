@@ -47,12 +47,12 @@ public class TCABG extends TCRL implements Colearning,
     protected Infrastructure infrastructure;
     protected TrafficLight[][] tls;
     protected Node[] allnodes;
-    protected Vector allsigns;
+    protected ArrayList allsigns;
     protected int num_nodes;
     protected boolean hecAddon = false;
 
     // TC1 vars
-    protected Vector count[][][][], pTable[][][][];
+    protected ArrayList count[][][][], pTable[][][][];
     protected float[][][][][] qTable; //sign, pos, des, isAccident(no=0, yes=1), color (red=0, green=1)
     protected float[][][][] vTable;
     protected static float gamma = 0.90f; //Discount Factor; used to decrease the influence of previous V values, that's why: 0 < gamma < 1
@@ -82,11 +82,11 @@ public class TCABG extends TCRL implements Colearning,
             num_nodes = nodes.length;
 
             int numSigns = infra.getAllInboundLanes().size();
-            allsigns = new Vector(numSigns);
+            allsigns = new ArrayList(numSigns);
 
             for (int i = 0; i < nodes.length; i++)
             {
-                Drivelane[] allInboundLanes = nodes[i].getInboundLanes();
+                DriveLaneTemp[] allInboundLanes = nodes[i].getInboundLanes();
                 for (int j = 0; j < allInboundLanes.length; j++)
                 {
                     allsigns.add(allInboundLanes[j].getSign().getId(),
@@ -96,33 +96,33 @@ public class TCABG extends TCRL implements Colearning,
 
             qTable = new float[numSigns][][][][];
             vTable = new float[numSigns][][][];
-            count = new Vector[numSigns][][][];
-            pTable = new Vector[numSigns][][][];
+            count = new ArrayList[numSigns][][][];
+            pTable = new ArrayList[numSigns][][][];
 
             int num_specialnodes = infra.getNumSpecialNodes();
 
             for (int i = 0; i < num_nodes; i++)
             {
                 Node n = nodes[i];
-                Drivelane[] dls = n.getInboundLanes();
+                DriveLaneTemp[] dls = n.getInboundLanes();
                 for (int j = 0; j < dls.length; j++)
                 {
-                    Drivelane d = dls[j];
+                    DriveLaneTemp d = dls[j];
                     Sign s = d.getSign();
                     int id = s.getId();
                     int num_pos_on_dl = d.getCompleteLength();
 
                     qTable[id] = new float[num_pos_on_dl][][][];
                     vTable[id] = new float[num_pos_on_dl][][];
-                    count[id] = new Vector[num_pos_on_dl][][];
-                    pTable[id] = new Vector[num_pos_on_dl][][];
+                    count[id] = new ArrayList[num_pos_on_dl][][];
+                    pTable[id] = new ArrayList[num_pos_on_dl][][];
 
                     for (int k = 0; k < num_pos_on_dl; k++)
                     {
                         qTable[id][k] = new float[num_specialnodes][][];
                         vTable[id][k] = new float[num_specialnodes][];
-                        count[id][k] = new Vector[num_specialnodes][];
-                        pTable[id][k] = new Vector[num_specialnodes][];
+                        count[id][k] = new ArrayList[num_specialnodes][];
+                        pTable[id][k] = new ArrayList[num_specialnodes][];
 
                         for (int m = 0; m < num_specialnodes; m++)
                         {
@@ -130,8 +130,8 @@ public class TCABG extends TCRL implements Colearning,
                             int isAccident = 2;
                             qTable[id][k][m] = new float[isAccident][];
                             vTable[id][k][m] = new float[isAccident];
-                            count[id][k][m] = new Vector[isAccident];
-                            pTable[id][k][m] = new Vector[isAccident];
+                            count[id][k][m] = new ArrayList[isAccident];
+                            pTable[id][k][m] = new ArrayList[isAccident];
 
                             for (int accident = 0; accident < isAccident;
                                                accident++)
@@ -140,8 +140,8 @@ public class TCABG extends TCRL implements Colearning,
                                 qTable[id][k][m][accident][0] = 0.0f;
                                 qTable[id][k][m][accident][1] = 0.0f;
                                 vTable[id][k][m][accident] = 0.0f;
-                                count[id][k][m][accident] = new Vector();
-                                pTable[id][k][m][accident] = new Vector();
+                                count[id][k][m][accident] = new ArrayList();
+                                pTable[id][k][m][accident] = new ArrayList();
                             }
 
                         }
@@ -170,7 +170,7 @@ public class TCABG extends TCRL implements Colearning,
         int num_dec, waitingsize, pos, tlId, desId;
         float gain, passenger_factor;
         Sign tl;
-        Drivelane lane;
+        DriveLaneTemp lane;
         Roaduser ru;
         ListIterator queue;
         Node destination;
@@ -224,7 +224,7 @@ public class TCABG extends TCRL implements Colearning,
                 // Debug info generator
                 if (trackNode != -1 && i == trackNode)
                 {
-                    Drivelane currentlane2 = tld[i][j].getTL().getLane();
+                    DriveLaneTemp currentlane2 = tld[i][j].getTL().getLane();
                     boolean[] targets = currentlane2.getTargets();
                     System.out.println("node: " + i + " light: " + j +
                                        " gain: " + gain +
@@ -250,12 +250,12 @@ public class TCABG extends TCRL implements Colearning,
         return tld;
     }
 
-    public void updateRoaduserMove(Roaduser ru, Drivelane prevlane,
+    public void updateRoaduserMove(Roaduser ru, DriveLaneTemp prevlane,
                                    Sign prevsign,
-                                   int prevpos, Drivelane dlanenow,
+                                   int prevpos, DriveLaneTemp dlanenow,
                                    Sign signnow,
                                    int posnow, PosMov[] posMovs,
-                                   Drivelane desired, int penalty)
+                                   DriveLaneTemp desired, int penalty)
     {
         // Roaduser has just left the building!
         if (dlanenow == null || signnow == null)
@@ -303,13 +303,13 @@ public class TCABG extends TCRL implements Colearning,
         {
             // Entry found
             thisSituation = (CountEntry) count[tlId][pos][desId][isAccident].
-                            elementAt(c_index);
+                            get(c_index);
             thisSituation.incrementValue();
         }
         else
         {
             // Entry not found
-            count[tlId][pos][desId][isAccident].addElement(thisSituation);
+            count[tlId][pos][desId][isAccident].add(thisSituation);
         }
 
         // We now know how often this exact situation has occurred
@@ -321,7 +321,7 @@ public class TCABG extends TCRL implements Colearning,
         int num_c = count[tlId][pos][desId][isAccident].size();
         for (int i = 0; i < num_c; i++)
         {
-            curC = (CountEntry) count[tlId][pos][desId][isAccident].elementAt(
+            curC = (CountEntry) count[tlId][pos][desId][isAccident].get(
                     i);
             sameStartSituation += curC.sameStartSituation(thisSituation);
         }
@@ -340,12 +340,12 @@ public class TCABG extends TCRL implements Colearning,
         if (p_index >= 0)
         {
             thisChance = (PEntry) pTable[tlId][pos][desId][isAccident].
-                         elementAt(
+                         get(
                                  p_index);
         }
         else
         {
-            pTable[tlId][pos][desId][isAccident].addElement(thisChance);
+            pTable[tlId][pos][desId][isAccident].add(thisChance);
             p_index = pTable[tlId][pos][desId][isAccident].indexOf(thisChance);
         }
 
@@ -357,7 +357,7 @@ public class TCABG extends TCRL implements Colearning,
         PEntry curP;
         for (int i = 0; i < num_p; i++)
         {
-            curP = (PEntry) pTable[tlId][pos][desId][isAccident].elementAt(i);
+            curP = (PEntry) pTable[tlId][pos][desId][isAccident].get(i);
             if (curP.sameStartSituation(thisSituation) && i != p_index)
             {
                 curP.addSameStartSituation();
@@ -381,7 +381,7 @@ public class TCABG extends TCRL implements Colearning,
      */
     protected void recalcQ(int tlId, int pos, int desId, boolean light,
                            int tlNewId, int posNew, PosMov[] posMovs,
-                           int isAccident, Drivelane dlnow, Roaduser ru, int penalty)
+                           int isAccident, DriveLaneTemp dlnow, Roaduser ru, int penalty)
     {
         // Q([tl,p,d,isAccident],L)	= Sum(tl', p') [P([tl,p,d,isAccident],L,[tl',p'])(R([tl,p,isAccident],[tl',p'])+ yV([tl',p',d,isAccident']))
 
@@ -402,7 +402,7 @@ public class TCABG extends TCRL implements Colearning,
 
             if (curPMTlId != tlId)
             { // In case RU just crossed a junction, a next sign has te be determened.
-                Drivelane dlnext = getNextDrivelaneByRu(ru, dlnow);
+                DriveLaneTemp dlnext = getNextDrivelaneByRu(ru, dlnow);
                 if (dlnext != null)
                 {
                     curNextSign = (Sign) dlnext.getSign();
@@ -425,7 +425,7 @@ public class TCABG extends TCRL implements Colearning,
 
             if (p_index >= 0)
             {
-                P = (PEntry) pTable[tlId][pos][desId][isAccident].elementAt(
+                P = (PEntry) pTable[tlId][pos][desId][isAccident].get(
                         p_index);
                 R = rewardFunction(tlId, pos, curPMTlId, curPMPos, isAccident);
                 V = vTable[curPMTlId][curPMPos][desId][curNextisAccident];
@@ -467,7 +467,7 @@ public class TCABG extends TCRL implements Colearning,
         for (; psize >= 0; psize--)
         {
             PEntry cur = (PEntry) pTable[tlId][pos][desId][isAccident].
-                         elementAt(
+                         get(
                                  psize);
             if (cur.light == green)
             {
@@ -526,10 +526,10 @@ public class TCABG extends TCRL implements Colearning,
 
 
 
-    public Drivelane getNextDrivelaneByRu(Roaduser ru, Drivelane currentLane)
+    public DriveLaneTemp getNextDrivelaneByRu(Roaduser ru, DriveLaneTemp currentLane)
     {
         DrivingPolicy dp = SimModel.getDrivingPolicy();
-        Drivelane destLane;
+        DriveLaneTemp destLane;
         try
         {
             destLane = dp.getDirection(ru, currentLane,
@@ -885,8 +885,8 @@ public class TCABG extends TCRL implements Colearning,
         random_chance = myElement.getAttribute("random-chance").getFloatValue();
         qTable = (float[][][][][]) XMLArray.loadArray(this, loader);
         vTable = (float[][][][]) XMLArray.loadArray(this, loader);
-        count = (Vector[][][][]) XMLArray.loadArray(this, loader, this);
-        pTable = (Vector[][][][]) XMLArray.loadArray(this, loader, this);
+        count = (ArrayList[][][][]) XMLArray.loadArray(this, loader, this);
+        pTable = (ArrayList[][][][]) XMLArray.loadArray(this, loader, this);
     }
 
     public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException,

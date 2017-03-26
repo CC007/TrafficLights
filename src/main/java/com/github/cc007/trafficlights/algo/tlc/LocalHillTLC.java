@@ -45,7 +45,7 @@ public class LocalHillTLC extends TLController implements Colearning
 	protected final static String shortXMLName="tlc-localhill";
 
 	protected Random seed;
-	protected Vector tld_backup;
+	protected ArrayList tld_backup;
 	protected int [] v_table;	//signID
 	protected final int iteration_length = 1;
 
@@ -64,7 +64,7 @@ public class LocalHillTLC extends TLController implements Colearning
 		num_nodes = allnodes.length;
 		try{numSigns = infra.getAllInboundLanes().size();}catch(Exception e){}
 
-		tld_backup = new Vector();
+		tld_backup = new ArrayList();
 
 		// Create the array
 		v_table = new int [numSigns];
@@ -134,7 +134,7 @@ public class LocalHillTLC extends TLController implements Colearning
 		{
 			Node currentNode = allnodes[i];
 			if (! (currentNode instanceof Junction)) continue;
-			Drivelane [] dls=null;
+			DriveLaneTemp [] dls=null;
 			try{dls= currentNode.getInboundLanes();}catch(Exception e){}
 
 			boolean changed;
@@ -163,7 +163,7 @@ public class LocalHillTLC extends TLController implements Colearning
 						else {
 							DrivingPolicy dp = SimModel.getDrivingPolicy();
 							Roaduser firstRU = dls[j].getFirstRoaduser();
-							Drivelane destLane = dp.getDirection(firstRU, dls[j], currentNode);
+							DriveLaneTemp destLane = dp.getDirection(firstRU, dls[j], currentNode);
 							int value = v_table[s.getId()];
 
 							if (destLane==null) value = 1; // when it is an end-node
@@ -198,7 +198,7 @@ public class LocalHillTLC extends TLController implements Colearning
 				Sign s = null;
 				for (int j=0; j<allnodes.length; j++)
 				{
-					Drivelane [] dls = allnodes[j].getInboundLanes();
+					DriveLaneTemp [] dls = allnodes[j].getInboundLanes();
 					for (int k=0; k<dls.length; k++)
 					{
 						if (dls[k].getSign().getId()==i) s=dls[k].getSign();
@@ -214,7 +214,7 @@ public class LocalHillTLC extends TLController implements Colearning
 		return Points;
 	}
 
-	public void updateRoaduserMove(Roaduser ru, Drivelane currentlane, Sign currentsign, int prevpos, Drivelane nextlane, Sign nextsign, int posnow, PosMov[] posMovs, Drivelane desired)
+	public void updateRoaduserMove(Roaduser ru, DriveLaneTemp currentlane, Sign currentsign, int prevpos, DriveLaneTemp nextlane, Sign nextsign, int posnow, PosMov[] posMovs, DriveLaneTemp desired)
 	{
 	/* If this road user is on the first position in the road, this one is used for calcing. We want to know his new direction (node, tl)
 		if(prevpos == 0 && currentlane != null && nextlane != null) {
@@ -233,10 +233,10 @@ public class LocalHillTLC extends TLController implements Colearning
 	}
 
 	protected void changeTLD (Node thisnode, Sign [] config) {
-		// Save things we are gonna change, Vector TLDBackup
+		// Save things we are gonna change, ArrayList TLDBackup
 
 		try {
-			Drivelane[] lanes = thisnode.getInboundLanes();
+			DriveLaneTemp[] lanes = thisnode.getInboundLanes();
 			// clear??
 			tld_backup.clear();
 			// Error might be here, as you're changing the object, and thus wont have a backup..
@@ -246,7 +246,7 @@ public class LocalHillTLC extends TLController implements Colearning
 			}*/
 			int num_lanes = tld[thisnode.getId()].length;
 			for (int j=0; j<num_lanes; j++) {
-				tld_backup.addElement(tld[thisnode.getId()][j]);
+				tld_backup.add(tld[thisnode.getId()][j]);
 				if (Arrayutils.findElement(config, tld[thisnode.getId()][j].getTL()) != -1)
 					tld[thisnode.getId()][j].setGain(1);
 				else
@@ -262,12 +262,12 @@ public class LocalHillTLC extends TLController implements Colearning
 	}
 
 	protected void restoreTLD (Node thisnode) {
-		// Save things we are gonna change, Vector TLDBackup
+		// Save things we are gonna change, ArrayList TLDBackup
 		int i = thisnode.getId();
 		try {
-			Drivelane[] lanes = thisnode.getInboundLanes();
+			DriveLaneTemp[] lanes = thisnode.getInboundLanes();
 			for (int j=0; j<lanes.length; j++) {
-				tld[i][j] = (TLDecision) tld_backup.elementAt(j);
+				tld[i][j] = (TLDecision) tld_backup.get(j);
 			}
 		}
 		catch (Exception e) {}
@@ -298,7 +298,7 @@ public class LocalHillTLC extends TLController implements Colearning
 	public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
 	{	super.load(myElement,loader);
 		v_table=(int[])XMLArray.loadArray(this,loader);
-		tld_backup=(Vector)(XMLArray.loadArray(this,loader));
+		tld_backup=(ArrayList)(XMLArray.loadArray(this,loader));
 	}
 
 	public XMLElement saveSelf () throws XMLCannotSaveException {

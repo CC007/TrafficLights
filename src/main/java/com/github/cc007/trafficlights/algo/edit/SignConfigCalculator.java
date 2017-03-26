@@ -17,10 +17,8 @@
 package com.github.cc007.trafficlights.algo.edit;
 
 import com.github.cc007.trafficlights.infra.*;
-import java.util.Vector;
-import java.util.Enumeration;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.awt.Point;
 
 /**
  * This class will determine for each node which sign-configurations are possible.
@@ -41,17 +39,17 @@ public class SignConfigCalculator
 	*/
 	public Sign [][] calcSC(Node nd) throws InfraException
 	{
-		Vector possibleConfigs = new Vector();  // This list contains all posible Configurations
+		ArrayList possibleConfigs = new ArrayList();  // This list contains all posible Configurations
 		Config cfg1 = null, cfg2 = null, newcfg = null;
 		
 		// add all possibilities of only one lane green
-		Drivelane [] dls = nd.getInboundLanes();
+		DriveLaneTemp [] dls = nd.getInboundLanes();
 		
 		for (int i=0; i<dls.length; i++)
 		{
 			Config cfg = new Config(nd);
 			cfg.addLane(dls[i]);
-			possibleConfigs.addElement(cfg);
+			possibleConfigs.add(cfg);
 		}
 		
 		int numOneSign = dls.length;
@@ -59,14 +57,14 @@ public class SignConfigCalculator
 		// Find all joined configurations, that are allowed
 		for (int counter1 = 0; counter1 < possibleConfigs.size(); counter1++)
 		{
-			cfg1 = (Config) possibleConfigs.elementAt(counter1);
+			cfg1 = (Config) possibleConfigs.get(counter1);
 			for (int i=0; i<numOneSign; i++)
 			{
 				newcfg = new Config(nd,cfg1,null);
 				newcfg.addLane(dls[i]);
 				if (!possibleConfigs.contains(newcfg))
 					if (newcfg.configAllowed()) 
-						possibleConfigs.addElement(newcfg);	
+						possibleConfigs.add(newcfg);	
 			}
 		}
 		
@@ -75,9 +73,9 @@ public class SignConfigCalculator
 		{
 			cfg1 = (Config) it1.next();
 			boolean subset = false;
-			for (Enumeration e=possibleConfigs.elements(); e.hasMoreElements(); )			
+			for (Iterator it2=possibleConfigs.iterator(); it2.hasNext(); )			
 			{
-				cfg2 = (Config) e.nextElement();
+				cfg2 = (Config) it2.next();
 				if (cfg1!=cfg2 && cfg1.subsetOf(cfg2))
 				{
 					subset = true;
@@ -93,7 +91,7 @@ public class SignConfigCalculator
 		
 		for (int i=0; i<possibleConfigs.size(); i++)
 		{
-			Config cfg = (Config) possibleConfigs.elementAt(i);
+			Config cfg = (Config) possibleConfigs.get(i);
 			result[i] = cfg.getResult();			
 			
 		}
@@ -103,13 +101,13 @@ public class SignConfigCalculator
 	
 	private class Config
 	{
-		Vector green; //Indicates which inbound-lanes are green in this config
+		ArrayList green; //Indicates which inbound-lanes are green in this config
 		Node nd;
 		
 		public Config(Node nd)
 		{
 			this.nd = nd;
-			green = new Vector();
+			green = new ArrayList();
 		}
 	
 		// this constructor joins two other configs
@@ -118,22 +116,22 @@ public class SignConfigCalculator
 			Green gr;
 			
 			this.nd = nd;
-			green = new Vector();
+			green = new ArrayList();
 			
 			
 			// add elements of cfg1
-			for (Enumeration e=cfg1.green.elements(); e.hasMoreElements(); )
+			for (Iterator it=cfg1.green.iterator(); it.hasNext(); )
 			{
-				gr = (Green) e.nextElement();
-				green.addElement(gr.getClone());
+				gr = (Green) it.next();
+				green.add(gr.getClone());
 			}
 			
 			// add elements of cfg2, if they were not already in cfg1
 			if (cfg2!=null)
-				for (Enumeration e=cfg2.green.elements(); e.hasMoreElements(); )
+				for (Iterator it=cfg2.green.iterator(); it.hasNext(); )
 			{
-				gr = (Green) e.nextElement();
-				if (!green.contains(gr)) green.addElement(gr.getClone());
+				gr = (Green) it.next();
+				if (!green.contains(gr)) green.add(gr.getClone());
 			}
 		}
 
@@ -144,10 +142,10 @@ public class SignConfigCalculator
 			// Check each pair of configuration wheter there are collisions or not
 			for (int i=0 ; i<green.size(); i++) 
 			{
-				elem1 = (Green) green.elementAt(i);
+				elem1 = (Green) green.get(i);
 				for (int f = i+1;f<green.size(); f++)
 				{
-					elem2 = (Green) green.elementAt(f);
+					elem2 = (Green) green.get(f);
 					if (!elem1.equals(elem2))
 						if (collisionDetect(elem1,elem2)) return false;
 				}
@@ -165,10 +163,10 @@ public class SignConfigCalculator
 				for (int j=0; j<gr2.outlanes.length;j++)
 				{
 					boolean collision=false;
-					Drivelane il1=gr1.inlane, il2=gr2.inlane, ol1=gr1.outlanes[i], ol2=gr2.outlanes[j];
+					DriveLaneTemp il1=gr1.inlane, il2=gr2.inlane, ol1=gr1.outlanes[i], ol2=gr2.outlanes[j];
 					if (il1==null || il2==null || ol1==null || ol2==null) throw new InfraException("il/ol 1/2 shouldn't be null");
 					if (il1.getRoad()==il2.getRoad()) continue;  // Buggy solution, crossing some invalid configs are valid with this.
-					Drivelane [] cw = ((Junction) nd).getAllLanesCW(il1); // TO DO: it shouldn't be always Junction
+					DriveLaneTemp [] cw = ((Junction) nd).getAllLanesCW(il1); // TO DO: it shouldn't be always Junction
 
 					int k=0;
 					while (k<cw.length)
@@ -194,12 +192,12 @@ public class SignConfigCalculator
 	
 
 		
-		public void addLane(Drivelane dl) throws InfraException
+		public void addLane(DriveLaneTemp dl) throws InfraException
 		{
-			Drivelane [] leadingfr=nd.getLanesLeadingFrom(dl,0);
+			DriveLaneTemp [] leadingfr=nd.getLanesLeadingFrom(dl,0);
 
 			Green gr = new Green(dl,leadingfr);
-			if (!green.contains(gr)) green.addElement(gr);
+			if (!green.contains(gr)) green.add(gr);
 			
 		}
 		
@@ -225,9 +223,9 @@ public class SignConfigCalculator
 		public boolean subsetOf(Config cfg)
 		{
 			Green gr1;
-			for (Enumeration e=green.elements() ; e.hasMoreElements() ; )
+			for (Iterator it=green.iterator() ; it.hasNext() ; )
 			{
-				gr1 = (Green) e.nextElement();
+				gr1 = (Green) it.next();
 				if (!cfg.green.contains(gr1)) return false;
 			}
 			return true;
@@ -238,7 +236,7 @@ public class SignConfigCalculator
 			Sign [] result= new Sign[green.size()];
 			for (int j=0; j<green.size(); j++)
 			{
-				Green gr = (Green) green.elementAt(j);
+				Green gr = (Green) green.get(j);
 				result[j] = gr.inlane.getSign();
 			}
 			
@@ -247,10 +245,10 @@ public class SignConfigCalculator
 		
 		private class Green
 		{
-			Drivelane inlane;
-			Drivelane [] outlanes;
+			DriveLaneTemp inlane;
+			DriveLaneTemp [] outlanes;
 			
-			public Green(Drivelane inl, Drivelane [] outl)
+			public Green(DriveLaneTemp inl, DriveLaneTemp [] outl)
 			{
 				this.inlane   = inl;
 				this.outlanes = outl;

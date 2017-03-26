@@ -45,7 +45,7 @@ public class TC1TLCFix extends TCRL implements Colearning, InstantiationAssistan
 	protected int num_nodes;
 
 	// TC1 vars
-	protected Vector count[][][], pTable[][][];
+	protected ArrayList count[][][], pTable[][][];
 	protected float [][][][] qTable; //sign, pos, des, color (red=0, green=1)
 	protected float [][][]   vTable;
 	protected static float gamma=0.90f;				//Discount Factor; used to decrease the influence of previous V values, that's why: 0 < gamma < 1
@@ -72,37 +72,37 @@ public class TC1TLCFix extends TCRL implements Colearning, InstantiationAssistan
 			int numSigns = infra.getAllInboundLanes().size();
 			qTable = new float [numSigns][][][];
 			vTable = new float [numSigns][][];
-			count  = new Vector[numSigns][][];
-			pTable = new Vector[numSigns][][];
+			count  = new ArrayList[numSigns][][];
+			pTable = new ArrayList[numSigns][][];
 
 			int num_specialnodes = infra.getNumSpecialNodes();
 			for (int i=0; i<num_nodes; i++)	{
 				Node n = nodes[i];
-				Drivelane [] dls = n.getInboundLanes();
+				DriveLaneTemp [] dls = n.getInboundLanes();
 				for (int j=0; j<dls.length; j++) {
-				    Drivelane d = dls[j];
+				    DriveLaneTemp d = dls[j];
 				    Sign s = d.getSign();
 				    int id = s.getId();
 				    int num_pos_on_dl = d.getCompleteLength();
 
 				    qTable[id] = new float [num_pos_on_dl][][];
 				    vTable[id] = new float [num_pos_on_dl][];
-				    count[id] = new Vector[num_pos_on_dl][];
-				    pTable[id] = new Vector[num_pos_on_dl][];
+				    count[id] = new ArrayList[num_pos_on_dl][];
+				    pTable[id] = new ArrayList[num_pos_on_dl][];
 
 				    for (int k=0; k<num_pos_on_dl; k++)	{
 					    qTable[id][k]=new float[num_specialnodes][];
 					    vTable[id][k]=new float[num_specialnodes];
-					    count[id][k] = new Vector[num_specialnodes];
-					    pTable[id][k] = new Vector[num_specialnodes];
+					    count[id][k] = new ArrayList[num_specialnodes];
+					    pTable[id][k] = new ArrayList[num_specialnodes];
 
 					    for (int l=0; l<num_specialnodes;l++)	{
 						    qTable[id][k][l]	= new float [2];
 						    qTable[id][k][l][0]= 0.0f;
 						    qTable[id][k][l][1]= 0.0f;
 						    vTable[id][k][l]	= 0.0f;
-						    count[id][k][l] 	= new Vector();
-						    pTable[id][k][l]	= new Vector();
+						    count[id][k][l] 	= new ArrayList();
+						    pTable[id][k][l]	= new ArrayList();
 					    }
 				    }
 			    }
@@ -126,7 +126,7 @@ public class TC1TLCFix extends TCRL implements Colearning, InstantiationAssistan
 		 */
 		int num_dec, waitingsize, pos, tlId, desId;
 		float gain, passenger_factor;
-		Sign tl; Drivelane lane; Roaduser ru; ListIterator queue; Node destination;
+		Sign tl; DriveLaneTemp lane; Roaduser ru; ListIterator queue; Node destination;
 
 		//Determine wheter it should be random or not
 		boolean randomrun = false;
@@ -158,7 +158,7 @@ public class TC1TLCFix extends TCRL implements Colearning, InstantiationAssistan
 
 				// Debug info generator
 				if(trackNode!=-1 && i==trackNode) {
-					Drivelane currentlane2 = tld[i][j].getTL().getLane();
+					DriveLaneTemp currentlane2 = tld[i][j].getTL().getLane();
 					boolean[] targets = currentlane2.getTargets();
 //					System.out.println("node: "+i+" light: "+j+" gain: "+gain+" "+targets[0]+" "+targets[1]+" "+targets[2]+" "+currentlane2.getNumRoadusersWaiting());
 				}
@@ -175,7 +175,7 @@ public class TC1TLCFix extends TCRL implements Colearning, InstantiationAssistan
 	    return tld;
 	}
 
-	public void updateRoaduserMove(Roaduser ru, Drivelane prevlane, Sign prevsign, int prevpos, Drivelane dlanenow, Sign signnow, int posnow, PosMov[] posMovs, Drivelane desired, int penalty) {
+	public void updateRoaduserMove(Roaduser ru, DriveLaneTemp prevlane, Sign prevsign, int prevpos, DriveLaneTemp dlanenow, Sign signnow, int posnow, PosMov[] posMovs, DriveLaneTemp desired, int penalty) {
 		if(dlanenow == null || signnow == null) // Roaduser has just left the building!
 			return;
 		if(prevsign.getType()==Sign.TRAFFICLIGHT && (signnow.getType()==Sign.TRAFFICLIGHT || signnow.getType()==Sign.NO_SIGN)) {
@@ -210,7 +210,7 @@ public class TC1TLCFix extends TCRL implements Colearning, InstantiationAssistan
 		}
 	}
 
-	protected void recalcP(int tlId, int pos, int desId, boolean light, int tlNewId, int posNew, Roaduser ru, Drivelane dl)	{
+	protected void recalcP(int tlId, int pos, int desId, boolean light, int tlNewId, int posNew, Roaduser ru, DriveLaneTemp dl)	{
 	    //Only update the chances when waiting (either on pos=0 or behind waiting RoadUser)
 	    if(true) {
 	        if(tlId==-1) return;
@@ -218,10 +218,10 @@ public class TC1TLCFix extends TCRL implements Colearning, InstantiationAssistan
 		    CountEntry thisSituation = new CountEntry(tlId,pos,desId,light,tlNewId,posNew);
 		    int c_index = count[tlId][pos][desId].indexOf(thisSituation);
 		    if(c_index >= 0) {	    // Entry found
-			    thisSituation = (CountEntry) count[tlId][pos][desId].elementAt(c_index);
+			    thisSituation = (CountEntry) count[tlId][pos][desId].get(c_index);
 			    thisSituation.incrementValue();
 		    } else 			        // Entry not found
-			    count[tlId][pos][desId].addElement(thisSituation);
+			    count[tlId][pos][desId].add(thisSituation);
 
 		    // We now know how often this exact situation has occurred
 		    // - Calculate the chance
@@ -231,7 +231,7 @@ public class TC1TLCFix extends TCRL implements Colearning, InstantiationAssistan
 		    CountEntry curC;
 		    int num_c = count[tlId][pos][desId].size();
 		    for(int i=0;i<num_c;i++) {
-			    curC = (CountEntry) count[tlId][pos][desId].elementAt(i);
+			    curC = (CountEntry) count[tlId][pos][desId].get(i);
 			    sameStartSituation	+= curC.sameStartSituation(thisSituation);
 		    }
 
@@ -244,9 +244,9 @@ public class TC1TLCFix extends TCRL implements Colearning, InstantiationAssistan
 		    PEntry thisChance = new PEntry(tlId,pos,desId,light,tlNewId,posNew);
 		    int p_index = pTable[tlId][pos][desId].indexOf(thisChance);
 		    if(p_index >= 0)
-			    thisChance = (PEntry) pTable[tlId][pos][desId].elementAt(p_index);
+			    thisChance = (PEntry) pTable[tlId][pos][desId].get(p_index);
 		    else {
-			    pTable[tlId][pos][desId].addElement(thisChance);
+			    pTable[tlId][pos][desId].add(thisChance);
 			    p_index = pTable[tlId][pos][desId].indexOf(thisChance);
 			}
 		    thisChance.setSameSituation(sameSituation);
@@ -256,16 +256,16 @@ public class TC1TLCFix extends TCRL implements Colearning, InstantiationAssistan
 		    int num_p = pTable[tlId][pos][desId].size();
 		    PEntry curP;
 		    for(int i=0;i<num_p;i++) {
-			    curP = (PEntry) pTable[tlId][pos][desId].elementAt(i);
+			    curP = (PEntry) pTable[tlId][pos][desId].get(i);
 			    if(curP.sameStartSituation(thisSituation) && i!=p_index)
 				    curP.addSameStartSituation();
 		    }
 		}
 	}
 
-	protected void recalcQ(int tlId, int pos, int desId, boolean light, int tlNewId, int posNew, Roaduser ru, Drivelane dl, int penalty)	{
+	protected void recalcQ(int tlId, int pos, int desId, boolean light, int tlNewId, int posNew, Roaduser ru, DriveLaneTemp dl, int penalty)	{
 	    float R=0, V=0, Q=penalty, P=0;
-	    Vector newpositions;
+	    ArrayList newpositions;
 	    PEntry situation;
 	    int num;
 	    // Check if we are waiting .....
@@ -276,7 +276,7 @@ public class TC1TLCFix extends TCRL implements Colearning, InstantiationAssistan
 		    newpositions = pTable[tlId][pos][desId];
 		    num = newpositions.size();
             for(int i=0; i<num; i++) {
-                situation = (PEntry) newpositions.elementAt(i);
+                situation = (PEntry) newpositions.get(i);
                 if(situation.getLight()==light) {
                     V = vTable[situation.getTlNew()][situation.getPosNew()][situation.getDes()];
                     R = rewardFunction(tlId, pos, situation.getTlNew(), situation.getPosNew(), ru.getSpeed());
@@ -290,7 +290,7 @@ public class TC1TLCFix extends TCRL implements Colearning, InstantiationAssistan
 		    newpositions = pTable[tlNewId][posNew][desId];
 		    num = newpositions.size();
             for(int i=0; i<num; i++) {
-                situation = (PEntry) newpositions.elementAt(i);
+                situation = (PEntry) newpositions.get(i);
                 V = vTable[situation.getTlNew()][situation.getPosNew()][situation.getDes()];
                 R = rewardFunction(tlNewId, posNew, situation.getTlNew(), situation.getPosNew(), ru.getSpeed());
                 Q += situation.getChance() *(R + (gamma * V));
@@ -299,9 +299,9 @@ public class TC1TLCFix extends TCRL implements Colearning, InstantiationAssistan
 		}
 	}
 
-	protected void recalcQ2(int tlId, int pos, int desId, boolean light, int tlNewId, int posNew, Roaduser ru, Drivelane dl, PosMov[] posMovs)	{
+	protected void recalcQ2(int tlId, int pos, int desId, boolean light, int tlNewId, int posNew, Roaduser ru, DriveLaneTemp dl, PosMov[] posMovs)	{
 	    float R=0, V=0, Q=0, P=0;
-	    Vector newpositions;
+	    ArrayList newpositions;
 	    PEntry situation;
 	    int num;
 	    // Check if we are waiting .....
@@ -311,7 +311,7 @@ public class TC1TLCFix extends TCRL implements Colearning, InstantiationAssistan
 		newpositions = pTable[tlId][pos][desId];
 		num = newpositions.size();
         for(int i=0; i<num; i++) {
-            situation = (PEntry) newpositions.elementAt(i);
+            situation = (PEntry) newpositions.get(i);
             if(situation.getLight()==light) {
                 V = vTable[situation.getTlNew()][situation.getPosNew()][situation.getDes()];
                 R = rewardFunction(tlId, pos, situation.getTlNew(), situation.getPosNew(), ru.getSpeed());
@@ -325,7 +325,7 @@ public class TC1TLCFix extends TCRL implements Colearning, InstantiationAssistan
 		newpositions = pTable[tlNewId][posNew][desId];
 		num = newpositions.size();
         for(int i=0; i<num; i++) {
-            situation = (PEntry) newpositions.elementAt(i);
+            situation = (PEntry) newpositions.get(i);
             V = vTable[situation.getTlNew()][situation.getPosNew()][situation.getDes()];
             R = rewardFunction(tlNewId, posNew, situation.getTlNew(), situation.getPosNew(), ru.getSpeed());
             Q += situation.getChance() *(R + (gamma * V));
@@ -353,7 +353,7 @@ public class TC1TLCFix extends TCRL implements Colearning, InstantiationAssistan
 			int p_index = pTable[tlId][pos][desId].indexOf(P);
 
 			if(p_index>=0) {
-				P = (PEntry) pTable[tlId][pos][desId].elementAt(p_index);
+				P = (PEntry) pTable[tlId][pos][desId].get(p_index);
 				R = rewardFunction(tlId, pos, curPMTlId, curPMPos,0);
 				V = vTable[curPMTlId][curPMPos][desId];
 				Q += P.getChance() *(R + (gamma * V));
@@ -388,7 +388,7 @@ public class TC1TLCFix extends TCRL implements Colearning, InstantiationAssistan
 		double countR=0, countG=0;
 		int psize = pTable[tlId][pos][desId].size();
 		for(int i=0; i<psize; i++) {
-			PEntry cur = (PEntry) pTable[tlId][pos][desId].elementAt(i);
+			PEntry cur = (PEntry) pTable[tlId][pos][desId].get(i);
 			if(cur.light==green)
 				countG += cur.getSameSituation();
 			else
@@ -407,7 +407,7 @@ public class TC1TLCFix extends TCRL implements Colearning, InstantiationAssistan
 
 		int psize = pTable[tlId][pos][desId].size()-1;
 		for(; psize>=0; psize--) {
-			PEntry cur = (PEntry) pTable[tlId][pos][desId].elementAt(psize);
+			PEntry cur = (PEntry) pTable[tlId][pos][desId].get(psize);
 			if(cur.light==green)
 				countG += cur.getSameSituation();
 			else
@@ -665,8 +665,8 @@ public class TC1TLCFix extends TCRL implements Colearning, InstantiationAssistan
 		random_chance=myElement.getAttribute("random-chance").getFloatValue();
 		qTable=(float[][][][])XMLArray.loadArray(this,loader);
 		vTable=(float[][][])XMLArray.loadArray(this,loader);
-		count=(Vector[][][])XMLArray.loadArray(this,loader,this);
-		pTable=(Vector[][][])XMLArray.loadArray(this,loader,this);
+		count=(ArrayList[][][])XMLArray.loadArray(this,loader,this);
+		pTable=(ArrayList[][][])XMLArray.loadArray(this,loader,this);
 	}
 
 	public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException

@@ -18,7 +18,7 @@ package com.github.cc007.trafficlights.utils;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  *
@@ -36,7 +36,7 @@ public class Hyperlink extends Component
 	protected boolean underline;
 	protected int alignment;
 
-	protected Vector listeners;
+	protected ArrayList listeners;
 	protected Rectangle textBounds;
 
 	/**
@@ -67,7 +67,7 @@ public class Hyperlink extends Component
 		super();
 		setForeground(Color.blue);
 		textBounds = null;
-		listeners = new Vector(1);
+		listeners = new ArrayList(1);
 
 		Listener listener = new Listener();
 		addFocusListener(listener);

@@ -18,7 +18,7 @@ package com.github.cc007.trafficlights.utils;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * This class is used to construct menus containing only CheckboxMenuItems
@@ -29,8 +29,8 @@ import java.util.Vector;
 
 public class CheckMenu extends Menu implements ItemSelectable
 {
-	Vector listeners;
-	Vector selectedItems;
+	ArrayList listeners;
+	ArrayList selectedItems;
 	boolean allowMultipleSelections;
 	int selectedIndex;
 	
@@ -54,8 +54,8 @@ public class CheckMenu extends Menu implements ItemSelectable
 	public CheckMenu(String name, String[] items, boolean allowmul) {
 		super(name);
 		
-		listeners = new Vector(1);
-		selectedItems = new Vector(1);
+		listeners = new ArrayList(1);
+		selectedItems = new ArrayList(1);
 		allowMultipleSelections = allowmul;
 		
 		Listener lis = new Listener(this);

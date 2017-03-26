@@ -66,9 +66,9 @@ public class Validation
         }
     }
 
-    public Vector validate() throws InfraException
+    public ArrayList validate() throws InfraException
     {
-        Vector errors = new Vector();
+        ArrayList errors = new ArrayList();
 
         SpecialNode[] specialNodes = infra.getSpecialNodes();
         Node[] nodes = infra.getAllNodes();
@@ -92,7 +92,7 @@ public class Validation
         }
 
         // Add ID's etc.
-        Vector addErrors = addIDs();
+        ArrayList addErrors = addIDs();
         errors.addAll(addErrors);
 
         // ** Describe the infrastructure for descriptive-purposes:
@@ -154,7 +154,7 @@ public class Validation
          for(int j=0;j<num_nroads;j++)
          {
           Road road = nroads[j];
-          Drivelane[] dlanes = road.getAllLanes();
+          DriveLaneTemp[] dlanes = road.getAllLanes();
           int num_lanes = dlanes.length;
 
           for(int k=0;k<num_lanes;k++)
@@ -168,7 +168,7 @@ public class Validation
              road_index=r;
 
            boolean[] targets = dlanes[k].getTargets();
-           System.out.println("Drivelane towards Node:"+danode.getId()+" at pos "+road_index+" with targets ("+targets[0]+","+targets[1]+","+targets[2]+")");
+           System.out.println("DriveLaneTemp towards Node:"+danode.getId()+" at pos "+road_index+" with targets ("+targets[0]+","+targets[1]+","+targets[2]+")");
           }
          }
            }*/
@@ -177,25 +177,25 @@ public class Validation
         // Check the infrastructure:
         //  numspecialNodesodes >=2
         //  nodes should have at least 1 road connected to it
-        Vector chInfErrors = checkInfra();
+        ArrayList chInfErrors = checkInfra();
         if (chInfErrors.size() > 0)
         {
-            errors.addElement("ERROR(S) found in infrastructure-checking:");
+            errors.add("ERROR(S) found in infrastructure-checking:");
             errors.addAll(chInfErrors);
         }
 
-        Vector spFreqErrors = checkSpawnFreqs();
+        ArrayList spFreqErrors = checkSpawnFreqs();
 
         if (spFreqErrors.size() > 0)
         {
-            errors.addElement("ERROR(S) found in spawn frequency-checking:");
+            errors.add("ERROR(S) found in spawn frequency-checking:");
             errors.addAll(spFreqErrors);
         }
 
-        Vector turnJustErrors = turnJustification();
+        ArrayList turnJustErrors = turnJustification();
         if (turnJustErrors.size() > 0)
         {
-            errors.addElement("ERROR(S) found in turn Justification:");
+            errors.add("ERROR(S) found in turn Justification:");
             errors.addAll(turnJustErrors);
         }
 
@@ -206,18 +206,18 @@ public class Validation
         addSPData();
 
         // check connectedness of the graph, this should be done after the shortestpathdata is added.
-        Vector checkConnectedErrors = checkConnected();
+        ArrayList checkConnectedErrors = checkConnected();
         if (checkConnectedErrors.size() > 0)
         {
-            errors.addElement("ERROR(S) found in Connected-checking:");
+            errors.add("ERROR(S) found in Connected-checking:");
             errors.addAll(checkConnectedErrors);
         }
 
         // Now combining with addFreqs
-        Vector connectedAndFreqErrors = addFrequencies();
+        ArrayList connectedAndFreqErrors = addFrequencies();
         if (connectedAndFreqErrors.size() > 0)
         {
-            errors.addElement(
+            errors.add(
                     "ERROR(S) found in Connected and or Frequency checking/setting:");
             errors.addAll(connectedAndFreqErrors);
         }
@@ -225,9 +225,9 @@ public class Validation
     }
 
     /** Add default spawning and destination frequencies to all EdgeNodes. */
-    private Vector addFrequencies() throws InfraException
+    private ArrayList addFrequencies() throws InfraException
     {
-        Vector errs = new Vector();
+        ArrayList errs = new ArrayList();
         SpecialNode[] specialNodes = infra.getSpecialNodes();
         int numSpecialNodes = infra.getNumSpecialNodes();
         float edgeChance = (float) 1.0 / (infra.getNumSpecialNodes() - 1);
@@ -235,11 +235,11 @@ public class Validation
         int ruTypes[] = RoaduserFactory.getConcreteTypes();
         int numRuTypes = ruTypes.length;
 
-        Enumeration edgeNodes = Arrayutils.getEnumeration(infra.getEdgeNodes_());
-        while (edgeNodes.hasMoreElements())
+        Iterator edgeNodes = Arrays.asList(infra.getEdgeNodes_()).iterator();
+        while (edgeNodes.hasNext())
         {
-            EdgeNode edge = (EdgeNode) (edgeNodes.nextElement());
-            Drivelane[] lanes = edge.getOutboundLanes();
+            EdgeNode edge = (EdgeNode) (edgeNodes.next());
+            DriveLaneTemp[] lanes = edge.getOutboundLanes();
             int lanetypes = 0;
             for (int j = 0; j < lanes.length; j++)
             {
@@ -282,9 +282,9 @@ public class Validation
         return errs;
     }
 
-    private Vector addIDs() throws InfraException
+    private ArrayList addIDs() throws InfraException
     {
-        Vector errors = new Vector();
+        ArrayList errors = new ArrayList();
 
         int nodeIDCount = 0;
         int roadID = 0;
@@ -318,12 +318,12 @@ public class Validation
         for (int i = 0; i < num_nodes; i++)
         {
             Node node = allNodes[i];
-            Drivelane[] inboundlanes = node.getInboundLanes();
+            DriveLaneTemp[] inboundlanes = node.getInboundLanes();
             int num_ibl = inboundlanes.length;
 
             for (int j = 0; j < num_ibl; j++)
             {
-                Drivelane lane = inboundlanes[j];
+                DriveLaneTemp lane = inboundlanes[j];
                 lane.setId(laneID++);
 
                 //als het goed is, is een sign nu nooit meer null
@@ -340,9 +340,9 @@ public class Validation
 
 
     // Check for each type wheter the turns are correct or not
-    private Vector turnJustification() throws InfraException
+    private ArrayList turnJustification() throws InfraException
     {
-        Vector errors = new Vector();
+        ArrayList errors = new ArrayList();
         Node[] nodes = infra.getAllNodes();
         int num_nodes = nodes.length;
 
@@ -356,7 +356,7 @@ public class Validation
             for (int j = 0; j < num_nroads; j++)
             {
                 Road road = nroads[j];
-                Drivelane[] dlanes = road.getAllLanes();
+                DriveLaneTemp[] dlanes = road.getAllLanes();
                 int num_lanes = dlanes.length;
 
                 for (int k = 0; k < num_lanes; k++)
@@ -393,7 +393,7 @@ public class Validation
                                      danode.getAllRoads()[(road_index + 3) % 4] +
                                      "" : "-";
 
-                        //System.out.println("Drivelane towards Node:"+danode.getId()+" at pos "+road_index+" orig targets ("+dtargets[0]+","+dtargets[1]+","+dtargets[2]+") ("+tg1+","+tg2+","+tg3+")");
+                        //System.out.println("DriveLaneTemp towards Node:"+danode.getId()+" at pos "+road_index+" orig targets ("+dtargets[0]+","+dtargets[1]+","+dtargets[2]+") ("+tg1+","+tg2+","+tg3+")");
 
                         if (dtargets[0])
                         {
@@ -429,7 +429,7 @@ public class Validation
                             }
                         }
 
-                        //System.out.println("Drivelane towards Node:"+danode.getId()+" at pos "+road_index+"  new targets ("+dtargets[0]+","+dtargets[1]+","+dtargets[2]+") "+num_turns);
+                        //System.out.println("DriveLaneTemp towards Node:"+danode.getId()+" at pos "+road_index+"  new targets ("+dtargets[0]+","+dtargets[1]+","+dtargets[2]+") "+num_turns);
 
                         if (num_turns == 0)
                         {
@@ -456,11 +456,11 @@ public class Validation
                     }
                     else
                     {
-                        //System.out.println("Drivelane towards EdgeNode:"+danode.getId()+" at pos "+road_index+" orig targets ("+dtargets[0]+","+dtargets[1]+","+dtargets[2]+")");
+                        //System.out.println("DriveLaneTemp towards EdgeNode:"+danode.getId()+" at pos "+road_index+" orig targets ("+dtargets[0]+","+dtargets[1]+","+dtargets[2]+")");
                         dtargets[0] = false;
                         dtargets[1] = true;
                         dtargets[2] = false;
-                        //System.out.println("Drivelane towards EdgeNode:"+danode.getId()+" at pos "+road_index+"  new targets ("+dtargets[0]+","+dtargets[1]+","+dtargets[2]+")");
+                        //System.out.println("DriveLaneTemp towards EdgeNode:"+danode.getId()+" at pos "+road_index+"  new targets ("+dtargets[0]+","+dtargets[1]+","+dtargets[2]+")");
                     }
                     dlanes[k].setTargets(dtargets);
                 }
@@ -472,7 +472,7 @@ public class Validation
     private int getRUTypes(SpecialNode mn) throws InfraException
     {
         int type = 0;
-        Drivelane[] dls = mn.getOutboundLanes();
+        DriveLaneTemp[] dls = mn.getOutboundLanes();
         for (int i = 0; i < dls.length; i++)
         {
             type |= dls[i].getType();
@@ -481,9 +481,9 @@ public class Validation
     }
 
 
-    private Vector checkConnectedType(int type) throws InfraException
+    private ArrayList checkConnectedType(int type) throws InfraException
     {
-        Vector errors = new Vector();
+        ArrayList errors = new ArrayList();
 
         SpecialNode en1, en2;
         SpecialNode[] specialNodes = infra.getSpecialNodes();
@@ -498,10 +498,10 @@ public class Validation
                     en2 = specialNodes[j];
                     if ((getRUTypes(en2) & type) != 0)
                     {
-                        Drivelane[] dl = en1.getShortestPaths(en2.getId(), type);
+                        DriveLaneTemp[] dl = en1.getShortestPaths(en2.getId(), type);
                         if (dl.length == 0)
                         {
-                            errors.addElement("ERROR: specialNode " + en1.getId() +
+                            errors.add("ERROR: specialNode " + en1.getId() +
                                     " is not connected to specialNode " +
                                               en2.getId() + " in type " +
                                               RoaduserFactory.getDescByType(
@@ -515,9 +515,9 @@ public class Validation
         return errors;
     }
 
-    private Vector checkConnected() throws InfraException
+    private ArrayList checkConnected() throws InfraException
     {
-        Vector errors = new Vector();
+        ArrayList errors = new ArrayList();
 
         // Check for every type wheter it is connected or not.
         int type = 1;
@@ -533,12 +533,12 @@ public class Validation
         return errors;
     }
 
-    private Vector checkInfra() throws InfraException
+    private ArrayList checkInfra() throws InfraException
     {
-        Vector errors = new Vector();
+        ArrayList errors = new ArrayList();
         if (infra.getNumSpecialNodes() < 2)
         {
-            errors.addElement(
+            errors.add(
                     "ERROR: infrastructure should contain at least 2 special nodes.");
         }
 
@@ -548,7 +548,7 @@ public class Validation
             Node nd = allNodes[i];
             if (nd.getNumAllLanes() == 0)
             {
-                errors.addElement("ERROR: Node " + nd.getId() +
+                errors.add("ERROR: Node " + nd.getId() +
                                   " doesn't have any road connected to it.");
             }
         }
@@ -595,9 +595,9 @@ public class Validation
                                            {new SpawnFrequency(0, 0.0f),
                                            new SpawnFrequency(1, 0.0f)};
 
-    private Vector checkSpawnFreqs() throws InfraException
+    private ArrayList checkSpawnFreqs() throws InfraException
     {
-        Vector errors = new Vector();
+        ArrayList errors = new ArrayList();
 
         EdgeNode[] edgnds = infra.getEdgeNodes_();
         for (int i = 0; i < edgnds.length; i++)
@@ -608,12 +608,12 @@ public class Validation
             {
                 if (spfreq[j].freq > 1)
                 {
-                    errors.addElement("ERROR: Edge-Node " + en.getId() +
+                    errors.add("ERROR: Edge-Node " + en.getId() +
                                       " Spawn-frequency >1 ");
                 }
                 if (spfreq[j].freq < 0)
                 {
-                    errors.addElement("ERROR: Edge-Node " + en.getId() +
+                    errors.add("ERROR: Edge-Node " + en.getId() +
                                       " Spawn-frequency <0 ");
                 }
             }

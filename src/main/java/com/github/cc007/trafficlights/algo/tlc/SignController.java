@@ -119,7 +119,7 @@ public class SignController implements XMLSerializable
 		//Check for traffic from the right
 		Road[] roads = node.getAllRoads(); //In clockwise order I hope/think ;)
 		Road right = roads[3] ;//Start with last road as being right
-		Drivelane[] lanes ;
+		DriveLaneTemp[] lanes ;
 		boolean alpha = false ;
 
 		for ( int i=0 ; i<roads.length ; i++ )//length is always 4
