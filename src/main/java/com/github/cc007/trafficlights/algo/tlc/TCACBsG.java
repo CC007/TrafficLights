@@ -13,7 +13,6 @@
  * See the GNU General Public License for more details.
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
-
 package com.github.cc007.trafficlights.algo.tlc;
 
 import com.github.cc007.trafficlights.*;
@@ -27,20 +26,24 @@ import com.github.cc007.trafficlights.xml.*;
 import java.io.IOException;
 import java.util.*;
 import java.awt.Color;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
- * Extra states have been added to the implementation of TC1TCLOPT.
- * If isAccident -> state will be [][][][1][][] else [][][][1][][]
- * If isConjestion == true -> state will be [][][][][1][] else [][][][][0][];
- * We set the conjestion threshold to 0.8, but this can probable be an more educated number, or even an dynamic number??
- * Colearning hasn't been implementend correctly as well, in fact it hasn't changed since the TC1TLCOpt version.
+ * Extra states have been added to the implementation of TC1TCLOPT. If
+ * isAccident -> state will be [][][][1][][] else [][][][1][][] If isConjestion
+ * == true -> state will be [][][][][1][] else [][][][][0][]; We set the
+ * conjestion threshold to 0.8, but this can probable be an more educated
+ * number, or even an dynamic number?? Colearning hasn't been implementend
+ * correctly as well, in fact it hasn't changed since the TC1TLCOpt version.
+ *
  * @author Project group DOAS uva 2006
  * @version 1.0
  */
 public class TCACBsG extends TCRL implements Colearning,
-        InstantiationAssistant, HECinterface
-{
+        InstantiationAssistant, HECinterface {
+
     // TLC vars
     protected Infrastructure infrastructure;
     protected TrafficLight[][] tls;
@@ -63,20 +66,17 @@ public class TCACBsG extends TCRL implements Colearning,
 
     /**
      * The constructor for TL controllers
+     *
      * @param The model being used.
      */
-
-    public TCACBsG(Infrastructure infra) throws InfraException
-    {
+    public TCACBsG(Infrastructure infra) throws InfraException {
         super(infra);
     }
 
     @Override
-    public void setInfrastructure(Infrastructure infra)
-    {
+    public void setInfrastructure(Infrastructure infra) {
         super.setInfrastructure(infra);
-        try
-        {
+        try {
             Node[] nodes = infra.getAllNodes();
             allnodes = nodes;
             num_nodes = nodes.length;
@@ -84,13 +84,11 @@ public class TCACBsG extends TCRL implements Colearning,
             int numSigns = infra.getAllInboundLanes().size();
             allsigns = new ArrayList(numSigns);
 
-            for (int i = 0; i < nodes.length; i++)
-            {
+            for (int i = 0; i < nodes.length; i++) {
                 DriveLane[] allInboundLanes = nodes[i].getInboundLanes();
-                for (int j = 0; j < allInboundLanes.length; j++)
-                {
+                for (int j = 0; j < allInboundLanes.length; j++) {
                     allsigns.add(allInboundLanes[j].getSign().getId(),
-                                 (Object) allInboundLanes[j].getSign());
+                            (Object) allInboundLanes[j].getSign());
                 }
             }
 
@@ -101,12 +99,10 @@ public class TCACBsG extends TCRL implements Colearning,
 
             int num_specialnodes = infra.getNumSpecialNodes();
 
-            for (int i = 0; i < num_nodes; i++)
-            {
+            for (int i = 0; i < num_nodes; i++) {
                 Node n = nodes[i];
                 DriveLane[] dls = n.getInboundLanes();
-                for (int j = 0; j < dls.length; j++)
-                {
+                for (int j = 0; j < dls.length; j++) {
                     DriveLane d = dls[j];
                     Sign s = d.getSign();
                     int id = s.getId();
@@ -117,21 +113,19 @@ public class TCACBsG extends TCRL implements Colearning,
                     count[id] = new ArrayList[num_pos_on_dl][][][];
                     pTable[id] = new ArrayList[num_pos_on_dl][][][];
 
-                    for (int k = 0; k < num_pos_on_dl; k++)
-                    {
+                    for (int k = 0; k < num_pos_on_dl; k++) {
                         qTable[id][k] = new float[num_specialnodes][][][];
                         vTable[id][k] = new float[num_specialnodes][][];
                         count[id][k] = new ArrayList[num_specialnodes][][];
                         pTable[id][k] = new ArrayList[num_specialnodes][][];
 
-                        for (int m = 0; m < num_specialnodes; m++)
-                        {
+                        for (int m = 0; m < num_specialnodes; m++) {
                             qTable[id][k][m] = new float[2][][];
                             vTable[id][k][m] = new float[2][];
                             count[id][k][m] = new ArrayList[2][];
                             pTable[id][k][m] = new ArrayList[2][];
 
-                            for(int acc = 0; acc < 2; acc++){
+                            for (int acc = 0; acc < 2; acc++) {
                                 int isCongested = 2;
                                 qTable[id][k][m][acc] = new float[isCongested][];
                                 vTable[id][k][m][acc] = new float[isCongested];
@@ -139,8 +133,7 @@ public class TCACBsG extends TCRL implements Colearning,
                                 pTable[id][k][m][acc] = new ArrayList[isCongested];
 
                                 for (int congest = 0; congest < isCongested;
-                                                   congest++)
-                                {
+                                        congest++) {
                                     qTable[id][k][m][acc][congest] = new float[2];
                                     qTable[id][k][m][acc][congest][0] = 0.0f;
                                     qTable[id][k][m][acc][congest][1] = 0.0f;
@@ -153,21 +146,23 @@ public class TCACBsG extends TCRL implements Colearning,
                     }
                 }
             }
+        } catch (Exception e) {
+            Logger.getLogger(TCACBsG.class.getName()).log(Level.SEVERE, null, e);
         }
-        catch (Exception e)
-        {}
         random_number = new Random(GLDSim.seriesSeed[GLDSim.seriesSeedIndex]);
     }
 
     /**
-     * Calculates how every traffic light should be switched
-     * Per node, per sign the waiting roadusers are passed and per each roaduser the gain is calculated.
-     * @param The TLDecision is a tuple consisting of a traffic light and a reward (Q) value, for it to be green
+     * Calculates how every traffic light should be switched Per node, per sign
+     * the waiting roadusers are passed and per each roaduser the gain is
+     * calculated.
+     *
+     * @param The TLDecision is a tuple consisting of a traffic light and a
+     * reward (Q) value, for it to be green
      * @see gld.algo.tlc.TLDecision
      */
     @Override
-    public TLDecision[][] decideTLs()
-    {
+    public TLDecision[][] decideTLs() {
         /* gain = 0
          * For each TL
          *  For each Roaduser waiting
@@ -183,18 +178,15 @@ public class TCACBsG extends TCRL implements Colearning,
 
         //Determine wheter it should be random or not
         boolean randomrun = false;
-        if (random_number.nextFloat() < random_chance)
-        {
+        if (random_number.nextFloat() < random_chance) {
             randomrun = true;
         }
 
         // For all Nodes
-        for (int i = 0; i < num_nodes; i++)
-        {
+        for (int i = 0; i < num_nodes; i++) {
             num_dec = tld[i].length;
             // For all Trafficlights
-            for (int j = 0; j < num_dec; j++)
-            {
+            for (int j = 0; j < num_dec; j++) {
                 tl = tld[i][j].getTL();
                 tlId = tl.getId();
                 lane = tld[i][j].getTL().getLane();
@@ -204,52 +196,46 @@ public class TCACBsG extends TCRL implements Colearning,
                 gain = 0;
 
                 // For each waiting Roaduser
-                for (int k = 0; k < waitingsize; k++)
-                {
+                for (int k = 0; k < waitingsize; k++) {
                     ru = (Roaduser) queue.next();
                     pos = ru.getPosition();
                     desId = ru.getDestNode().getId();
                     passenger_factor = ru.getNumPassengers();
-                    
+
                     int isAccident = isAccident(ru, lane);
 
                     //HEC Addon: Congestion weight factor used in calculation of the gain.
                     float congestion = (float) 1.0;
-                    if (hecAddon == true)
-                    {
+                    if (hecAddon == true) {
                         congestion = HEC.getCongestion(ru, lane, tl.getNode());
                     }
 
                     int isCongestedInt = isCongested(ru, lane);
 
                     // Add the pf*(Q([tl,pos,des,isAccident,isCongested],red)-Q([tl,pos,des,isAccident,isCongested],green))
-                    gain += passenger_factor * congestion *
-                            (qTable[tlId][pos][desId][isAccident][isCongestedInt][red_index] -
-                             qTable[tlId][pos][desId][isAccident][isCongestedInt][
-                             green_index]); //red - green
+                    gain += passenger_factor * congestion
+                            * (qTable[tlId][pos][desId][isAccident][isCongestedInt][red_index]
+                            - qTable[tlId][pos][desId][isAccident][isCongestedInt][green_index]); //red - green
                 }
 
                 // Debug info generator
-                if (trackNode != -1 && i == trackNode)
-                {
+                if (trackNode != -1 && i == trackNode) {
                     DriveLane currentlane2 = tld[i][j].getTL().getLane();
                     boolean[] targets = currentlane2.getTargets();
-                    System.out.println("node: " + i + " light: " + j +
-                                       " gain: " + gain +
-                                       " " + targets[0] + " " + targets[1] +
-                                       " " +
-                                       targets[2] + " " +
-                                       currentlane2.getNumRoadusersWaiting());
+                    System.out.println("node: " + i + " light: " + j
+                            + " gain: " + gain
+                            + " " + targets[0] + " " + targets[1]
+                            + " "
+                            + targets[2] + " "
+                            + currentlane2.getNumRoadusersWaiting());
                 }
 
                 // If this is a random run, set all gains randomly
-                if (randomrun)
-                {
+                if (randomrun) {
                     gain = random_number.nextFloat();
                 }
 
-                if (gain > 1000.0 || gain < -1000.0f)
-                {
+                if (gain > 1000.0 || gain < -1000.0f) {
                     System.out.println("Gain might be too high? : " + gain);
                 }
                 tld[i][j].setGain(gain);
@@ -260,37 +246,30 @@ public class TCACBsG extends TCRL implements Colearning,
 
     @Override
     public void updateRoaduserMove(Roaduser ru, DriveLane prevlane,
-                                   Sign prevsign,
-                                   int prevpos, DriveLane dlanenow,
-                                   Sign signnow,
-                                   int posnow, PosMov[] posMovs,
-                                   DriveLane desired, int penalty)
-    {
+            Sign prevsign,
+            int prevpos, DriveLane dlanenow,
+            Sign signnow,
+            int posnow, PosMov[] posMovs,
+            DriveLane desired, int penalty) {
         // Roaduser has just left the building!
-        if (dlanenow == null || signnow == null)
-        {
+        if (dlanenow == null || signnow == null) {
             return;
         }
-        
+
         int isAccidentInt = isAccident(ru, prevlane);
 
         //Is next sign congested?
         int isCongestedInt = isCongested(ru, prevlane); // total screw
-        if (isCongestedInt == 1)
-        {
+        if (isCongestedInt == 1) {
             ru.setHeadColor(new Color(255, 0, 0));
-        }
-        else
-        {
+        } else {
             ru.setHeadColor(new Color(0, 255, 0));
         }
 
         //This ordening is important for the execution of the algorithm!
-
-        if (prevsign.getType() == Sign.TRAFFICLIGHT &&
-            (signnow.getType() == Sign.TRAFFICLIGHT ||
-             signnow.getType() == Sign.NO_SIGN))
-        {
+        if (prevsign.getType() == Sign.TRAFFICLIGHT
+                && (signnow.getType() == Sign.TRAFFICLIGHT
+                || signnow.getType() == Sign.NO_SIGN)) {
             int tlId = prevsign.getId();
             int desId = ru.getDestNode().getId();
             recalcP(tlId, prevpos, desId, prevsign.mayDrive(), signnow.getId(),
@@ -302,23 +281,19 @@ public class TCACBsG extends TCRL implements Colearning,
     }
 
     protected void recalcP(int tlId, int pos, int desId, boolean light,
-                           int tlNewId, int posNew, int isAccident, int isCongested)
-    {
+            int tlNewId, int posNew, int isAccident, int isCongested) {
         // - First create a CountEntry, find if it exists, and if not add it.
         CountEntry thisSituation = new CountEntry(tlId, pos, desId, light,
-                                                  tlNewId,
-                                                  posNew, isAccident, isCongested);
+                tlNewId,
+                posNew, isAccident, isCongested);
         int c_index = count[tlId][pos][desId][isAccident][isCongested].indexOf(
                 thisSituation);
-        if (c_index >= 0)
-        {
+        if (c_index >= 0) {
             // Entry found
             thisSituation = (CountEntry) count[tlId][pos][desId][isAccident][isCongested].
-                            get(c_index);
+                    get(c_index);
             thisSituation.incrementValue();
-        }
-        else
-        {
+        } else {
             // Entry not found
             count[tlId][pos][desId][isAccident][isCongested].add(thisSituation);
         }
@@ -330,8 +305,7 @@ public class TCACBsG extends TCRL implements Colearning,
 
         CountEntry curC;
         int num_c = count[tlId][pos][desId][isAccident][isCongested].size();
-        for (int i = 0; i < num_c; i++)
-        {
+        for (int i = 0; i < num_c; i++) {
             curC = (CountEntry) count[tlId][pos][desId][isAccident][isCongested].get(
                     i);
             sameStartSituation += curC.sameStartSituation(thisSituation);
@@ -343,19 +317,15 @@ public class TCACBsG extends TCRL implements Colearning,
         //						= #([tl,pos,des,isAccident,isCongested],L)/#([tl,pos,des,isAccident,isCongested])
         // Niet duidelijk of dit P([tl,p,d,isAccident,isCongested],L,[*,*]) of P([tl,p,d,isAccident,isCongested],L,[tl,d]) moet zijn
         // Oftewel, kans op deze transitie of kans om te wachten!
-
         PEntry thisChance = new PEntry(tlId, pos, desId, light, tlNewId, posNew,
-                                       isAccident,isCongested);
+                isAccident, isCongested);
         int p_index = pTable[tlId][pos][desId][isAccident][isCongested].indexOf(thisChance);
 
-        if (p_index >= 0)
-        {
+        if (p_index >= 0) {
             thisChance = (PEntry) pTable[tlId][pos][desId][isAccident][isCongested].
-                         get(
-                                 p_index);
-        }
-        else
-        {
+                    get(
+                            p_index);
+        } else {
             pTable[tlId][pos][desId][isAccident][isCongested].add(thisChance);
             p_index = pTable[tlId][pos][desId][isAccident][isCongested].indexOf(thisChance);
         }
@@ -366,23 +336,19 @@ public class TCACBsG extends TCRL implements Colearning,
         // - Update rest of the Chance Table
         int num_p = pTable[tlId][pos][desId][isAccident][isCongested].size();
         PEntry curP;
-        for (int i = 0; i < num_p; i++)
-        {
+        for (int i = 0; i < num_p; i++) {
             curP = (PEntry) pTable[tlId][pos][desId][isAccident][isCongested].get(i);
-            if (curP.sameStartSituation(thisSituation) && i != p_index)
-            {
+            if (curP.sameStartSituation(thisSituation) && i != p_index) {
                 curP.addSameStartSituation();
             }
         }
     }
 
     protected void recalcQ(int tlId, int pos, int desId, boolean light,
-                           int tlNewId, int posNew, PosMov[] posMovs,
-                           int isAccident, int isCongested, DriveLane dlnow,
-                           Roaduser ru, int penalty)
-    {
+            int tlNewId, int posNew, PosMov[] posMovs,
+            int isAccident, int isCongested, DriveLane dlnow,
+            Roaduser ru, int penalty) {
         // Q([tl,p,d,isAccident,isCongested],L)	= Sum(tl', p') [P([tl,p,d,isAccident,isCongested],L,[tl',p'])(R([tl,p,isAccident,isCongested],[tl',p'])+ yV([tl',p',d,isAccident,isCongested']))
-
 
         // First gather All tl' and p' in one array
         int num_posmovs = posMovs.length;
@@ -392,40 +358,32 @@ public class TCACBsG extends TCRL implements Colearning,
         Sign curNextSign = dlnow.getSign();
         float R = 0, V = 0, Q = penalty;
 
-        for (int t = 0; t < num_posmovs; t++)
-        { // For All tl', pos'
+        for (int t = 0; t < num_posmovs; t++) { // For All tl', pos'
             curPosMov = posMovs[t];
             curPMTlId = curPosMov.tlId;
             curPMPos = curPosMov.pos;
 
-            if (curPMTlId != tlId)
-            { // In case RU just crossed a junction, a next sign has te be determened.
+            if (curPMTlId != tlId) { // In case RU just crossed a junction, a next sign has te be determened.
                 DriveLane dlnext = getNextDrivelaneByRu(ru, dlnow);
-                if (dlnext != null)
-                {
+                if (dlnext != null) {
                     curNextSign = (Sign) dlnext.getSign();
                     curNextIsAccident = isAccident(ru, curNextSign.getLane());
                     curNextIsCongested = isCongested(ru, curNextSign.getLane());
-                }
-                else
-                {
+                } else {
                     curNextIsAccident = 0;
                     curNextIsCongested = 0;
                 }
-            }
-            else
-            {
+            } else {
                 curNextSign = dlnow.getSign();
                 curNextIsAccident = isAccident;
                 curNextIsCongested = isCongested;
             }
 
             PEntry P = new PEntry(tlId, pos, desId, light, curPMTlId, curPMPos,
-                                  isAccident, isCongested);
+                    isAccident, isCongested);
             int p_index = pTable[tlId][pos][desId][isAccident][isCongested].indexOf(P);
 
-            if (p_index >= 0)
-            {
+            if (p_index >= 0) {
                 P = (PEntry) pTable[tlId][pos][desId][isAccident][isCongested].get(
                         p_index);
                 R = rewardFunction(tlId, pos, curPMTlId, curPMPos, isAccident, isCongested);
@@ -435,20 +393,19 @@ public class TCACBsG extends TCRL implements Colearning,
             }
             // Else P(..)=0, thus will not add anything in the summation
         }
-        qTable[tlId][pos][desId][isAccident][isCongested][light ? green_index :
-                red_index] = Q;
+        qTable[tlId][pos][desId][isAccident][isCongested][light ? green_index
+                : red_index] = Q;
     }
 
-    protected void recalcV(int tlId, int pos, int desId, int isAccident, int isCongested)
-    { //  V([tl,p,d,isAccident,isCongested]) = Sum (L) [P(L|(tl,p,d,isAccident,isCongested))Q([tl,p,d,isAccident,isCongested],L)] ??
+    protected void recalcV(int tlId, int pos, int desId, int isAccident, int isCongested) { //  V([tl,p,d,isAccident,isCongested]) = Sum (L) [P(L|(tl,p,d,isAccident,isCongested))Q([tl,p,d,isAccident,isCongested],L)] ??
         float qRed = qTable[tlId][pos][desId][isAccident][isCongested][red_index];
         float qGreen = qTable[tlId][pos][desId][isAccident][isCongested][green_index];
         float[] pGR = calcPGR(tlId, pos, desId, isAccident, isCongested);
         float pGreen = pGR[green_index];
         float pRed = pGR[red_index];
 
-        vTable[tlId][pos][desId][isAccident][isCongested] = (pGreen * qGreen) +
-                                                (pRed * qRed);
+        vTable[tlId][pos][desId][isAccident][isCongested] = (pGreen * qGreen)
+                + (pRed * qRed);
     }
 
     /*
@@ -456,25 +413,18 @@ public class TCACBsG extends TCRL implements Colearning,
      Additional methods, used by the recalc methods
      ==========================================================================
      */
-
-
-    protected float[] calcPGR(int tlId, int pos, int desId, int isAccident, int isCongested)
-    {
+    protected float[] calcPGR(int tlId, int pos, int desId, int isAccident, int isCongested) {
         float[] counters = new float[2];
         double countR = 0, countG = 0;
 
         int psize = pTable[tlId][pos][desId][isAccident][isCongested].size() - 1;
-        for (; psize >= 0; psize--)
-        {
+        for (; psize >= 0; psize--) {
             PEntry cur = (PEntry) pTable[tlId][pos][desId][isAccident][isCongested].
-                         get(
-                                 psize);
-            if (cur.light == green)
-            {
+                    get(
+                            psize);
+            if (cur.light == green) {
                 countG += cur.getSameSituation();
-            }
-            else
-            {
+            } else {
                 countR += cur.getSameSituation();
             }
         }
@@ -484,40 +434,34 @@ public class TCACBsG extends TCRL implements Colearning,
     }
 
     protected int rewardFunction(int tlId, int pos, int tlNewId, int posNew,
-                                 int isAccident, int isCongested)
-    {
-        if(isAccident == 1){
-            return 1;
-        }
-        
-        if (isCongested == 1)
-        {
+            int isAccident, int isCongested) {
+        if (isAccident == 1) {
             return 1;
         }
 
-        if (tlId != tlNewId || pos != posNew)
-        {
+        if (isCongested == 1) {
+            return 1;
+        }
+
+        if (tlId != tlNewId || pos != posNew) {
             return 0;
         }
         return 1;
     }
 
-    public float getVValue(Sign sign, Node des, int pos)
-    {
+    public float getVValue(Sign sign, Node des, int pos) {
         int isAccident = 0; //hier moet nog iets zinnigs voor isCongested worden bedacht
         int isCongested = 0; //hier moet nog iets zinnigs voor isCongested worden bedacht
         return vTable[sign.getId()][pos][des.getId()][isAccident][isCongested];
     }
 
     @Override
-    public float getColearnValue(Sign now, Sign sign, Node des, int pos)
-    {
+    public float getColearnValue(Sign now, Sign sign, Node des, int pos) {
         return getVValue(sign, des, pos);
     }
 
     @Override
-    public void setHecAddon(boolean b, Controller c)
-    {
+    public void setHecAddon(boolean b, Controller c) {
         if (b) {
             c.setStatus("Using HEC on ACBsG");
         } else {
@@ -526,57 +470,46 @@ public class TCACBsG extends TCRL implements Colearning,
         hecAddon = b;
     }
 
-
-
     /*
      ==========================================================================
      Internal Classes to provide a way to put entries into the tables
      ==========================================================================
      */
+    public int isAccident(Roaduser ru, DriveLane currentLane) {
+        return (infra.leadsToAccidentArea(ru, currentLane) ? 1 : 0);
+    }
 
-
-     public int isAccident(Roaduser ru, DriveLane currentLane){
-         return (infra.leadsToAccidentArea(ru, currentLane) ? 1 : 0);
-     }
-
-
-    public int isCongested(Roaduser ru, DriveLane currentLane)
-    {
+    public int isCongested(Roaduser ru, DriveLane currentLane) {
 
         DriveLane destLane = getNextDrivelaneByRu(ru, currentLane);
 
-        if (destLane == null)
-        { //Edgenode, returns 0 because an edgenode is never congested;
+        if (destLane == null) { //Edgenode, returns 0 because an edgenode is never congested;
             return 0;
         }
 
-        float percWaiting = (float) destLane.getNumBlocksWaiting() /
-                            (float) destLane.getLength();
+        float percWaiting = (float) destLane.getNumBlocksWaiting()
+                / (float) destLane.getLength();
 
         return (percWaiting > this.threshold) ? 1 : 0;
 
     }
 
-    public DriveLane getNextDrivelaneByRu(Roaduser ru, DriveLane currentLane)
-    {
+    public DriveLane getNextDrivelaneByRu(Roaduser ru, DriveLane currentLane) {
         DrivingPolicy dp = SimModel.getDrivingPolicy();
         DriveLane destLane;
-        try
-        {
+        try {
             destLane = dp.getDirection(ru, currentLane,
-                                       currentLane.getSign().getNode());
+                    currentLane.getSign().getNode());
             return destLane;
-        }
-        catch (InfraException e)
-        {
+        } catch (InfraException e) {
             System.out.println(e.getMessage());
         }
         return null;
 
     }
 
-    public class CountEntry implements XMLSerializable
-    {
+    public class CountEntry implements XMLSerializable {
+
         // CountEntry vars
         int tlId, pos, desId, tlNewId, posNew, isAccident, isCongested;
         long value;
@@ -586,9 +519,8 @@ public class TCACBsG extends TCRL implements Colearning,
         String parentName = "model.tlc";
 
         CountEntry(int _tlId, int _pos, int _desId, boolean _light,
-                   int _tlNewId,
-                   int _posNew, int _isAccident, int _isCongested)
-        {
+                int _tlNewId,
+                int _posNew, int _isAccident, int _isCongested) {
             tlId = _tlId; // The Sign the RU was at
             pos = _pos; // The position the RU was at
             desId = _desId; // The SpecialNode the RU is travelling to
@@ -600,56 +532,44 @@ public class TCACBsG extends TCRL implements Colearning,
             value = 1; // How often this situation has occurred
         }
 
-        public CountEntry()
-        { // Empty constructor for loading
+        public CountEntry() { // Empty constructor for loading
         }
 
-        public void incrementValue()
-        {
+        public void incrementValue() {
             value++;
         }
 
         // Returns how often this situation has occurred
-        public long getValue()
-        {
+        public long getValue() {
             return value;
         }
 
         @Override
-        public boolean equals(Object other)
-        {
-            if (other != null && other instanceof CountEntry)
-            {
+        public boolean equals(Object other) {
+            if (other != null && other instanceof CountEntry) {
                 CountEntry countnew = (CountEntry) other;
-                if (countnew.tlId != tlId)
-                {
+                if (countnew.tlId != tlId) {
                     return false;
                 }
-                if (countnew.pos != pos)
-                {
+                if (countnew.pos != pos) {
                     return false;
                 }
-                if (countnew.desId != desId)
-                {
+                if (countnew.desId != desId) {
                     return false;
                 }
-                if (countnew.light != light)
-                {
+                if (countnew.light != light) {
                     return false;
                 }
-                if (countnew.tlNewId != tlNewId)
-                {
+                if (countnew.tlNewId != tlNewId) {
                     return false;
                 }
-                if (countnew.posNew != posNew)
-                {
+                if (countnew.posNew != posNew) {
                     return false;
                 }
-                if (countnew.isAccident != isAccident){
+                if (countnew.isAccident != isAccident) {
                     return false;
                 }
-                if (countnew.isCongested != isCongested)
-                {
+                if (countnew.isCongested != isCongested) {
                     return false;
                 }
                 return true;
@@ -658,28 +578,20 @@ public class TCACBsG extends TCRL implements Colearning,
         }
 
         // Retuns the count-value if the situations match
-        public long sameSituation(CountEntry other)
-        {
-            if (equals(other))
-            {
+        public long sameSituation(CountEntry other) {
+            if (equals(other)) {
                 return value;
-            }
-            else
-            {
+            } else {
                 return 0;
             }
         }
 
         // Retuns the count-value if the startingsituations match
-        public long sameStartSituation(CountEntry other)
-        {
-            if (other.tlId == tlId && other.pos == pos && other.desId == desId &&
-                other.light == light && other.isAccident == isAccident && other.isCongested == isCongested)
-            {
+        public long sameStartSituation(CountEntry other) {
+            if (other.tlId == tlId && other.pos == pos && other.desId == desId
+                    && other.light == light && other.isAccident == isAccident && other.isCongested == isCongested) {
                 return value;
-            }
-            else
-            {
+            } else {
                 return 0;
             }
         }
@@ -687,8 +599,7 @@ public class TCACBsG extends TCRL implements Colearning,
         // XMLSerializable implementation of CountEntry
         @Override
         public void load(XMLElement myElement, XMLLoader loader) throws
-                XMLTreeException, IOException, XMLInvalidInputException
-        {
+                XMLTreeException, IOException, XMLInvalidInputException {
             pos = myElement.getAttribute("pos").getIntValue();
             tlId = myElement.getAttribute("tl-id").getIntValue();
             desId = myElement.getAttribute("des-id").getIntValue();
@@ -701,8 +612,7 @@ public class TCACBsG extends TCRL implements Colearning,
         }
 
         @Override
-        public XMLElement saveSelf() throws XMLCannotSaveException
-        {
+        public XMLElement saveSelf() throws XMLCannotSaveException {
             XMLElement result = new XMLElement("count");
             result.addAttribute(new XMLAttribute("pos", pos));
             result.addAttribute(new XMLAttribute("tl-id", tlId));
@@ -719,26 +629,22 @@ public class TCACBsG extends TCRL implements Colearning,
         @Override
         public void saveChilds(XMLSaver saver) throws XMLTreeException,
                 IOException,
-                XMLCannotSaveException
-        { // A count entry has no child objects
+                XMLCannotSaveException { // A count entry has no child objects
         }
 
         @Override
-        public String getXMLName()
-        {
+        public String getXMLName() {
             return parentName + ".count";
         }
 
         @Override
-        public void setParentName(String parentName)
-        {
+        public void setParentName(String parentName) {
             this.parentName = parentName;
         }
     }
 
+    public class PEntry implements XMLSerializable {
 
-    public class PEntry implements XMLSerializable
-    {
         // PEntry vars
         int pos, posNew, tlId, tlNewId, desId, isAccident, isCongested;
         double sameStartSituation, sameSituation;
@@ -748,8 +654,7 @@ public class TCACBsG extends TCRL implements Colearning,
         String parentName = "model.tlc";
 
         PEntry(int _tlId, int _pos, int _desId, boolean _light, int _tlNewId,
-               int _posNew, int _isAccident, int _isCongested)
-        {
+                int _posNew, int _isAccident, int _isCongested) {
             tlId = _tlId; // The Sign the RU was at
             pos = _pos; // The position the RU was at
             desId = _desId; // The SpecialNode the RU is travelling to
@@ -762,75 +667,59 @@ public class TCACBsG extends TCRL implements Colearning,
             sameSituation = 0;
         }
 
-        public PEntry()
-        { // Empty constructor for loading
+        public PEntry() { // Empty constructor for loading
         }
 
-        public void addSameStartSituation()
-        {
+        public void addSameStartSituation() {
             sameStartSituation++;
         }
 
-        public void setSameStartSituation(long s)
-        {
+        public void setSameStartSituation(long s) {
             sameStartSituation = s;
         }
 
-        public void setSameSituation(long s)
-        {
+        public void setSameSituation(long s) {
             sameSituation = s;
         }
 
-        public double getSameStartSituation()
-        {
+        public double getSameStartSituation() {
             return sameStartSituation;
         }
 
-        public double getSameSituation()
-        {
+        public double getSameSituation() {
             return sameSituation;
         }
 
-        public double getChance()
-        {
+        public double getChance() {
             return getSameSituation() / getSameStartSituation();
         }
 
         @Override
-        public boolean equals(Object other)
-        {
-            if (other != null && other instanceof PEntry)
-            {
+        public boolean equals(Object other) {
+            if (other != null && other instanceof PEntry) {
                 PEntry pnew = (PEntry) other;
-                if (pnew.tlId != tlId)
-                {
+                if (pnew.tlId != tlId) {
                     return false;
                 }
-                if (pnew.pos != pos)
-                {
+                if (pnew.pos != pos) {
                     return false;
                 }
-                if (pnew.desId != desId)
-                {
+                if (pnew.desId != desId) {
                     return false;
                 }
-                if (pnew.light != light)
-                {
+                if (pnew.light != light) {
                     return false;
                 }
-                if (pnew.tlNewId != tlNewId)
-                {
+                if (pnew.tlNewId != tlNewId) {
                     return false;
                 }
-                if (pnew.posNew != posNew)
-                {
+                if (pnew.posNew != posNew) {
                     return false;
                 }
-                if(pnew.isAccident != isAccident){
+                if (pnew.isAccident != isAccident) {
                     return false;
                 }
-                if (pnew.isCongested != isCongested)
-                {
+                if (pnew.isCongested != isCongested) {
                     return false;
                 }
                 return true;
@@ -838,20 +727,15 @@ public class TCACBsG extends TCRL implements Colearning,
             return false;
         }
 
-        public boolean sameSituation(CountEntry other)
-        {
+        public boolean sameSituation(CountEntry other) {
             return equals(other);
         }
 
-        public boolean sameStartSituation(CountEntry other)
-        {
-            if (other.tlId == tlId && other.pos == pos && other.desId == desId &&
-                other.light == light && other.isAccident == isAccident && other.isCongested == isCongested)
-            {
+        public boolean sameStartSituation(CountEntry other) {
+            if (other.tlId == tlId && other.pos == pos && other.desId == desId
+                    && other.light == light && other.isAccident == isAccident && other.isCongested == isCongested) {
                 return true;
-            }
-            else
-            {
+            } else {
                 return false;
             }
         }
@@ -859,8 +743,7 @@ public class TCACBsG extends TCRL implements Colearning,
         // XMLSerializable implementation of PEntry
         @Override
         public void load(XMLElement myElement, XMLLoader loader) throws
-                XMLTreeException, IOException, XMLInvalidInputException
-        {
+                XMLTreeException, IOException, XMLInvalidInputException {
             pos = myElement.getAttribute("pos").getIntValue();
             tlId = myElement.getAttribute("tl-id").getIntValue();
             desId = myElement.getAttribute("des-id").getIntValue();
@@ -870,14 +753,13 @@ public class TCACBsG extends TCRL implements Colearning,
             isAccident = myElement.getAttribute("acc").getIntValue();
             isCongested = myElement.getAttribute("next-sign-id").getIntValue();
             sameStartSituation = myElement.getAttribute("same-startsituation").
-                                 getLongValue();
+                    getLongValue();
             sameSituation = myElement.getAttribute("same-situation").
-                            getLongValue();
+                    getLongValue();
         }
 
         @Override
-        public XMLElement saveSelf() throws XMLCannotSaveException
-        {
+        public XMLElement saveSelf() throws XMLCannotSaveException {
             XMLElement result = new XMLElement("pval");
             result.addAttribute(new XMLAttribute("pos", pos));
             result.addAttribute(new XMLAttribute("tl-id", tlId));
@@ -888,42 +770,37 @@ public class TCACBsG extends TCRL implements Colearning,
             result.addAttribute(new XMLAttribute("acc", isAccident));
             result.addAttribute(new XMLAttribute("next-sign-id", isCongested));
             result.addAttribute(new XMLAttribute("same-startsituation",
-                                                 sameStartSituation));
+                    sameStartSituation));
             result.addAttribute(new XMLAttribute("same-situation",
-                                                 sameSituation));
+                    sameSituation));
             return result;
         }
 
         @Override
         public void saveChilds(XMLSaver saver) throws XMLTreeException,
                 IOException,
-                XMLCannotSaveException
-        { // A PEntry has no child objects
+                XMLCannotSaveException { // A PEntry has no child objects
         }
 
         @Override
-        public void setParentName(String parentName)
-        {
+        public void setParentName(String parentName) {
             this.parentName = parentName;
         }
 
         @Override
-        public String getXMLName()
-        {
+        public String getXMLName() {
             return parentName + ".pval";
         }
     }
 
-
     @Override
-    public void showSettings(Controller c)
-    {
-        String[] descs =
-                {
-                "Gamma (discount factor)", "Random decision chance", "Congestion Threshold"};
-        float[] floats =
-                {
-                gamma, random_chance, threshold};
+    public void showSettings(Controller c) {
+        String[] descs
+                = {
+                    "Gamma (discount factor)", "Random decision chance", "Congestion Threshold"};
+        float[] floats
+                = {
+                    gamma, random_chance, threshold};
         TLCSettings settings = new TLCSettings(descs, null, floats);
 
         settings = doSettingsDialog(c, settings);
@@ -933,11 +810,9 @@ public class TCACBsG extends TCRL implements Colearning,
     }
 
     // XMLSerializable, SecondStageLoader and InstantiationAssistant implementation
-
     @Override
     public void load(XMLElement myElement, XMLLoader loader) throws
-            XMLTreeException, IOException, XMLInvalidInputException
-    {
+            XMLTreeException, IOException, XMLInvalidInputException {
         super.load(myElement, loader);
         gamma = myElement.getAttribute("gamma").getFloatValue();
         random_chance = myElement.getAttribute("random-chance").getFloatValue();
@@ -949,8 +824,7 @@ public class TCACBsG extends TCRL implements Colearning,
 
     @Override
     public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException,
-            XMLCannotSaveException
-    {
+            XMLCannotSaveException {
         super.saveChilds(saver);
         XMLArray.saveArray(qTable, this, saver, "q-table");
         XMLArray.saveArray(vTable, this, saver, "v-table");
@@ -959,8 +833,7 @@ public class TCACBsG extends TCRL implements Colearning,
     }
 
     @Override
-    public XMLElement saveSelf() throws XMLCannotSaveException
-    {
+    public XMLElement saveSelf() throws XMLCannotSaveException {
         XMLElement result = super.saveSelf();
         result.setName(shortXMLName);
         result.addAttribute(new XMLAttribute("random-chance", random_chance));
@@ -969,38 +842,29 @@ public class TCACBsG extends TCRL implements Colearning,
     }
 
     @Override
-    public String getXMLName()
-    {
+    public String getXMLName() {
         return "model." + shortXMLName;
     }
 
     @Override
-    public boolean canCreateInstance(Class request)
-    {
+    public boolean canCreateInstance(Class request) {
         System.out.println("Called TCACBsG instantiation assistant ??");
-        return CountEntry.class.equals(request) ||
-                PEntry.class.equals(request);
+        return CountEntry.class.equals(request)
+                || PEntry.class.equals(request);
     }
 
     @Override
     public Object createInstance(Class request) throws
             ClassNotFoundException, InstantiationException,
-            IllegalAccessException
-    {
+            IllegalAccessException {
         System.out.println("Called TCACBsG instantiation assistant");
-        if (CountEntry.class.equals(request))
-        {
+        if (CountEntry.class.equals(request)) {
             return new CountEntry();
-        }
-        else if (PEntry.class.equals(request))
-        {
+        } else if (PEntry.class.equals(request)) {
             return new PEntry();
-        }
-        else
-        {
-            throw new ClassNotFoundException
-                    ("TCACBsG IntstantiationAssistant cannot make instances of " +
-                     request);
+        } else {
+            throw new ClassNotFoundException("TCACBsG IntstantiationAssistant cannot make instances of "
+                    + request);
         }
     }
 }

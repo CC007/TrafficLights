@@ -13,7 +13,6 @@
  * See the GNU General Public License for more details.
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
-
 package com.github.cc007.trafficlights.sim;
 
 import com.github.cc007.trafficlights.*;
@@ -26,7 +25,8 @@ import java.awt.PopupMenu;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -35,207 +35,194 @@ import java.awt.event.KeyEvent;
  * @author Group GUI
  * @version 1.0
  */
+public class SimPopupMenuFactory {
 
-public class SimPopupMenuFactory
-{
-	protected SimController controller;
-	
-	public SimPopupMenuFactory(SimController con) {
-		controller = con;
-	}
-	
-	/**
-	 * Creates a right-click PopupMenu for the given object.
-	 * A listener is added to the menu as well.
-	 */
-	public PopupMenu getPopupMenuFor(Selectable obj) throws PopupException
-	{
-		if (obj instanceof Node) {
-            return getNodeMenu((Node)obj);
+    protected SimController controller;
+
+    public SimPopupMenuFactory(SimController con) {
+        controller = con;
+    }
+
+    /**
+     * Creates a right-click PopupMenu for the given object. A listener is added
+     * to the menu as well.
+     */
+    public PopupMenu getPopupMenuFor(Selectable obj) throws PopupException {
+        if (obj instanceof Node) {
+            return getNodeMenu((Node) obj);
         }
-		if (obj instanceof Road) {
-            return getRoadMenu((Road)obj);
+        if (obj instanceof Road) {
+            return getRoadMenu((Road) obj);
         }
-		if (obj instanceof DriveLane) {
-            return getDrivelaneMenu((DriveLane)obj);
+        if (obj instanceof DriveLane) {
+            return getDrivelaneMenu((DriveLane) obj);
         }
-		throw new PopupException("Unknown object type");
-	}
+        throw new PopupException("Unknown object type");
+    }
 
 
-	/* Node popup menu's & listeners */
-
-	protected PopupMenu getNodeMenu(Node n) throws PopupException
-	{
-		PopupMenuListener pml = null;
-		if (n instanceof EdgeNode) {
-            return getEdgeNodeMenu((EdgeNode)n);
+    /* Node popup menu's & listeners */
+    protected PopupMenu getNodeMenu(Node n) throws PopupException {
+        PopupMenuListener pml = null;
+        if (n instanceof EdgeNode) {
+            return getEdgeNodeMenu((EdgeNode) n);
         }
-		if (n instanceof Junction) {
-            return getJunctionMenu((Junction)n);
+        if (n instanceof Junction) {
+            return getJunctionMenu((Junction) n);
         }
-		if (n instanceof NetTunnel) {
-            return getNetTunnelMenu((NetTunnel)n);
+        if (n instanceof NetTunnel) {
+            return getNetTunnelMenu((NetTunnel) n);
         }
-		throw new PopupException("Unknown Node type");
-	}
+        throw new PopupException("Unknown Node type");
+    }
 
-	// EdgeNode popup menu
-	
-	protected PopupMenu getEdgeNodeMenu(EdgeNode edge)
-	{
-		PopupMenu menu = new PopupMenu();
-		PopupMenuListener pml = new EdgeNodePopupListener(edge, controller);
+    // EdgeNode popup menu
+    protected PopupMenu getEdgeNodeMenu(EdgeNode edge) {
+        PopupMenu menu = new PopupMenu();
+        PopupMenuListener pml = new EdgeNodePopupListener(edge, controller);
 
-		String[] items = { "Track waiting queue length", "Track roadusers arrived", "Track trip waiting time" };
-		MenuItem item;
+        String[] items = {"Track waiting queue length", "Track roadusers arrived", "Track trip waiting time"};
+        MenuItem item;
 
-		for(int i=0; i<items.length; i++)
-		{
-	  	item = new MenuItem(items[i]);
-  		item.addActionListener(pml);
-  		menu.add(item);
-		}
+        for (int i = 0; i < items.length; i++) {
+            item = new MenuItem(items[i]);
+            item.addActionListener(pml);
+            menu.add(item);
+        }
 
-		menu.add(new MenuItem("-"));
-		
-  	item = new MenuItem("Properties...", new MenuShortcut(KeyEvent.VK_ENTER));
-  	item.addActionListener(pml);
-  	menu.add(item);
+        menu.add(new MenuItem("-"));
 
-  	return menu;
-	}
-	
+        item = new MenuItem("Properties...", new MenuShortcut(KeyEvent.VK_ENTER));
+        item.addActionListener(pml);
+        menu.add(item);
 
-	protected static class EdgeNodePopupListener implements PopupMenuListener
-	{
-		SimController controller;
-		EdgeNode node;
-		
-		public EdgeNodePopupListener(EdgeNode n, SimController con) {
-			controller = con;
-			node = n;
-		}
+        return menu;
+    }
+
+    protected static class EdgeNodePopupListener implements PopupMenuListener {
+
+        SimController controller;
+        EdgeNode node;
+
+        public EdgeNodePopupListener(EdgeNode n, SimController con) {
+            controller = con;
+            node = n;
+        }
 
         @Override
-		public void actionPerformed(ActionEvent e) {
-			String sel = e.getActionCommand();
-			try
-			{
-				if (sel.equals("Properties...")) {
+        public void actionPerformed(ActionEvent e) {
+            String sel = e.getActionCommand();
+            try {
+                if (sel.equals("Properties...")) {
                     controller.showConfigDialog();
-                } else if(sel.equals("Track waiting queue length")) {
+                } else if (sel.equals("Track waiting queue length")) {
                     TrackerFactory.showTracker(controller.getSimModel(), controller, node, TrackerFactory.SPECIAL_QUEUE);
-                } else if(sel.equals("Track trip waiting time")) {
+                } else if (sel.equals("Track trip waiting time")) {
                     TrackerFactory.showTracker(controller.getSimModel(), controller, node, TrackerFactory.SPECIAL_WAIT);
-                } else if(sel.equals("Track roadusers arrived")) {
+                } else if (sel.equals("Track roadusers arrived")) {
                     TrackerFactory.showTracker(controller.getSimModel(), controller, node, TrackerFactory.SPECIAL_ROADUSERS);
                 }
-			}
-			catch(GLDException exc) { controller.showError(exc.toString()); }
-		}
-	}
-	
-	// NetTunnel popup menu
-	
-	protected PopupMenu getNetTunnelMenu(NetTunnel tunnel)
-	{
-		PopupMenu menu = new PopupMenu();
-		PopupMenuListener pml = new NetTunnelPopupListener(tunnel, controller);
+            } catch (GLDException exc) {
+                Logger.getLogger(SimPopupMenuFactory.class.getName()).log(Level.SEVERE, null, exc);
+                controller.showError(exc.toString());
+            }
+        }
+    }
 
-		String[] items = { "Track roadusers arrived", "Track trip waiting time",
-								 "Track waiting (receive) queue","Track send queue"};
-		MenuItem item;
+    // NetTunnel popup menu
+    protected PopupMenu getNetTunnelMenu(NetTunnel tunnel) {
+        PopupMenu menu = new PopupMenu();
+        PopupMenuListener pml = new NetTunnelPopupListener(tunnel, controller);
 
-		for(int i=0; i<items.length; i++)
-		{
-	  	item = new MenuItem(items[i]);
-  		item.addActionListener(pml);
-  		menu.add(item);
-		}
+        String[] items = {"Track roadusers arrived", "Track trip waiting time",
+            "Track waiting (receive) queue", "Track send queue"};
+        MenuItem item;
 
-		menu.add(new MenuItem("-"));
-		
-  	item = new MenuItem("Properties...", new MenuShortcut(KeyEvent.VK_ENTER));
-  	item.addActionListener(pml);
-  	menu.add(item);
+        for (int i = 0; i < items.length; i++) {
+            item = new MenuItem(items[i]);
+            item.addActionListener(pml);
+            menu.add(item);
+        }
 
-  	return menu;
-	}
-	
-	protected static class NetTunnelPopupListener implements PopupMenuListener
-	{	SimController controller;
-		NetTunnel node;
-		
-		public NetTunnelPopupListener(NetTunnel n, SimController con) {
-			controller = con;
-			node = n;
-		}
+        menu.add(new MenuItem("-"));
 
-    @Override
-		public void actionPerformed(ActionEvent e) {
-			String sel = e.getActionCommand();
-			try
-			{
-				if (sel.equals("Properties...")) {
-                    controller.showConfigDialog();
-                } else if(sel.equals("Track trip waiting time")) {
-                    TrackerFactory.showTracker(controller.getSimModel(), controller, node, TrackerFactory.SPECIAL_WAIT);
-                } else if(sel.equals("Track roadusers arrived")) {
-                    TrackerFactory.showTracker(controller.getSimModel(), controller, node, TrackerFactory.SPECIAL_ROADUSERS);
-                } else if(sel.equals("Track waiting (receive) queue")) {
-                    TrackerFactory.showTracker(controller.getSimModel(),controller,node, TrackerFactory.SPECIAL_QUEUE);
-                } else if(sel.equals("Track send queue")) {
-                    TrackerFactory.showTracker(controller.getSimModel(), controller,node, TrackerFactory.NETTUNNEL_SEND);
-                }
-					
-				
-			}
-			catch(GLDException exc) { controller.showError(exc.toString()); }
-		}
-	}
-	
+        item = new MenuItem("Properties...", new MenuShortcut(KeyEvent.VK_ENTER));
+        item.addActionListener(pml);
+        menu.add(item);
 
-	// Junction popup menu
+        return menu;
+    }
 
-	protected PopupMenu getJunctionMenu(Junction junction)
-	{
-		PopupMenu menu = new PopupMenu();
-		PopupMenuListener pml = new JunctionPopupListener(junction, controller);
+    protected static class NetTunnelPopupListener implements PopupMenuListener {
 
-		String[] items = { "Track roadusers that crossed", "Track junction waiting time" };
-		MenuItem item;
+        SimController controller;
+        NetTunnel node;
 
-		for(int i=0; i<items.length; i++)
-		{
-	  	item = new MenuItem(items[i]);
-  		item.addActionListener(pml);
-  		menu.add(item);
-		}
+        public NetTunnelPopupListener(NetTunnel n, SimController con) {
+            controller = con;
+            node = n;
+        }
 
-		menu.add(new MenuItem("-"));
-		
-  	item = new MenuItem("Properties...", new MenuShortcut(KeyEvent.VK_ENTER));
-  	item.addActionListener(pml);
-  	menu.add(item);
-
-  	return menu;
-	}
-
-	protected static class JunctionPopupListener implements PopupMenuListener
-	{
-		SimController controller;
-		Junction node;
-		
-		public JunctionPopupListener(Junction n, SimController con) {
-			controller = con;
-			node = n;
-		}
-	
         @Override
-		public void actionPerformed(ActionEvent e) {
-			String sel = e.getActionCommand();
-			if (sel.equals("Properties...")) {
+        public void actionPerformed(ActionEvent e) {
+            String sel = e.getActionCommand();
+            try {
+                if (sel.equals("Properties...")) {
+                    controller.showConfigDialog();
+                } else if (sel.equals("Track trip waiting time")) {
+                    TrackerFactory.showTracker(controller.getSimModel(), controller, node, TrackerFactory.SPECIAL_WAIT);
+                } else if (sel.equals("Track roadusers arrived")) {
+                    TrackerFactory.showTracker(controller.getSimModel(), controller, node, TrackerFactory.SPECIAL_ROADUSERS);
+                } else if (sel.equals("Track waiting (receive) queue")) {
+                    TrackerFactory.showTracker(controller.getSimModel(), controller, node, TrackerFactory.SPECIAL_QUEUE);
+                } else if (sel.equals("Track send queue")) {
+                    TrackerFactory.showTracker(controller.getSimModel(), controller, node, TrackerFactory.NETTUNNEL_SEND);
+                }
+
+            } catch (GLDException exc) {
+                Logger.getLogger(SimPopupMenuFactory.class.getName()).log(Level.SEVERE, null, exc);
+                controller.showError(exc.toString());
+            }
+        }
+    }
+
+    // Junction popup menu
+    protected PopupMenu getJunctionMenu(Junction junction) {
+        PopupMenu menu = new PopupMenu();
+        PopupMenuListener pml = new JunctionPopupListener(junction, controller);
+
+        String[] items = {"Track roadusers that crossed", "Track junction waiting time"};
+        MenuItem item;
+
+        for (int i = 0; i < items.length; i++) {
+            item = new MenuItem(items[i]);
+            item.addActionListener(pml);
+            menu.add(item);
+        }
+
+        menu.add(new MenuItem("-"));
+
+        item = new MenuItem("Properties...", new MenuShortcut(KeyEvent.VK_ENTER));
+        item.addActionListener(pml);
+        menu.add(item);
+
+        return menu;
+    }
+
+    protected static class JunctionPopupListener implements PopupMenuListener {
+
+        SimController controller;
+        Junction node;
+
+        public JunctionPopupListener(Junction n, SimController con) {
+            controller = con;
+            node = n;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String sel = e.getActionCommand();
+            if (sel.equals("Properties...")) {
                 controller.showConfigDialog();
             } else {
                 try {
@@ -244,83 +231,74 @@ public class SimPopupMenuFactory
                     } else if (sel.equals("Track junction waiting time")) {
                         TrackerFactory.showTracker(controller.getSimModel(), controller, node, TrackerFactory.JUNCTION_WAIT);
                     }
-                }catch(GLDException exc) {}
+                } catch (GLDException exc) {
+                    Logger.getLogger(SimPopupMenuFactory.class.getName()).log(Level.SEVERE, null, exc);
+                }
             }
-		}
-	}
+        }
+    }
 
+    /* Road popup menu & listeners */
+    protected PopupMenu getRoadMenu(Road r) {
+        PopupMenu menu = new PopupMenu();
+        PopupMenuListener pml = new RoadPopupListener(r, controller);
 
+        MenuItem item = new MenuItem("Properties...", new MenuShortcut(KeyEvent.VK_ENTER));
+        item.addActionListener(pml);
+        menu.add(item);
 
-	/* Road popup menu & listeners */
+        return menu;
+    }
 
-	protected PopupMenu getRoadMenu(Road r)
-	{
-		PopupMenu menu = new PopupMenu();
-		PopupMenuListener pml = new RoadPopupListener(r, controller);
+    protected static class RoadPopupListener implements PopupMenuListener {
 
-  	MenuItem item = new MenuItem("Properties...", new MenuShortcut(KeyEvent.VK_ENTER));
-  	item.addActionListener(pml);
-  	menu.add(item);
+        SimController controller;
+        Road road;
 
-  	return menu;
-	}
-	
-	protected static class RoadPopupListener implements PopupMenuListener
-	{
-		SimController controller;
-		Road road;
-		
-		public RoadPopupListener(Road r, SimController con) {
-			controller = con;
-			road = r;
-		}
-	
+        public RoadPopupListener(Road r, SimController con) {
+            controller = con;
+            road = r;
+        }
+
         @Override
-		public void actionPerformed(ActionEvent e) {
-			if (e.getActionCommand().equals("Properties...")) {
+        public void actionPerformed(ActionEvent e) {
+            if (e.getActionCommand().equals("Properties...")) {
                 controller.showConfigDialog();
             }
-		}
-	}
+        }
+    }
 
-	
-	/* DriveLane popup menu & listeners */
-	
-	protected PopupMenu getDrivelaneMenu(DriveLane l)
-	{
-		PopupMenu menu = new PopupMenu();
-		PopupMenuListener pml = new LanePopupListener(l, controller);
+    /* DriveLane popup menu & listeners */
+    protected PopupMenu getDrivelaneMenu(DriveLane l) {
+        PopupMenu menu = new PopupMenu();
+        PopupMenuListener pml = new LanePopupListener(l, controller);
 
-  	MenuItem item = new MenuItem("Properties...", new MenuShortcut(KeyEvent.VK_ENTER));
-  	item.addActionListener(pml);
-  	menu.add(item);
+        MenuItem item = new MenuItem("Properties...", new MenuShortcut(KeyEvent.VK_ENTER));
+        item.addActionListener(pml);
+        menu.add(item);
 
-  	return menu;
-	}
-	
-	protected static class LanePopupListener implements PopupMenuListener
-	{
-		SimController controller;
-		DriveLane lane;
-		
-		public LanePopupListener(DriveLane l, SimController con) {
-			controller = con;
-			lane = l;
-		}
-	
+        return menu;
+    }
+
+    protected static class LanePopupListener implements PopupMenuListener {
+
+        SimController controller;
+        DriveLane lane;
+
+        public LanePopupListener(DriveLane l, SimController con) {
+            controller = con;
+            lane = l;
+        }
+
         @Override
-		public void actionPerformed(ActionEvent e) {
-			if (e.getActionCommand().equals("Properties...")) {
+        public void actionPerformed(ActionEvent e) {
+            if (e.getActionCommand().equals("Properties...")) {
                 controller.showConfigDialog();
             }
-		}
-	}
+        }
+    }
 
-
-
-
-
-	/* Popup menu listener interface */
-
-	protected static interface PopupMenuListener extends ActionListener { }
+    /* Popup menu listener interface */
+    protected static interface PopupMenuListener extends ActionListener {
+    }
 }

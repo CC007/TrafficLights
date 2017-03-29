@@ -22,6 +22,8 @@ import com.github.cc007.trafficlights.xml.*;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /* This algorithm should optimize waitingtimes considerably. Right now we are aware of some possible issues.
  * Gains do rise too high, but only under certain specific very busy situations. If you lower the spawning-rates
@@ -131,6 +133,7 @@ public class TC3TLCWorkInProgress extends TCRL implements Colearning, Instantiat
                 }
             }
         } catch (Exception e) {
+            Logger.getLogger(TC3TLCWorkInProgress.class.getName()).log(Level.SEVERE, null, e);
         }
         System.out.println("TC3TLCOpt2 datastructure created");
         random_number = new Random(GLDSim.seriesSeed[GLDSim.seriesSeedIndex]);

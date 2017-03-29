@@ -313,7 +313,7 @@ public abstract class TLController implements XMLSerializable, TwoStageLoader {
                         }
                         if (settings.floats != null) {
                             for (int i = 0; i < settings.floats.length; i++, tc++) {
-                                settings.floats[i] = Float.valueOf(texts[tc].getText()).floatValue();
+                                settings.floats[i] = Float.valueOf(texts[tc].getText());
                             }
                         }
                     } catch (NumberFormatException nfe) {

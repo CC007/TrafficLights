@@ -24,6 +24,8 @@ import java.awt.geom.*;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -340,8 +342,8 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
 
     @Override
     public List<Selectable> getChildren() {
-        List<Selectable> children = Arrays.asList(alphaLanes);
-        children.addAll(Arrays.asList(betaLanes));
+        List<Selectable> children = new ArrayList<>(Arrays.asList(alphaLanes));
+        children.addAll(new ArrayList<>(Arrays.asList(betaLanes)));
         return children;
     }
 
@@ -659,7 +661,7 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
             ((Graphics2D) g).draw(arc2);
             return path;
         } catch (CurveException exc) {
-            System.out.println("CurveException: " + exc.getMessage());
+            Logger.getLogger(Road.class.getName()).log(Level.SEVERE, null, exc);
         }
         return null;
     }
@@ -753,7 +755,8 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
                     }
                 }
             }
-        } catch (Exception x) {
+        } catch (Exception e) {
+            Logger.getLogger(Road.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 
@@ -859,48 +862,58 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
         bcp = betaNode.isConnectedAt(this);
 
 // calculate the starting positions of the road
-        if (acp == 0) // alpha top
-        {
-            cax = alphaNode.coord.x;
-            cay = alphaNode.coord.y - alphaMaxWidth * 5 - 1;
-            alphaAngle = Math.toRadians(90); // Math.PI * 0.5
-        } else if (acp == 1) // alpha right
-        {
-            cax = alphaNode.coord.x + alphaMaxWidth * 5 + 1;
-            cay = alphaNode.coord.y;
-            alphaAngle = 0.0;
-        } else if (acp == 2) // alpha bottom
-        {
-            cax = alphaNode.coord.x;
-            cay = alphaNode.coord.y + alphaMaxWidth * 5 + 1;
-            alphaAngle = Math.toRadians(270); // Math.PI * 1.5
-        } else // alpha left
-        {
-            cax = alphaNode.coord.x - alphaMaxWidth * 5 - 1;
-            cay = alphaNode.coord.y;
-            alphaAngle = Math.toRadians(180); // Math.PI
+        switch (acp) {
+            // alpha top
+            case 0:
+                cax = alphaNode.coord.x;
+                cay = alphaNode.coord.y - alphaMaxWidth * 5 - 1;
+                alphaAngle = Math.toRadians(90); // Math.PI * 0.5
+                break;
+            // alpha right
+            case 1:
+                cax = alphaNode.coord.x + alphaMaxWidth * 5 + 1;
+                cay = alphaNode.coord.y;
+                alphaAngle = 0.0;
+                break;
+            // alpha bottom
+            case 2:
+                cax = alphaNode.coord.x;
+                cay = alphaNode.coord.y + alphaMaxWidth * 5 + 1;
+                alphaAngle = Math.toRadians(270); // Math.PI * 1.5
+                break;
+            // alpha left
+            default:
+                cax = alphaNode.coord.x - alphaMaxWidth * 5 - 1;
+                cay = alphaNode.coord.y;
+                alphaAngle = Math.toRadians(180); // Math.PI
+                break;
         }
 
-        if (bcp == 0) // beta top
-        {
-            cbx = betaNode.coord.x;
-            cby = betaNode.coord.y - betaMaxWidth * 5 - 1;
-            betaAngle = Math.toRadians(270);
-        } else if (bcp == 1) // beta right
-        {
-            cbx = betaNode.coord.x + betaMaxWidth * 5 + 1;
-            cby = betaNode.coord.y;
-            betaAngle = Math.toRadians(180);
-        } else if (bcp == 2) // beta bottom
-        {
-            cbx = betaNode.coord.x;
-            cby = betaNode.coord.y + betaMaxWidth * 5 + 1;
-            betaAngle = Math.toRadians(90);
-        } else // beta left
-        {
-            cbx = betaNode.coord.x - betaMaxWidth * 5 - 1;
-            cby = betaNode.coord.y;
-            betaAngle = 0.0;
+        switch (bcp) {
+            // beta top
+            case 0:
+                cbx = betaNode.coord.x;
+                cby = betaNode.coord.y - betaMaxWidth * 5 - 1;
+                betaAngle = Math.toRadians(270);
+                break;
+            // beta right
+            case 1:
+                cbx = betaNode.coord.x + betaMaxWidth * 5 + 1;
+                cby = betaNode.coord.y;
+                betaAngle = Math.toRadians(180);
+                break;
+            // beta bottom
+            case 2:
+                cbx = betaNode.coord.x;
+                cby = betaNode.coord.y + betaMaxWidth * 5 + 1;
+                betaAngle = Math.toRadians(90);
+                break;
+            // beta left
+            default:
+                cbx = betaNode.coord.x - betaMaxWidth * 5 - 1;
+                cby = betaNode.coord.y;
+                betaAngle = 0.0;
+                break;
         }
 
         Point alphaCoord = new Point(cax, cay);

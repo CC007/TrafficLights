@@ -21,6 +21,8 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -271,7 +273,8 @@ public abstract class Node implements Selectable, XMLSerializable,
                     ndt[i] = odt[i];
                 }
                 ns.setDelayTable(ndt);
-            } catch (CloneNotSupportedException c) {
+            } catch (CloneNotSupportedException e) {
+                Logger.getLogger(Node.class.getName()).log(Level.SEVERE, null, e);
             }
             return ns;
         }
@@ -506,7 +509,7 @@ public abstract class Node implements Selectable, XMLSerializable,
 
     @Override
     public List<Selectable> getChildren() {
-        return Arrays.asList(getAlphaRoads());
+        return new ArrayList<>(Arrays.asList(getAlphaRoads()));
     }
 
     public abstract void paint(Graphics g) throws GLDException;

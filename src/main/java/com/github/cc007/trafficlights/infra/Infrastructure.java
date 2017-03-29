@@ -24,6 +24,8 @@ import com.github.cc007.trafficlights.utils.*;
 import com.github.cc007.trafficlights.xml.*;
 import com.github.cc007.trafficlights.edit.Validation;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -311,6 +313,7 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
                         infraOK = false;
                     }
                 } catch (InfraException e) {
+                    Logger.getLogger(Infrastructure.class.getName()).log(Level.SEVERE, null, e);
                     infraOK = false;
                 }
 
@@ -321,8 +324,8 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
                 }
 
                 return true;
-            } catch (Exception e) // If there is an exception The drivelane will not be disabled
-            {
+            } catch (Exception e) {// If there is an exception The drivelane will not be disabled
+                Logger.getLogger(Infrastructure.class.getName()).log(Level.SEVERE, null, e);
             }
         }
 
@@ -718,7 +721,7 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
      * need another method now.
      */
     public EdgeNode[] getEdgeNodes_() {
-        Iterator it = Arrays.asList(specialNodes).iterator();
+        Iterator it = new ArrayList<>(Arrays.asList(specialNodes)).iterator();
         ArrayList result = new ArrayList();
         Node tmp;
         while (it.hasNext()) {
@@ -763,7 +766,7 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
 
     @Override
     public List<Selectable> getChildren() {
-        return Arrays.asList(getAllNodes());
+        return new ArrayList<>(Arrays.asList(getAllNodes()));
     }
 
 
@@ -889,7 +892,7 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
             throw new XMLInvalidInputException("Problem with internal 2nd stage load of infra :" + e);
         }
         XMLUtils.loadSecondStage(allLanes, mainMap);
-        XMLUtils.loadSecondStage(Arrays.asList(allNodes), mainMap);
+        XMLUtils.loadSecondStage(new ArrayList<>(Arrays.asList(allNodes)), mainMap);
     }
 
     @Override

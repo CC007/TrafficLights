@@ -861,7 +861,7 @@ public class GenNeuralTLC extends TLController implements XMLSerializable, TwoSt
     public void loadSecondStage(Map maps) throws XMLInvalidInputException, XMLTreeException {
         super.loadSecondStage(maps);
         pop.loadSecondStage(maps);
-        XMLUtils.loadSecondStage(Arrays.asList(ind), maps);
+        XMLUtils.loadSecondStage(new ArrayList<>(Arrays.asList(ind)), maps);
     }
 
     // InstantiationAssistant implementation

@@ -27,6 +27,8 @@ import com.github.cc007.trafficlights.xml.*;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -562,6 +564,7 @@ public class SimModel extends Model implements XMLSerializable {
                                                     ru.getPosition(), posMovs,
                                                     destLane);
                                         } catch (Exception e) {
+                                            Logger.getLogger(SimModel.class.getName()).log(Level.SEVERE, null, e);
                                         }
                                     } else { // Apparently no space was created, so we're still here.
                                         if (moveRoaduserOnLane(li, ru, ru_speed,
@@ -740,6 +743,7 @@ public class SimModel extends Model implements XMLSerializable {
     /**
      * New road users are placed on the roads when necessary. When roads are
      * full, new road users are queued.
+     *
      * @throws com.github.cc007.trafficlights.infra.InfraException
      * @throws java.lang.ClassNotFoundException
      */
@@ -838,6 +842,7 @@ public class SimModel extends Model implements XMLSerializable {
                 infra.enteredCarsIncrement();//DOAS 06 Statistics blahhh
                 return true;
             } catch (Exception e) {
+                Logger.getLogger(SimModel.class.getName()).log(Level.SEVERE, null, e);
                 return false;
             }
         }
@@ -861,8 +866,7 @@ public class SimModel extends Model implements XMLSerializable {
     /**
      * Get a completely random destination, don't choose moi
      */
-    public SpecialNode getRandomDestination(SpecialNode moi) throws
-            InfraException {
+    public SpecialNode getRandomDestination(SpecialNode moi) throws InfraException {
         SpecialNode[] dests = infra.getSpecialNodes();
         if (dests.length < 2) {
             throw new InfraException(

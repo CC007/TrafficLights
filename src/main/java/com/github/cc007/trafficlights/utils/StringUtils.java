@@ -1,5 +1,6 @@
 package com.github.cc007.trafficlights.utils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
@@ -171,7 +172,7 @@ public class StringUtils {
      * @throws NoSuchElementException If the specified object cannot be found
      */
     public static int getIndexObject(Object[] data, Object object) {
-        int x = Arrays.asList(data).indexOf(object);
+        int x = new ArrayList<>(Arrays.asList(data)).indexOf(object);
         if (x == -1) {
             throw new NoSuchElementException("StringUtils : index lookup in array failed for object "
                     + object + ". Data length is " + data.length);

@@ -18,6 +18,8 @@ package com.github.cc007.trafficlights.xml;
 import java.io.*;
 import java.net.Socket;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 // TODO : - Make JUnit tests (together with XMLInputReader)
 /**
@@ -97,6 +99,7 @@ public class XMLLoader {
             reader.close();
         } catch (IOException e) {
             System.out.println("Warning : could not close XMLLoader : " + e);
+            Logger.getLogger(XMLLoader.class.getName()).log(Level.SEVERE, null, e);
             // Ignore it if we don't succeed. This should not be fatal
         }
     }

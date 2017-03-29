@@ -20,6 +20,8 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 /**
@@ -92,6 +94,7 @@ public class ToolBar extends Panel {
                 }
                 img = result;
             } catch (IOException e) {
+                Logger.getLogger(ToolBar.class.getName()).log(Level.SEVERE, null, e);
                 img = null;
             }
         }

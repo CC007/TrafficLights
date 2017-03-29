@@ -491,7 +491,7 @@ public class ACGJ1 extends TLController implements XMLSerializable, TwoStageLoad
         // TwoStageLoader implementation of Person
         @Override
         public void loadSecondStage(Map maps) throws XMLInvalidInputException, XMLTreeException {
-            XMLUtils.loadSecondStage(Arrays.asList(ndinf), maps);
+            XMLUtils.loadSecondStage(new ArrayList<>(Arrays.asList(ndinf)), maps);
         }
 
     }

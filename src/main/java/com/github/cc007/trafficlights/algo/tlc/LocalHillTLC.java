@@ -13,7 +13,6 @@
  * See the GNU General Public License for more details.
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
-
 package com.github.cc007.trafficlights.algo.tlc;
 
 import com.github.cc007.trafficlights.*;
@@ -26,327 +25,315 @@ import com.github.cc007.trafficlights.algo.dp.*;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
- * This controller will decide it's Q values for the traffic lights according to the traffic situation on
-/* the lane connected to the TrafficLight. It will learn how to alter it's outcome by reinforcement learning.
+ * This controller will decide it's Q values for the traffic lights according to
+ * the traffic situation on /* the lane connected to the TrafficLight. It will
+ * learn how to alter it's outcome by reinforcement learning.
  *
  * @author Arne K & Chaim Z
  * @version 1.0
  */
-public class LocalHillTLC extends TLController implements Colearning
-{
-	protected Infrastructure infrastructure;
-	protected Node[] allnodes;
-	protected int num_nodes;
-	protected int numSigns;
-	protected final static String shortXMLName="tlc-localhill";
+public class LocalHillTLC extends TLController implements Colearning {
 
-	protected Random seed;
-	protected ArrayList tld_backup;
-	protected int [] v_table;	//signID
-	protected final int iteration_length = 1;
+    protected Infrastructure infrastructure;
+    protected Node[] allnodes;
+    protected int num_nodes;
+    protected int numSigns;
+    protected final static String shortXMLName = "tlc-localhill";
 
-	/**
-	 * The constructor for TL controllers
-	 * @param The model being used.
-	 */
+    protected Random seed;
+    protected ArrayList tld_backup;
+    protected int[] v_table;	//signID
+    protected final int iteration_length = 1;
 
-	public LocalHillTLC( Infrastructure infra) throws InfraException
-	{	super(infra);
-	}
+    /**
+     * The constructor for TL controllers
+     *
+     * @param The model being used.
+     */
+    public LocalHillTLC(Infrastructure infra) throws InfraException {
+        super(infra);
+    }
 
     @Override
-	public void setInfrastructure(Infrastructure infra)
-	{	super.setInfrastructure(infra);
-		allnodes = infra.getAllNodes(); //Moet Edge zijn eigenlijk, alleen testSimModel knalt er dan op
-		num_nodes = allnodes.length;
-		try{numSigns = infra.getAllInboundLanes().size();}catch(Exception e){}
+    public void setInfrastructure(Infrastructure infra) {
+        super.setInfrastructure(infra);
+        allnodes = infra.getAllNodes(); //Moet Edge zijn eigenlijk, alleen testSimModel knalt er dan op
+        num_nodes = allnodes.length;
+        try {
+            numSigns = infra.getAllInboundLanes().size();
+        } catch (Exception e) {
+        }
 
-		tld_backup = new ArrayList();
+        tld_backup = new ArrayList();
 
-		// Create the array
-		v_table = new int [numSigns];
-		for(int i=0; i<numSigns; i++) v_table[i]=-1;
+        // Create the array
+        v_table = new int[numSigns];
+        for (int i = 0; i < numSigns; i++) {
+            v_table[i] = -1;
+        }
 
-		// Create random setting for the D array
-		seed=new Random(GLDSim.seriesSeed[GLDSim.seriesSeedIndex]);
-		for (int i=0; i < tld.length; i++)
-			for (int j=0; j < tld[i].length; j++)
-				tld[i][j].setGain(seed.nextFloat());
-	}
+        // Create random setting for the D array
+        seed = new Random(GLDSim.seriesSeed[GLDSim.seriesSeedIndex]);
+        for (int i = 0; i < tld.length; i++) {
+            for (int j = 0; j < tld[i].length; j++) {
+                tld[i][j].setGain(seed.nextFloat());
+            }
+        }
+    }
 
-
-	/**
-	* Calculates how every traffic light should be switched
-	* Per node, per sign the waiting roadusers are passed and per each roaduser the gain is calculated.
-	* @param The TLDecision is a tuple consisting of a traffic light and a reward (Q) value, for it to be green
-	* @see gld.algo.tlc.TLDecision
-	*/
+    /**
+     * Calculates how every traffic light should be switched Per node, per sign
+     * the waiting roadusers are passed and per each roaduser the gain is
+     * calculated.
+     *
+     * @param The TLDecision is a tuple consisting of a traffic light and a
+     * reward (Q) value, for it to be green
+     * @see gld.algo.tlc.TLDecision
+     */
     @Override
-	public TLDecision[][] decideTLs() {
-		// tld[Node][Sign] the gain per node
-		// Perform the local hill climbing algorithm
-		int max_points = 0;
-		Node max_node;
-		Sign[] max_config;
-		int steps = iteration_length;
-		for(; steps>0; steps--) {
-			int num_nodes = allnodes.length;
-			for (int i=0; i<num_nodes; i++) {
-				if(allnodes[i] instanceof Junction) {
-					Sign [][] configs = ((Junction) allnodes[i]).getSignConfigs();
-					max_points = 0;
-					max_node = allnodes[i];
-					max_config = configs[0];
+    public TLDecision[][] decideTLs() {
+        // tld[Node][Sign] the gain per node
+        // Perform the local hill climbing algorithm
+        int max_points = 0;
+        Node max_node;
+        Sign[] max_config;
+        int steps = iteration_length;
+        for (; steps > 0; steps--) {
+            int num_nodes = allnodes.length;
+            for (int i = 0; i < num_nodes; i++) {
+                if (allnodes[i] instanceof Junction) {
+                    Sign[][] configs = ((Junction) allnodes[i]).getSignConfigs();
+                    max_points = 0;
+                    max_node = allnodes[i];
+                    max_config = configs[0];
 
-					for(int j=0; j<configs.length; j++) {
-						changeTLD(allnodes[i], configs[j]);
-						int cPoints = 0;
-						try{ cPoints=computePoints(tld);}
-						catch(InfraException ie){System.out.println(""+ie);ie.printStackTrace();}
-						//System.out.println("Config: "+j+ " points: "+cPoints);
-						if (cPoints> max_points)
-						{
-							max_node   = allnodes[i];
-							max_config = configs[j];
-							max_points = cPoints;
-						}
-						//restoreTLD(allnodes[i]);
-					}
-					changeTLD(max_node, max_config);
-				}
-			}
-		}
-	    return tld;
-	}
+                    for (int j = 0; j < configs.length; j++) {
+                        changeTLD(allnodes[i], configs[j]);
+                        int cPoints = 0;
+                        try {
+                            cPoints = computePoints(tld);
+                        } catch (InfraException ie) {
+                            System.out.println("" + ie);
+                            ie.printStackTrace();
+                        }
+                        //System.out.println("Config: "+j+ " points: "+cPoints);
+                        if (cPoints > max_points) {
+                            max_node = allnodes[i];
+                            max_config = configs[j];
+                            max_points = cPoints;
+                        }
+                        //restoreTLD(allnodes[i]);
+                    }
+                    changeTLD(max_node, max_config);
+                }
+            }
+        }
+        return tld;
+    }
 
-	protected void reset_v_table() {
-		for(int i=0; i<numSigns; i++) v_table[i] = -1;
-	}
+    protected void reset_v_table() {
+        for (int i = 0; i < numSigns; i++) {
+            v_table[i] = -1;
+        }
+    }
 
-	protected int computePoints( TLDecision[][] tld) throws InfraException
-	{
-		int Points = 0;
-		reset_v_table();
+    protected int computePoints(TLDecision[][] tld) throws InfraException {
+        int Points = 0;
+        reset_v_table();
 
-		for (int i=0; i<allnodes.length; i++)
-		{
-			Node currentNode = allnodes[i];
-			if (! (currentNode instanceof Junction)) {
+        for (int i = 0; i < allnodes.length; i++) {
+            Node currentNode = allnodes[i];
+            if (!(currentNode instanceof Junction)) {
                 continue;
             }
-			DriveLane [] dls=null;
-			try{dls= currentNode.getInboundLanes();}catch(Exception e){}
+            DriveLane[] dls = null;
+            try {
+                dls = currentNode.getInboundLanes();
+            } catch (Exception e) {
+            }
 
-			boolean changed;
-			do
-			{
-				changed = false;
-				int cnId = currentNode.getId();
-				for (int j=0; j<dls.length; j++)
-				{
-					// If a car is standing at the first place at node,dir
-					Sign s = dls[j].getSign();
-					if (dls[j].getNumRoadusersWaiting()>0)
-					{
-						// if the light at node,dir is RED...
-						boolean isRed = true;
-						for (int k=0; k<tld[currentNode.getId()].length; k++)
-							if (tld[currentNode.getId()][k].getTL()==s)	{
-								if (tld[currentNode.getId()][k].getGain()==1) {
-                                    isRed=false;
+            boolean changed;
+            do {
+                changed = false;
+                int cnId = currentNode.getId();
+                for (int j = 0; j < dls.length; j++) {
+                    // If a car is standing at the first place at node,dir
+                    Sign s = dls[j].getSign();
+                    if (dls[j].getNumRoadusersWaiting() > 0) {
+                        // if the light at node,dir is RED...
+                        boolean isRed = true;
+                        for (int k = 0; k < tld[currentNode.getId()].length; k++) {
+                            if (tld[currentNode.getId()][k].getTL() == s) {
+                                if (tld[currentNode.getId()][k].getGain() == 1) {
+                                    isRed = false;
                                 }
-							}
-						if (isRed) {
-							if (v_table[s.getId()]!=0) {
-								v_table[s.getId()]=0;
-								changed = true;
-							}
-						}
-						else {
-							DrivingPolicy dp = SimModel.getDrivingPolicy();
-							Roaduser firstRU = dls[j].getFirstRoaduser();
-							DriveLane destLane = dp.getDirection(firstRU, dls[j], currentNode);
-							int value = v_table[s.getId()];
+                            }
+                        }
+                        if (isRed) {
+                            if (v_table[s.getId()] != 0) {
+                                v_table[s.getId()] = 0;
+                                changed = true;
+                            }
+                        } else {
+                            DrivingPolicy dp = SimModel.getDrivingPolicy();
+                            Roaduser firstRU = dls[j].getFirstRoaduser();
+                            DriveLane destLane = dp.getDirection(firstRU, dls[j], currentNode);
+                            int value = v_table[s.getId()];
 
-							if (destLane==null) {
+                            if (destLane == null) {
                                 value = 1; // when it is an end-node
                             } else if (!destLane.isFull()) {
                                 value = 1;
                             } else {
-								// When destLane is full
-								value = v_table[destLane.getSign().getId()];
-							}
+                                // When destLane is full
+                                value = v_table[destLane.getSign().getId()];
+                            }
 
-							if (v_table[s.getId()]!=value) {
-								v_table[s.getId()]=value;
-								changed = true;
-							}
-						}
-					}
-					else {
-						if (v_table[s.getId()]!=0) {
-							v_table[s.getId()]=0;
-							changed = true;
-						}
-			  		}
-				}
-			}
-			while(changed);
-		}
-
-		for(int i=0; i<numSigns; i++)
-		{
-			if(v_table[i] == -1 )
-			{
-				// Find the associated sign
-				Sign s = null;
-				for (int j=0; j<allnodes.length; j++)
-				{
-					DriveLane [] dls = allnodes[j].getInboundLanes();
-					for (int k=0; k<dls.length; k++)
-					{
-						if (dls[k].getSign().getId()==i) {
-                            s=dls[k].getSign();
+                            if (v_table[s.getId()] != value) {
+                                v_table[s.getId()] = value;
+                                changed = true;
+                            }
                         }
-					}
-				}
+                    } else if (v_table[s.getId()] != 0) {
+                        v_table[s.getId()] = 0;
+                        changed = true;
+                    }
+                }
+            } while (changed);
+        }
 
-				Node n1=s.getNode();
+        for (int i = 0; i < numSigns; i++) {
+            if (v_table[i] == -1) {
+                // Find the associated sign
+                Sign s = null;
+                for (int j = 0; j < allnodes.length; j++) {
+                    DriveLane[] dls = allnodes[j].getInboundLanes();
+                    for (int k = 0; k < dls.length; k++) {
+                        if (dls[k].getSign().getId() == i) {
+                            s = dls[k].getSign();
+                        }
+                    }
+                }
 
-				if (!(n1 instanceof SpecialNode)) {
+                Node n1 = s.getNode();
+
+                if (!(n1 instanceof SpecialNode)) {
                     Points++;
                 }
-			}
-				else {
+            } else {
                 Points += v_table[i];
             }
-		}
-		return Points;
-	}
+        }
+        return Points;
+    }
 
     @Override
-	public void updateRoaduserMove(Roaduser ru, DriveLane currentlane, Sign currentsign, int prevpos, DriveLane nextlane, Sign nextsign, int posnow, PosMov[] posMovs, DriveLane desired)
-	{
-	/* If this road user is on the first position in the road, this one is used for calcing. We want to know his new direction (node, tl)
+    public void updateRoaduserMove(Roaduser ru, DriveLane currentlane, Sign currentsign, int prevpos, DriveLane nextlane, Sign nextsign, int posnow, PosMov[] posMovs, DriveLane desired) {
+        /* If this road user is on the first position in the road, this one is used for calcing. We want to know his new direction (node, tl)
 		if(prevpos == 0 && currentlane != null && nextlane != null) {
 			updateNextTable(currentlane.getNodeLeadsTo(), currentsign, nextlane.getNodeLeadsTo(), nextsign);
 		}*/
-	}
+    }
 
-	protected boolean isRed( TLDecision[] tld_node,  int sign_id ) {
-		int num_tld_node = tld_node.length;
-		Sign sign;
-		for(int i=0; i<num_tld_node; i++) {
-			sign = tld_node[i].getTL();
-			if(sign.getId() == sign_id) {
+    protected boolean isRed(TLDecision[] tld_node, int sign_id) {
+        int num_tld_node = tld_node.length;
+        Sign sign;
+        for (int i = 0; i < num_tld_node; i++) {
+            sign = tld_node[i].getTL();
+            if (sign.getId() == sign_id) {
                 return !sign.mayDrive();
             }
-		}
-		return false;
-	}
+        }
+        return false;
+    }
 
-	protected void changeTLD (Node thisnode, Sign [] config) {
-		// Save things we are gonna change, ArrayList TLDBackup
+    protected void changeTLD(Node thisnode, Sign[] config) {
+        // Save things we are gonna change, ArrayList TLDBackup
 
-		try {
-			DriveLane[] lanes = thisnode.getInboundLanes();
-			// clear??
-			tld_backup.clear();
-			// Error might be here, as you're changing the object, and thus wont have a backup..
-			// Not sure how to create a well-retrievable backup.
-			/*for(int i=0;i<tld[thisnode.getId()].length;i++) {
+        try {
+            DriveLane[] lanes = thisnode.getInboundLanes();
+            // clear??
+            tld_backup.clear();
+            // Error might be here, as you're changing the object, and thus wont have a backup..
+            // Not sure how to create a well-retrievable backup.
+            /*for(int i=0;i<tld[thisnode.getId()].length;i++) {
 				tld_backup.removeElement(tld[thisnode.getId()][i]);
 			}*/
-			int num_lanes = tld[thisnode.getId()].length;
-			for (int j=0; j<num_lanes; j++) {
-				tld_backup.add(tld[thisnode.getId()][j]);
-				if (Arrayutils.findElement(config, tld[thisnode.getId()][j].getTL()) != -1) {
+            int num_lanes = tld[thisnode.getId()].length;
+            for (int j = 0; j < num_lanes; j++) {
+                tld_backup.add(tld[thisnode.getId()][j]);
+                if (Arrayutils.findElement(config, tld[thisnode.getId()][j].getTL()) != -1) {
                     tld[thisnode.getId()][j].setGain(1);
                 } else {
                     tld[thisnode.getId()][j].setGain(0);
                 }
-			}
-		}
-		catch (Exception e)
-		{
-			System.out.println(e+"");
-			e.printStackTrace();
-		}
+            }
+        } catch (Exception e) {
+            System.out.println(e + "");
+            e.printStackTrace();
+        }
 
-	}
+    }
 
-	protected void restoreTLD (Node thisnode) {
-		// Save things we are gonna change, ArrayList TLDBackup
-		int i = thisnode.getId();
-		try {
-			DriveLane[] lanes = thisnode.getInboundLanes();
-			for (int j=0; j<lanes.length; j++) {
-				tld[i][j] = (TLDecision) tld_backup.get(j);
-			}
-		}
-		catch (Exception e) {}
-	}
-
+    protected void restoreTLD(Node thisnode) {
+        // Save things we are gonna change, ArrayList TLDBackup
+        int i = thisnode.getId();
+        try {
+            DriveLane[] lanes = thisnode.getInboundLanes();
+            for (int j = 0; j < lanes.length; j++) {
+                tld[i][j] = (TLDecision) tld_backup.get(j);
+            }
+        } catch (Exception e) {
+            Logger.getLogger(LocalHillTLC.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
 
 // ================================================
-
-
-
-
-
-
-
-
-
-
-
 // ================================================
+    @Override
+    public float getColearnValue(Sign now, Sign sign, Node des, int pos) {
+        return 0;
+    }
+
+    // XMLSerializable and SecondStageLoader implementation
+    @Override
+    public void load(XMLElement myElement, XMLLoader loader) throws XMLTreeException, IOException, XMLInvalidInputException {
+        super.load(myElement, loader);
+        v_table = (int[]) XMLArray.loadArray(this, loader);
+        tld_backup = (ArrayList) (XMLArray.loadArray(this, loader));
+    }
 
     @Override
-	public float getColearnValue(Sign now, Sign sign, Node des, int pos) {
-		return 0;
-	}
-
-
-	// XMLSerializable and SecondStageLoader implementation
-
-    @Override
-	public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
-	{	super.load(myElement,loader);
-		v_table=(int[])XMLArray.loadArray(this,loader);
-		tld_backup=(ArrayList)(XMLArray.loadArray(this,loader));
-	}
+    public XMLElement saveSelf() throws XMLCannotSaveException {
+        XMLElement result = super.saveSelf();
+        result.setName(shortXMLName);
+        return result;
+    }
 
     @Override
-	public XMLElement saveSelf () throws XMLCannotSaveException {
-		XMLElement result=super.saveSelf();
-		result.setName(shortXMLName);
-	  	return result;
-	}
+    public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException, XMLCannotSaveException {
+        super.saveChilds(saver);
+        XMLArray.saveArray(v_table, this, saver, "v-table");
+        XMLArray.saveArray(tld_backup, this, saver, "tld-backup");
+    }
 
     @Override
-	public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
-	{	super.saveChilds(saver);
-		XMLArray.saveArray(v_table,this,saver,"v-table");
-		XMLArray.saveArray(tld_backup,this,saver,"tld-backup");
-	}
+    public String getXMLName() {
+        return "model." + shortXMLName;
+    }
 
     @Override
-	public String getXMLName () {
-		return "model."+shortXMLName;
-	}
+    public void loadSecondStage(Map maps) throws XMLInvalidInputException, XMLTreeException {
+        System.out.println("Local Hillclimbing second stage load finished.");
+    }
 
     @Override
-	public void loadSecondStage (Map maps) throws XMLInvalidInputException,XMLTreeException {
-		System.out.println("Local Hillclimbing second stage load finished.");
-	}
-
-    @Override
-	public void showSettings(Controller c) {
-	}
-
+    public void showSettings(Controller c) {
+    }
 
 }

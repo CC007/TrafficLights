@@ -23,6 +23,8 @@ import com.github.cc007.trafficlights.xml.*;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -117,6 +119,7 @@ public class TC1B1 extends TCRL implements Colearning, InstantiationAssistant {
                 }
             }
         } catch (Exception e) {
+                Logger.getLogger(TC1B1.class.getName()).log(Level.SEVERE, null, e);
         }
         System.out.println("TC1TLCOpt2 datastructure created");
         random_number = new Random(GLDSim.seriesSeed[GLDSim.seriesSeedIndex]);

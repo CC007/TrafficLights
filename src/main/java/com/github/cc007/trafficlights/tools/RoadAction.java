@@ -18,9 +18,12 @@ package com.github.cc007.trafficlights.tools;
 import com.github.cc007.trafficlights.*;
 import com.github.cc007.trafficlights.edit.*;
 import com.github.cc007.trafficlights.infra.*;
+import com.github.cc007.trafficlights.sim.stats.TrackingController;
 
 import java.awt.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This implements create road user action
@@ -113,6 +116,7 @@ public class RoadAction implements ToolAction {
                     try {
                         alphaConPos = getBestConPosition(alphaNode, alphaPoint, p);
                     } catch (CannotConnectException e) {
+                        Logger.getLogger(RoadAction.class.getName()).log(Level.SEVERE, null, e);
                         reset();
                         return false;
                     }
@@ -135,6 +139,7 @@ public class RoadAction implements ToolAction {
                     }
                     betaConPos = getBestConPosition(betaNode, betaPoint, cp);
                 } catch (CannotConnectException e) {
+                    Logger.getLogger(RoadAction.class.getName()).log(Level.SEVERE, null, e);
                     reset();
                     return false;
                 }
@@ -144,6 +149,7 @@ public class RoadAction implements ToolAction {
                 reset();
             }
         } catch (InfraException e) {
+            Logger.getLogger(RoadAction.class.getName()).log(Level.SEVERE, null, e);
             reset();
             Controller.reportError(e);
             return false;

@@ -13,7 +13,6 @@
  * See the GNU General Public License for more details.
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
-
 package com.github.cc007.trafficlights.sim.stats;
 
 import com.github.cc007.trafficlights.ErrorDialog;
@@ -23,158 +22,177 @@ import com.github.cc007.trafficlights.sim.SimController;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
-*
-* The controller for the tracking window, it controls a TrackingView.
-*
-* @author Group GUI
-* @version 1.0
-*/
+ *
+ * The controller for the tracking window, it controls a TrackingView.
+ *
+ * @author Group GUI
+ * @version 1.0
+ */
+public class TrackingController extends Frame {
 
-public class TrackingController extends Frame
-{
-	private SimModel model;
-	private SimController controller;
-	private TrackingView view;
+    private SimModel model;
+    private SimController controller;
+    private TrackingView view;
 
-	/**
-	* Creates a <code>TrackingController</code>.
-	*
-	* @param _model The <code>SimModel</code> statistics should be read from.
-	* @param _controller The parent <code>SimController</code>.
-	* @param _view The <code>TrackingView</code> to be shown.
-	*/
-	public TrackingController(SimModel _model, SimController _controller, TrackingView _view)
-	{
-		model = _model;
-		controller = _controller;
-		view = _view;
+    /**
+     * Creates a <code>TrackingController</code>.
+     *
+     * @param _model The <code>SimModel</code> statistics should be read from.
+     * @param _controller The parent <code>SimController</code>.
+     * @param _view The <code>TrackingView</code> to be shown.
+     */
+    public TrackingController(SimModel _model, SimController _controller, TrackingView _view) {
+        model = _model;
+        controller = _controller;
+        view = _view;
 
-		addWindowListener(new WindowAdapter() {@Override
- public void windowClosing(WindowEvent e) { closeWindow(); } });
-		setBounds(200, 200, 400, 300);
-		setBackground(Color.lightGray);
-		setTitle("Tracking - " + view.getDescription());
-		setVisible(true);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                closeWindow();
+            }
+        });
+        setBounds(200, 200, 400, 300);
+        setBackground(Color.lightGray);
+        setTitle("Tracking - " + view.getDescription());
+        setVisible(true);
 
- 		add(view);
- 		model.addObserver(view);
-		setViewEnabled(true);
+        add(view);
+        model.addObserver(view);
+        setViewEnabled(true);
 
-		setMenuBar(makeMenuBar());
-	}
+        setMenuBar(makeMenuBar());
+    }
 
-	/**
-	* Closes the <code>TrackingController</code>.
-	*/
-	public void closeWindow()
-	{
-		setVisible(false);
-		model.deleteObserver(view);
-		dispose();
-	}
+    /**
+     * Closes the <code>TrackingController</code>.
+     */
+    public void closeWindow() {
+        setVisible(false);
+        model.deleteObserver(view);
+        dispose();
+    }
 
-	/** Enables or disables the view. */
-	public void setViewEnabled(boolean enable) { view.setVisible(enable); view.redraw(); }
-	/** Returns true if the view is enabled. */
-	public boolean isViewEnabled() { return view.isVisible(); }
+    /**
+     * Enables or disables the view.
+     */
+    public void setViewEnabled(boolean enable) {
+        view.setVisible(enable);
+        view.redraw();
+    }
 
-	/**
-	* Creates the <code>MenuBar</code> to be used.
-	*/
-	public MenuBar makeMenuBar()
-	{
-		MenuBar bar = new MenuBar();
-		Menu menu; MenuItem item;
+    /**
+     * Returns true if the view is enabled.
+     */
+    public boolean isViewEnabled() {
+        return view.isVisible();
+    }
 
-		menu = new Menu("File");
-  	bar.add(menu);
-  	MenuListener ml = new MenuListener(this);
+    /**
+     * Creates the <code>MenuBar</code> to be used.
+     */
+    public MenuBar makeMenuBar() {
+        MenuBar bar = new MenuBar();
+        Menu menu;
+        MenuItem item;
 
-  	item = new MenuItem("Export...", new MenuShortcut(KeyEvent.VK_S));
-  	menu.add(item);
-  	item.addActionListener(ml);
+        menu = new Menu("File");
+        bar.add(menu);
+        MenuListener ml = new MenuListener(this);
 
-  	menu.add(new MenuItem("-"));
+        item = new MenuItem("Export...", new MenuShortcut(KeyEvent.VK_S));
+        menu.add(item);
+        item.addActionListener(ml);
 
-  	item = new MenuItem("Close", new MenuShortcut(KeyEvent.VK_W));
-  	menu.add(item);
-  	item.addActionListener(ml);
+        menu.add(new MenuItem("-"));
 
-		/*  Options */
+        item = new MenuItem("Close", new MenuShortcut(KeyEvent.VK_W));
+        menu.add(item);
+        item.addActionListener(ml);
 
-    menu = new Menu("Options");
-  	bar.add(menu);
+        /*  Options */
+        menu = new Menu("Options");
+        bar.add(menu);
 
-  	CheckboxMenuItem citem = new CheckboxMenuItem("Toggle view", true);
-  	menu.add(citem);
-   	citem.addItemListener(ml);
+        CheckboxMenuItem citem = new CheckboxMenuItem("Toggle view", true);
+        menu.add(citem);
+        citem.addItemListener(ml);
 
-		addToOptionsMenu(menu);
+        addToOptionsMenu(menu);
 
- 		return bar;
- 	}
+        return bar;
+    }
 
- 	protected void addToOptionsMenu(Menu menu) {}
+    protected void addToOptionsMenu(Menu menu) {
+    }
 
-	/**
-	 * Shows an error dialog.
-	 * @param msg The message to be shown.
-	 */
-	public void showError(String msg) {
-		new ErrorDialog(this, msg);
-	}
+    /**
+     * Shows an error dialog.
+     *
+     * @param msg The message to be shown.
+     */
+    public void showError(String msg) {
+        new ErrorDialog(this, msg);
+    }
 
-	/** Resets the view. */
-	public void reset() {
-		view.reset();
-	}
+    /**
+     * Resets the view.
+     */
+    public void reset() {
+        view.reset();
+    }
 
-	/**
-	* Listens to the menus.
-	*/
-	protected class MenuListener implements ActionListener, ItemListener
-	{
-		TrackingController controller;
+    /**
+     * Listens to the menus.
+     */
+    protected class MenuListener implements ActionListener, ItemListener {
 
-		public MenuListener(TrackingController _controller)
-		{
-			controller = _controller;
-		}
+        TrackingController controller;
 
-		/**
-		* Handles the <code>ActionEvent</code> action.
-		* @param e The ActionEvent that has occured.
-		*/
+        public MenuListener(TrackingController _controller) {
+            controller = _controller;
+        }
+
+        /**
+         * Handles the <code>ActionEvent</code> action.
+         *
+         * @param e The ActionEvent that has occured.
+         */
         @Override
-		public void actionPerformed( ActionEvent e )
-		{
-			String sel = ((MenuItem) e.getSource()).getLabel();
-			if (sel.equals("Close")) { closeWindow(); }
-			else if(sel.equals("Export..."))
-			{
-				FileDialog diag = new FileDialog(controller, "Export...", FileDialog.SAVE);
-				diag.setFile("export - " + view.getDescription() + ".dat");
-				diag.setVisible(true);
-				String filename;
-				if((filename = diag.getFile()) == null) {
+        public void actionPerformed(ActionEvent e) {
+            String sel = ((MenuItem) e.getSource()).getLabel();
+            if (sel.equals("Close")) {
+                closeWindow();
+            } else if (sel.equals("Export...")) {
+                FileDialog diag = new FileDialog(controller, "Export...", FileDialog.SAVE);
+                diag.setFile("export - " + view.getDescription() + ".dat");
+                diag.setVisible(true);
+                String filename;
+                if ((filename = diag.getFile()) == null) {
                     return;
                 }
-				filename = diag.getDirectory() + filename;
-				try { view.saveData(filename, model); }
-				catch(IOException exc) { controller.showError("Couldn't export data to \"" + filename + "\"!"); }
-			}
-		}
+                filename = diag.getDirectory() + filename;
+                try {
+                    view.saveData(filename, model);
+                } catch (IOException exc) {
+                    Logger.getLogger(TrackingController.class.getName()).log(Level.SEVERE, null, exc);
+                    controller.showError("Couldn't export data to \"" + filename + "\"!");
+                }
+            }
+        }
 
         @Override
-		public void itemStateChanged(ItemEvent e) {
-			CheckboxMenuItem item = (CheckboxMenuItem)e.getItemSelectable();
-			setViewEnabled(item.getState());
-		}
-	}
+        public void itemStateChanged(ItemEvent e) {
+            CheckboxMenuItem item = (CheckboxMenuItem) e.getItemSelectable();
+            setViewEnabled(item.getState());
+        }
+    }
 
-	public TrackingView getTrackingView() {
-		return view;
-	}
+    public TrackingView getTrackingView() {
+        return view;
+    }
 }

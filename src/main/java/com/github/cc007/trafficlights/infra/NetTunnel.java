@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -254,6 +256,7 @@ public class NetTunnel extends SpecialNode {
             } catch (Exception e) {
                 System.out.println("Unable to make socket server for NetTunnel."
                         + "Cannot receive roadusers :" + e);
+                Logger.getLogger(NetTunnel.class.getName()).log(Level.SEVERE, null, e);
             }
         }
 
@@ -268,6 +271,7 @@ public class NetTunnel extends SpecialNode {
                     System.out.println("NetTunnel " + nodeId + " received new connection.");
                 } catch (Exception e) {
                     System.out.println("NetTunnel couldn't accept connection :" + e);
+                    Logger.getLogger(NetTunnel.class.getName()).log(Level.SEVERE, null, e);
                 }
             }
         }
@@ -313,6 +317,7 @@ public class NetTunnel extends SpecialNode {
             } catch (Exception e) {
                 System.out.println("NetTunnel " + nodeId + " cannot connect to its peer on "
                         + remoteHostname + ":" + remotePort + ". Postponing send. I will retry later.");
+                Logger.getLogger(NetTunnel.class.getName()).log(Level.SEVERE, null, e);
             }
         } else {
             Iterator i = sendQueue.iterator();
@@ -333,6 +338,7 @@ public class NetTunnel extends SpecialNode {
                 loader = new XMLLoader(socket);
             } catch (Exception e) {
                 System.out.println("Problem with initializing listening socket for NetTunnel");
+                Logger.getLogger(NetTunnel.class.getName()).log(Level.SEVERE, null, e);
             }
         }
 
@@ -343,10 +349,11 @@ public class NetTunnel extends SpecialNode {
                     receive(loader.getNextElement(null));
                 } catch (InfraException e) {
                     System.out.println("Cannot generate received RU in NetTunnel " + nodeId);
+                    Logger.getLogger(NetTunnel.class.getName()).log(Level.SEVERE, null, e);
                 } catch (Exception e) {
                     System.out.println("A receiver in NetTunnel " + nodeId
                             + " broke of its connection.");
-                    //e.printStackTrace(System.out);
+                    e.printStackTrace(System.out);
                     return;
                 }
             }

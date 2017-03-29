@@ -25,6 +25,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -160,6 +162,7 @@ public abstract class Controller extends Frame implements XMLSerializable {
             try {
                 settings.doLoad();
             } catch (Exception e) {
+                Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, e);
                 showError("Cannot load settings. Reverting to defaults. Cause : " + e);
             }
         } else {
@@ -172,7 +175,8 @@ public abstract class Controller extends Frame implements XMLSerializable {
         // Give VM time to setup the window
         try {
             Thread.currentThread().sleep(splash ? 3000 : 1000);
-        } catch (Exception e) {
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         // show the window
@@ -343,6 +347,7 @@ public abstract class Controller extends Frame implements XMLSerializable {
             try {
                 settings.doSave();
             } catch (Exception e) {
+                Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, e);
                 showError("Cannot save settings : " + e);
             }
             // TODO: ask if user wants to save work
@@ -395,6 +400,7 @@ public abstract class Controller extends Frame implements XMLSerializable {
             try {
                 Runtime.getRuntime().exec(cmd);
             } catch (IOException e) {
+                Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, e);
                 showError("Couldn't launch browser: " + cmd);
             }
         }
@@ -583,10 +589,11 @@ public abstract class Controller extends Frame implements XMLSerializable {
             setStatus("Succesfully loaded " + filename);
         } catch (InvalidFilenameException e) {
             setStatus("Cannot load " + filename);
+            Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, e);
             showError(e.getMessage());
         } catch (Exception e) {
             setStatus("Cannot load " + filename);
-            e.printStackTrace(System.out);
+            Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, e);
         }
 
     }
@@ -602,9 +609,10 @@ public abstract class Controller extends Frame implements XMLSerializable {
             doSave(filename);
             setCurrentFilename(filename);
         } catch (InvalidFilenameException e) {
+            Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, e);
             showError(e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace(System.out);
+            Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 

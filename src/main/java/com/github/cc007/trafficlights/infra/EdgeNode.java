@@ -25,6 +25,8 @@ import java.awt.Color;
 import java.io.IOException;
 import java.util.*;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -82,6 +84,7 @@ public class EdgeNode extends SpecialNode {
             }
         } catch (Exception e) {
             System.out.println(e.getMessage() + "\n Due to new XML entry, safe to ignore the first time when loading older files.");
+            Logger.getLogger(EdgeNode.class.getName()).log(Level.SEVERE, null, e);
         }
 
     }

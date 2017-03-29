@@ -25,6 +25,8 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -145,6 +147,7 @@ abstract public class Roaduser implements Selectable, XMLSerializable, TwoStageL
             return super.clone();
         } catch (Exception e) {
             System.out.println(e);
+                Logger.getLogger(Roaduser.class.getName()).log(Level.SEVERE, null, e);
         }
         return null;
     }

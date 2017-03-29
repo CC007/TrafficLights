@@ -24,6 +24,8 @@ import java.awt.Graphics;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -116,7 +118,6 @@ public class Junction extends Node {
     /**
      * Sets the array that contains all roads connected to this node
      */
-
     public void setAllRoads(Road[] r) throws InfraException {
         allRoads = r;
         updateLanes();
@@ -753,6 +754,7 @@ public class Junction extends Node {
             } catch (InfraException e) {
                 thisRoad = 0;
                 System.out.println("Something went wrong in areOtherTailsFree()");
+                Logger.getLogger(Junction.class.getName()).log(Level.SEVERE, null, e);
             }
             targets = lane.getTargets();
 
@@ -774,6 +776,7 @@ public class Junction extends Node {
                 } catch (Exception e) {
                     check = new DriveLane[0];
                     System.out.println("Something went wrong in areOtherTailsFree() 2");
+                    Logger.getLogger(Junction.class.getName()).log(Level.SEVERE, null, e);
                 }
 
                 num_check = check.length;

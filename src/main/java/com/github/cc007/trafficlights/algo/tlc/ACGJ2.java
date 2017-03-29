@@ -223,7 +223,7 @@ public class ACGJ2 extends TLController implements XMLSerializable, TwoStageLoad
             DriveLane[] dls;
             try {
                 dls = nd.getInboundLanes();
-            } catch (Exception e) {
+            } catch (InfraException e) {
                 dls = new DriveLane[0];
             }
             dli = new DrivelaneInfo[dls.length];
@@ -233,7 +233,7 @@ public class ACGJ2 extends TLController implements XMLSerializable, TwoStageLoad
 
             try {
                 dls = nd.getInboundLanes();
-            } catch (Exception e) {
+            } catch (InfraException e) {
                 dls = new DriveLane[0];
             }
             dlo = new DrivelaneInfo[dls.length];
@@ -255,7 +255,7 @@ public class ACGJ2 extends TLController implements XMLSerializable, TwoStageLoad
             DriveLane[] dls;
             try {
                 dls = nd.getInboundLanes();
-            } catch (Exception e) {
+            } catch (InfraException e) {
                 dls = new DriveLane[0];
             }
             for (int i = 0; i < dls.length; i++) {
@@ -439,13 +439,13 @@ public class ACGJ2 extends TLController implements XMLSerializable, TwoStageLoad
         public void loadSecondStage(Map<String, Map<Integer, TwoStageLoader>> maps) throws XMLInvalidInputException, XMLTreeException {
             nd = (Node) maps.get("node").get(loadData.nodeId);
             if (bestSignSoFar != null) {
-                XMLUtils.loadSecondStage(Arrays.asList(bestSignSoFar), maps);
+                XMLUtils.loadSecondStage(new ArrayList<>(Arrays.asList(bestSignSoFar)), maps);
             }
         }
 
         public void loadThirdStage(Map maps) throws XMLInvalidInputException, XMLTreeException {
-            XMLUtils.loadSecondStage(Arrays.asList(dli), maps);
-            XMLUtils.loadSecondStage(Arrays.asList(dlo), maps);
+            XMLUtils.loadSecondStage(new ArrayList<>(Arrays.asList(dli)), maps);
+            XMLUtils.loadSecondStage(new ArrayList<>(Arrays.asList(dlo)), maps);
         }
 
     }
@@ -739,18 +739,18 @@ public class ACGJ2 extends TLController implements XMLSerializable, TwoStageLoad
     @Override
     public void loadSecondStage(Map<String, Map<Integer, TwoStageLoader>> maps) throws XMLInvalidInputException, XMLTreeException {
         super.loadSecondStage(maps);
-        XMLUtils.loadSecondStage(Arrays.asList(ndinf), maps);
+        XMLUtils.loadSecondStage(new ArrayList<>(Arrays.asList(ndinf)), maps);
         loadThirdStage(maps);
     }
 
     // Yeah. Baby. A three-stage loader
     public void loadThirdStage(Map<String, Map<Integer, TwoStageLoader>> maps) throws XMLInvalidInputException, XMLTreeException {
         Map<Integer, TwoStageLoader> nodeInfoMap = new HashMap();
-        for (NodeInfo nodeInfo : Arrays.asList(ndinf)) {
+        for (NodeInfo nodeInfo : new ArrayList<>(Arrays.asList(ndinf))) {
             nodeInfoMap.put(nodeInfo.getId(), nodeInfo);
         }
         maps.put("node-info", nodeInfoMap);
-        for (NodeInfo nodeInfo : Arrays.asList(ndinf)) {
+        for (NodeInfo nodeInfo : new ArrayList<>(Arrays.asList(ndinf))) {
             nodeInfo.loadThirdStage(maps);
         }
     }
