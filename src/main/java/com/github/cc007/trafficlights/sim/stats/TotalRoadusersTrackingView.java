@@ -16,7 +16,6 @@
 
 package com.github.cc007.trafficlights.sim.stats;
 
-import com.github.cc007.trafficlights.infra.*;
 import com.github.cc007.trafficlights.infra.Node.NodeStatistics;
 import com.github.cc007.trafficlights.sim.SimModel;
 
@@ -39,6 +38,7 @@ public class TotalRoadusersTrackingView extends ExtendedTrackingView
 	}
 
 	/** Returns the next sample to be 'tracked'. */
+    @Override
 	protected float nextSample(int index) 
 	{ 
 		int sample = 0;
@@ -47,9 +47,12 @@ public class TotalRoadusersTrackingView extends ExtendedTrackingView
 		return (float)sample;
 	}
 
+    @Override
 	protected String getYLabel() { return "arrived (roadusers)"; }
 
+    @Override
 	public String getDescription() { return "total arrived roadusers"; }
 	
+    @Override
 	public boolean useModes() { return false; }
 }

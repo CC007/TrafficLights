@@ -16,15 +16,9 @@
 
 package com.github.cc007.trafficlights.algo.tlc;
 
-import com.github.cc007.trafficlights.*;
-import com.github.cc007.trafficlights.sim.*;
 import com.github.cc007.trafficlights.algo.tlc.*;
 import com.github.cc007.trafficlights.infra.*;
-import com.github.cc007.trafficlights.utils.*;
 import com.github.cc007.trafficlights.xml.*;
-import java.io.IOException;
-import java.util.* ;
-import java.awt.Point;
 
 /**
  * This controller will switch TrafficLights so that a SignConfig
@@ -48,6 +42,7 @@ public class MostCarsTLC extends TLController
 	 * This implementation sets the Q-values according to the length
 	 * of the waiting queue. The longer the queue, the higher the Q-value.
 	 */	
+@Override
 	public TLDecision[][] decideTLs()
 	{
 		int num_lanes, num_nodes = tld.length;
@@ -55,15 +50,17 @@ public class MostCarsTLC extends TLController
 		for (int i=0; i < num_nodes; i++) {
 			num_lanes = tld[i].length;
 			for(int j=0; j < num_lanes; j++) {
-				if(tld[i][j].getTL().getLane().getNumRoadusersWaiting()>=1)
-					tld[i][j].setGain(1);
-				else
-					tld[i][j].setGain(0);
+				if(tld[i][j].getTL().getLane().getNumRoadusersWaiting()>=1) {
+                    tld[i][j].setGain(1);
+                } else {
+                    tld[i][j].setGain(0);
+                }
     		}
 		}
 		return tld;
 	}
 
+@Override
 	public void updateRoaduserMove(Roaduser _ru, DriveLane _prevlane, Sign _prevsign, int _prevpos, DriveLane _dlanenow, Sign _signnow, int _posnow, PosMov[] posMovs, DriveLane desired)
 	{
 	    // No needed
@@ -71,12 +68,14 @@ public class MostCarsTLC extends TLController
 	
 	// Trivial XMLSerializable implementation
 
+@Override
 	public XMLElement saveSelf () throws XMLCannotSaveException
 	{ 	XMLElement result=super.saveSelf();
 		result.setName(shortXMLName);
 		return result;
 	}
   
+@Override
  	public String getXMLName ()
 	{ 	return "model.tlc-mostcars";
 	}

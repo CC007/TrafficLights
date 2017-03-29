@@ -107,8 +107,9 @@ class XMLInputReader extends InputStreamReader
       for (t=bufferBegin;t<bufferEnd;t++)	 
       { if (c==buffer[t])
         { int endPos=t-bufferBegin;
-	  if (including)
-	     endPos++;
+	  if (including) {
+          endPos++;
+        }
 	  result+=(new String(buffer,bufferBegin,endPos));
 	  bufferBegin=t; 
 	  return result;
@@ -118,8 +119,9 @@ class XMLInputReader extends InputStreamReader
       bufferBegin=bufferEnd;
       // This statement is superfluous, just to make really sure the
       // loop is eventually terminated if the char is never encountered.
-      if (atEOF) 
+      if (atEOF) {
           throw new EOFException ();
+    }
     }
   }
   
@@ -135,14 +137,16 @@ class XMLInputReader extends InputStreamReader
       { fillBuffer();
         // Check the first char in the buffer
         if (bufferBegin<bufferEnd && buffer[bufferBegin]==c)
-	{ if (including)
-	     bufferBegin++;
+	{ if (including) {
+        bufferBegin++;
+    }
           return;
 	}
         for ( ; bufferBegin< bufferEnd; bufferBegin++)
 	{ if (buffer[bufferBegin]==c)
-	  { if (including)
-	      bufferBegin++;
+	  { if (including) {
+          bufferBegin++;
+      }
 	    return;  
 	  }
 	}

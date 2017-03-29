@@ -38,6 +38,7 @@ public class RoadTool extends PopupMenuTool
 		ra = new RoadAction(c.getEditModel());
 	}
 
+    @Override
 	public void mousePressed(View view, Point p, Tool.Mask mask)
 	{
 		if (ra.beingUsed()) {
@@ -50,17 +51,25 @@ public class RoadTool extends PopupMenuTool
 
 		super.mousePressed(view, p, mask);
 
-		if (!mask.isLeft()) return;
-		if (ra.startAction(view, p)) view.repaint();
+		if (!mask.isLeft()) {
+            return;
+        }
+		if (ra.startAction(view, p)) {
+            view.repaint();
+        }
 	}
 
+    @Override
 	public void mouseReleased(View view, Point p, Tool.Mask mask)
 	{
-		if (!mask.isLeft() && !ra.beingUsed()) return;
+		if (!mask.isLeft() && !ra.beingUsed()) {
+            return;
+        }
 		ra.nextAction(view, p);
 		view.repaint();
 	}
 
+    @Override
 	public void mouseMoved(View view, Point p, Tool.Mask mask) {
 		if (ra.beingUsed()) {
 			ra.moveAction(view, p);
@@ -68,11 +77,16 @@ public class RoadTool extends PopupMenuTool
 		}
 	}
 
+    @Override
 	public int overlayType() { return 1; }
 	
+    @Override
 	public void paint(Graphics g) throws GLDException {
-		if (ra.beingUsed()) ra.paint(g);
+		if (ra.beingUsed()) {
+            ra.paint(g);
+        }
 	}
 	
+    @Override
 	public Panel getPanel() { return new Panel(null); }
 }

@@ -17,9 +17,6 @@
 package com.github.cc007.trafficlights.edit;
 
 import com.github.cc007.trafficlights.*;
-import com.github.cc007.trafficlights.infra.*;
-import com.github.cc007.trafficlights.tools.*;
-import com.github.cc007.trafficlights.xml.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -60,7 +57,7 @@ public class EditSizeDialog extends Dialog implements ActionListener, WindowList
 	
 	
 	/*============================================*/
-	/* GET, SET, ok() and show()                  */
+	/* GET, SET, ok() and setVisible(true)                  */
 	/*============================================*/
 	
 	// I & S erachter anders clash met Component.getWidth() en zo
@@ -79,9 +76,10 @@ public class EditSizeDialog extends Dialog implements ActionListener, WindowList
 	public boolean ok() { return ok; }
 	
 	/** Shows the dialog */
-	public void show() {
+    @Override
+	public void setVisible(boolean visible) {
 		ok = false;
-		super.show();
+		super.setVisible(visible);
 	}
 
 
@@ -94,6 +92,7 @@ public class EditSizeDialog extends Dialog implements ActionListener, WindowList
 
 
 
+    @Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("Ok") || e.getSource() instanceof TextField) {
  			try {
@@ -107,16 +106,25 @@ public class EditSizeDialog extends Dialog implements ActionListener, WindowList
  			}
  			ok = true;
  		}
- 		else ok = false;
-		hide();
+ 		else {
+            ok = false;
+        }
+		setVisible(false);
  	}
  	
-	public void windowClosing(WindowEvent e) { hide(); }
+    @Override
+	public void windowClosing(WindowEvent e) { setVisible(false); }
+    @Override
 	public void windowActivated(WindowEvent e) { }
+    @Override
 	public void windowClosed(WindowEvent e) { }
+    @Override
 	public void windowDeactivated(WindowEvent e) { }
+    @Override
 	public void windowIconified(WindowEvent e) { }
+    @Override
 	public void windowDeiconified(WindowEvent e) { }
+    @Override
 	public void windowOpened(WindowEvent e) { }
 
 

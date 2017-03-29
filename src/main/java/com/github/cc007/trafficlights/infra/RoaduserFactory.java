@@ -16,7 +16,6 @@
 
 package com.github.cc007.trafficlights.infra;
 
-import com.github.cc007.trafficlights.GeneralSettings;
 import com.github.cc007.trafficlights.GLDSim;
 import com.github.cc007.trafficlights.infra.*;
 import java.awt.Color;
@@ -94,7 +93,9 @@ public class RoaduserFactory
 		if (UseCustoms)
 		{
 			Roaduser ru = CustomFactory.genRoaduser(type, start, dest, pos);
-			if (ru != null) return ru;
+			if (ru != null) {
+                return ru;
+            }
 		}
 		switch (type) {
 			case CAR : return (rnd.nextFloat() < PacChance ? new PacCar(start,dest,0) : new Car(start,dest,0));
@@ -122,8 +123,9 @@ public class RoaduserFactory
 	*/
 	public static int getTypeByDesc(String desc) {
 			for(int i=0; i<types.length; i++)
-				if(desc.equals(typeDescs[i]))
-					return types[i];
+				if(desc.equals(typeDescs[i])) {
+                    return types[i];
+            }
 			return 0;
 	}
 
@@ -133,8 +135,9 @@ public class RoaduserFactory
 	*/
 	public static String getDescByType(int type) {
 			for(int i=0; i<types.length; i++)
-				if(type == types[i])
-					return typeDescs[i];
+				if(type == types[i]) {
+                    return typeDescs[i];
+            }
 			return "";
 	}
 
@@ -144,8 +147,9 @@ public class RoaduserFactory
 	*/
 	public static String getDescByConcreteType(int type) {
 			for(int i=0; i<concreteTypes.length; i++)
-				if(type == concreteTypes[i])
-					return concreteTypeDescs[i];
+				if(type == concreteTypes[i]) {
+                    return concreteTypeDescs[i];
+            }
 			return "";
 	}
 

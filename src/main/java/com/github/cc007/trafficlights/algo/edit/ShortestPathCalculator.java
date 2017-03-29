@@ -15,7 +15,6 @@
 
 package com.github.cc007.trafficlights.algo.edit;
 
-import java.io.*;
 import com.github.cc007.trafficlights.infra.*;
 import com.github.cc007.trafficlights.utils.Typeutils;
 

@@ -16,8 +16,6 @@
 
 package com.github.cc007.trafficlights.xml;
 
-import com.github.cc007.trafficlights.utils.StringUtils;
-
 /** Container class for attributes of a XML element. Objects have built-in
  *  encapsulation for control-characters.
  */
@@ -96,6 +94,7 @@ public class XMLAttribute
   
   /** @return A string with name="value". With eventual encapsulation.
    */
+@Override
   public String toString ()
   { return name+'='+'\"'+value+'\"';
   }
@@ -145,10 +144,12 @@ public class XMLAttribute
     *         be converted to a boolean.
    */
   public boolean getBoolValue () throws XMLInvalidInputException
-  { if (value.equals("true"))
-       return true;
-    if (value.equals("false"))
-       return false;
+  { if (value.equals("true")) {
+      return true;
+  }
+    if (value.equals("false")) {
+        return false;
+  }
     throw new XMLInvalidInputException   
       ("Tried to parse a boolean in attribute "+name+" , but value "+value+
        "could not be parsed.");

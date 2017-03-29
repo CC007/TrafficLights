@@ -16,10 +16,8 @@
 
 package com.github.cc007.trafficlights;
 
-import com.github.cc007.trafficlights.GLDException;
 
 import java.awt.*;
-import java.util.*;
 
 /**
  *

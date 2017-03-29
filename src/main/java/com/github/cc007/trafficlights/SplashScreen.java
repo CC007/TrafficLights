@@ -35,6 +35,7 @@ public class SplashScreen extends Window
 		try {mt.waitForID(0);} catch (InterruptedException e) {}
 	}
 	
+@Override
 	public void paint(Graphics g) {
 		setSize(WIDTH,HEIGHT);
 		g.setColor(Color.white);

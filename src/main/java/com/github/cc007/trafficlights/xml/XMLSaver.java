@@ -120,8 +120,9 @@ public class XMLSaver
     *         is not XMLSerializable
    */
   public void saveIteratorObjects (Iterator it) throws ClassCastException,XMLTreeException,IOException,XMLCannotSaveException
-  { while (it.hasNext())
-          saveObject((XMLSerializable)(it.next()));
+  { while (it.hasNext()) {
+      saveObject((XMLSerializable)(it.next()));
+  }
   }
   
  /** Save an atomary XML element

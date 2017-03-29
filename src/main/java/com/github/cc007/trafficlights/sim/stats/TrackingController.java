@@ -22,9 +22,7 @@ import com.github.cc007.trafficlights.sim.SimController;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
 import java.io.IOException;
-import java.util.*;
 
 /**
 *
@@ -53,7 +51,8 @@ public class TrackingController extends Frame
 		controller = _controller;
 		view = _view;
 
-		addWindowListener(new WindowAdapter() { public void windowClosing(WindowEvent e) { closeWindow(); } });
+		addWindowListener(new WindowAdapter() {@Override
+ public void windowClosing(WindowEvent e) { closeWindow(); } });
 		setBounds(200, 200, 400, 300);
 		setBackground(Color.lightGray);
 		setTitle("Tracking - " + view.getDescription());
@@ -148,6 +147,7 @@ public class TrackingController extends Frame
 		* Handles the <code>ActionEvent</code> action.
 		* @param e The ActionEvent that has occured.
 		*/
+        @Override
 		public void actionPerformed( ActionEvent e )
 		{
 			String sel = ((MenuItem) e.getSource()).getLabel();
@@ -156,15 +156,18 @@ public class TrackingController extends Frame
 			{
 				FileDialog diag = new FileDialog(controller, "Export...", FileDialog.SAVE);
 				diag.setFile("export - " + view.getDescription() + ".dat");
-				diag.show();
+				diag.setVisible(true);
 				String filename;
-				if((filename = diag.getFile()) == null) return;
+				if((filename = diag.getFile()) == null) {
+                    return;
+                }
 				filename = diag.getDirectory() + filename;
 				try { view.saveData(filename, model); }
 				catch(IOException exc) { controller.showError("Couldn't export data to \"" + filename + "\"!"); }
 			}
 		}
 
+        @Override
 		public void itemStateChanged(ItemEvent e) {
 			CheckboxMenuItem item = (CheckboxMenuItem)e.getItemSelectable();
 			setViewEnabled(item.getState());

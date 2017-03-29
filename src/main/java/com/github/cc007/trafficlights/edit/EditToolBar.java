@@ -20,8 +20,6 @@ import com.github.cc007.trafficlights.GLDToolBar;
 import com.github.cc007.trafficlights.utils.*;
 import com.github.cc007.trafficlights.tools.*;
 
-import java.awt.*;
-import java.util.*;
 import java.awt.event.*;
 
 /**
@@ -44,6 +42,7 @@ public class EditToolBar extends GLDToolBar
 		super(ec, true);
 	}
 	
+    @Override
 	protected void addTools() {
 //  	addButton("gld/images/total.gif", this, TOTAL);
 //		addButton("gld/images/move.gif", this, MOVE);
@@ -52,6 +51,7 @@ public class EditToolBar extends GLDToolBar
   	addButton("images/drivelane.gif", this, LANE);
 	}
 
+    @Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		int Id = ((IconButton)e.getSource()).getId();

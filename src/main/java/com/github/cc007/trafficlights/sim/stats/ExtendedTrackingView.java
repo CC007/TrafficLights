@@ -16,14 +16,9 @@
 
 package com.github.cc007.trafficlights.sim.stats;
 
-import com.github.cc007.trafficlights.infra.Node.NodeStatistics;
 import com.github.cc007.trafficlights.infra.RoaduserFactory;
 
-import java.awt.Canvas;
-import java.awt.Graphics;
-import java.awt.Point;
 import java.awt.Color;
-import java.awt.event.*;
 
 /**
  *
@@ -59,6 +54,7 @@ public abstract class ExtendedTrackingView extends TrackingView
 	public boolean getAllTime() { return allTime; }
 	
   /** Returns the colors to be used when drawing the tracking graphs. */
+    @Override
   protected Color[] getColors() {
   	Color[] ruColors = new Color[MAX_TRACK];
   	ruColors[0] = Color.black;
@@ -67,8 +63,10 @@ public abstract class ExtendedTrackingView extends TrackingView
   	return ruColors;
 	}
 	
+    @Override
 	protected int getMaxTrack() { return RoaduserFactory.statArrayLength(); }
 	
+    @Override
 	protected String getSourceDesc(int i) { return RoaduserFactory.getDescByStatIndex(i); }
 
 	public boolean useModes() { return true; }

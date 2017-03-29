@@ -16,8 +16,6 @@
 
 package com.github.cc007.trafficlights.sim.stats;
 
-import com.github.cc007.trafficlights.infra.*;
-import com.github.cc007.trafficlights.infra.Node.NodeStatistics;
 import com.github.cc007.trafficlights.sim.SimModel;
 
 /**
@@ -35,14 +33,18 @@ public class AccidentsCountTrackingView extends ExtendedTrackingView{
     }
     
 	/** Returns the next sample to be 'tracked'. */
+    @Override
 	protected float nextSample(int index) 
 	{ 
             return (float) model.getInfrastructure().getAccidentsCount();
 	}
 
+    @Override
 	protected String getYLabel() { return "accidents"; }
 
+    @Override
 	public String getDescription() { return "Number of accidents"; }
 	
+    @Override
 	public boolean useModes() { return false; }
 }

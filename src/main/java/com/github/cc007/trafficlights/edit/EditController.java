@@ -18,16 +18,13 @@ package com.github.cc007.trafficlights.edit;
 
 import com.github.cc007.trafficlights.*;
 import com.github.cc007.trafficlights.infra.*;
-import com.github.cc007.trafficlights.sim.*;
-import com.github.cc007.trafficlights.tools.*;
-import com.github.cc007.trafficlights.utils.*;
 import com.github.cc007.trafficlights.xml.*;
 
 import java.awt.*;
 import java.io.*;
 import java.util.*;
 import java.awt.event.*;
-import java.util.EventListener;
+import java.util.List;
 
 /**
  *
@@ -46,6 +43,7 @@ public class EditController extends Controller
 	 * Creates the main frame
 	 *
 	 * @param m The program can't run without this =]
+     * @param splash
 	 */
 	public EditController(EditModel m, boolean splash) 
 	{
@@ -104,6 +102,7 @@ public class EditController extends Controller
 	/* Loading and saving                         */
 	/*============================================*/
 
+    @Override
  	public XMLElement saveSelf() throws XMLCannotSaveException
 	{
 		XMLElement result = super.saveSelf();
@@ -112,11 +111,15 @@ public class EditController extends Controller
 	}
 
 
+    @Override
 	protected void doSave(String filename) throws InvalidFilenameException, Exception
 	{	boolean valid = validateInfra();
-		if (!valid) throw new InvalidFilenameException("Can't save invalid infrastructure to file.");
-		if (!filename.endsWith(".infra"))
-			throw new InvalidFilenameException("Filename must have .infra extension.");
+		if (!valid) {
+            throw new InvalidFilenameException("Can't save invalid infrastructure to file.");
+    }
+		if (!filename.endsWith(".infra")) {
+            throw new InvalidFilenameException("Filename must have .infra extension.");
+    }
 		setStatus("Saving infrastructure to " + filename);	
 		XMLSaver saver=new XMLSaver(new File(filename));
 		saveAll(saver,getEditModel());
@@ -124,9 +127,11 @@ public class EditController extends Controller
 		saver.close();
 	}
  
+    @Override
 	protected void doLoad(String filename) throws InvalidFilenameException, Exception
-	{  if (!filename.endsWith(".infra"))
-			throw new InvalidFilenameException("Only able to load .infra files.");
+	{  if (!filename.endsWith(".infra")) {
+        throw new InvalidFilenameException("Only able to load .infra files.");
+    }
 		XMLLoader loader=new XMLLoader(new File(filename));
 		loadAll(loader,getEditModel());
 		newInfrastructure(model.getInfrastructure());
@@ -152,6 +157,7 @@ public class EditController extends Controller
 	/* Miscellanous                               */
 	/*============================================*/
 
+    @Override
 	protected String appName() { return "editor"; }
 
 	protected void enableGrid() {
@@ -163,16 +169,19 @@ public class EditController extends Controller
 	}
 
 	/** Creates the menubar for the editor */
+    @Override
   protected MenuBar createMenuBar() {
   	return new EditMenuBar(this);
   }
 
 	/** Creates the toolbar for the editor */  
+    @Override
   protected GLDToolBar createToolBar() {
   	return new EditToolBar(this);
   }
 
 	/** Creates a right-click popup-menu for the givens object */
+    @Override
 	public PopupMenu getPopupMenuFor(Selectable obj) throws PopupException {
 		EditPopupMenuFactory pmf = new EditPopupMenuFactory(this);
 		return pmf.getPopupMenuFor(obj);
@@ -208,6 +217,7 @@ public class EditController extends Controller
 	/*============================================*/
 
 	/** Shows the file properties dialog */
+    @Override
 	public void showFilePropertiesDialog()
 	{
 		Infrastructure infra = getEditModel().getInfrastructure();
@@ -217,7 +227,7 @@ public class EditController extends Controller
 		
 		EditPropDialog propDialog = new EditPropDialog(this, title, author, comments);
 		
-		propDialog.show();
+		propDialog.setVisible(true);
 		if (propDialog.ok())
 		{
 			infra.setTitle(propDialog.getInfraname());
@@ -231,7 +241,7 @@ public class EditController extends Controller
 	public void showChangeSizeDialog() {
 		Dimension dim = model.getInfrastructure().getSize();
 		EditSizeDialog esd = new EditSizeDialog(this, dim.width, dim.height);
-		esd.show();
+		esd.setVisible(true);
 		if (esd.ok()) {
 			dim = new Dimension(esd.getWidthI(), esd.getHeightI());
 			model.getInfrastructure().setSize(dim);
@@ -243,7 +253,7 @@ public class EditController extends Controller
 	/** Removes all objects from the infrastructure that are currently selected */
 	public void deleteSelection() {
 		try {
-			LinkedList objects = currentSelection.getSelectedObjects();
+			List<Selectable> objects = currentSelection.getSelectedObjects();
 			currentSelection.setSelectedObjects(new LinkedList());
 			getEditModel().remObjects(objects);
 		}
@@ -290,18 +300,25 @@ public class EditController extends Controller
 		}
 
 		/** Invoked when a mouse button is pressed on the View. */
+        @Override
 		public void mousePressed(MouseEvent e) { posToScreen(e.getPoint()); }
 		/** Invoked when a mouse button is released on the View. */
+        @Override
 		public void mouseReleased( MouseEvent e ) { posToScreen(e.getPoint()); }
 		/** Invoked when the mouse cursor is moved over the View. */
+        @Override
 		public void mouseMoved( MouseEvent e ) { posToScreen(e.getPoint()); }
 		/** Invoked when the mouse cursor is dragged over the View. */
+        @Override
 		public void mouseDragged( MouseEvent e ) { posToScreen(e.getPoint()); }
 		/** Invoked when the mouse cursor enters the View. */
+        @Override
 		public void mouseEntered( MouseEvent e ) {	posToScreen(e.getPoint());	}
 		/** Invoked when the mouse cursor exits the View. */
+        @Override
 		public void mouseExited( MouseEvent e ) { setStatus("Ready."); }
 		/** Empty implementation, required by the MouseListener interface. */
+        @Override
 		public void mouseClicked( MouseEvent e ) { }
 	}
 }

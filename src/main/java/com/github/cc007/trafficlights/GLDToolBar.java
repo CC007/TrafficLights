@@ -20,9 +20,7 @@ import com.github.cc007.trafficlights.utils.*;
 import com.github.cc007.trafficlights.tools.*;
 
 import java.awt.*;
-import java.util.*;
 import java.awt.event.*;
-import java.io.File;
 
 /**
  * Abstract ToolBar for simulator and editor contains common elements
@@ -104,9 +102,10 @@ public abstract class GLDToolBar extends ToolBar implements ActionListener, Item
         return zoom;
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
-        int Id = ((IconButton) e.getSource()).getId();
-        switch (Id) {
+        int id = ((IconButton) e.getSource()).getId();
+        switch (id) {
             case NEW: {
                 controller.newFile();
                 break;
@@ -150,6 +149,7 @@ public abstract class GLDToolBar extends ToolBar implements ActionListener, Item
         }
     }
 
+    @Override
     public void itemStateChanged(ItemEvent e) {
         controller.zoomTo(zoom.getSelectedIndex());
     }

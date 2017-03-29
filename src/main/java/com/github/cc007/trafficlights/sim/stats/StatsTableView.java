@@ -18,11 +18,8 @@ package com.github.cc007.trafficlights.sim.stats;
 
 import com.github.cc007.trafficlights.infra.*;
 import com.github.cc007.trafficlights.infra.Node.NodeStatistics;
-import com.github.cc007.trafficlights.sim.SimModel;
 
 import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
 
 /**
  *
@@ -48,6 +45,7 @@ public class StatsTableView extends StatisticsView
 		super(parent, stats);
 	}
 	
+    @Override
 	public void paintStats(Graphics g)
 	{
 		NodeStatistics[][] nodeStats = stats.getNodeStatistics();
@@ -101,6 +99,7 @@ public class StatsTableView extends StatisticsView
 		return "";
 	}
 	
+    @Override
 	protected void paintAreaChanged()
 	{
 		int rowsPossible = Math.max(paintArea.height / ROW_HEIGHT, 1);

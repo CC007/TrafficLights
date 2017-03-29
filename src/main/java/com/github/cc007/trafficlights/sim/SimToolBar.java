@@ -46,6 +46,7 @@ public class SimToolBar extends GLDToolBar
 		addSeparator();
 	}
 	
+    @Override
 	protected void addTools() {
   	addButton("images/edgenode.gif", this, EDGENODE);
   	
@@ -68,6 +69,7 @@ public class SimToolBar extends GLDToolBar
 	
 	public Choice getSpeed() { return speed; }
 
+    @Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		SimController sc = (SimController)controller;
@@ -80,10 +82,14 @@ public class SimToolBar extends GLDToolBar
 		}
 	}
 	
+    @Override
 	public void itemStateChanged(ItemEvent e) {
 		SimController sc = (SimController)controller;
 		Choice s = (Choice)e.getItemSelectable();
-		if (s == speed) sc.setSpeed(speed.getSelectedIndex());
-		else super.itemStateChanged(e);
+		if (s == speed) {
+            sc.setSpeed(speed.getSelectedIndex());
+        } else {
+            super.itemStateChanged(e);
+        }
 	}
 }

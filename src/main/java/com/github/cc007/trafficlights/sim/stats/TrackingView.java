@@ -170,17 +170,21 @@ public abstract class TrackingView extends Canvas implements Observer
 	 * @param o The observed <code>Model</code>.
 	 * @param arg Optional arguments.
 	 */
+    @Override
 	public void update(Observable o, Object arg)
 	{
-		if(++trackCount != trackRate) return;
+		if(++trackCount != trackRate) {
+            return;
+        }
 		trackCount = 0;
 
 		for(int i=0; i<MAX_TRACK; i++) {
 			trackData[i][curIndex] = nextSample(i);
 			maximum = Math.max(maximum, trackData[i][curIndex]);
 		}
-		if(++curIndex == MAX_DATA)
-			collapseData();
+		if(++curIndex == MAX_DATA) {
+            collapseData();
+        }
 
 		redraw();
 	}
@@ -188,7 +192,9 @@ public abstract class TrackingView extends Canvas implements Observer
 	/** Redraws the buffer and paints it to the screen. */
 	public void redraw()
 	{
-		if (!isVisible()) return;
+		if (!isVisible()) {
+            return;
+        }
 
 		drawBuffer();
 		repaint();
@@ -211,8 +217,9 @@ public abstract class TrackingView extends Canvas implements Observer
 		// y-axis
 		String max = maximum + "";
 		int dot;
-		if((dot = max.indexOf(".")) > -1)
-			max = max.substring(0, dot+2);
+		if((dot = max.indexOf(".")) > -1) {
+            max = max.substring(0, dot+2);
+        }
 		g.drawString(max, 2, 15);
 		g.drawString("0", 16, h - 22);
 		g.drawString(getYLabel(), 0, 28);
@@ -250,6 +257,7 @@ public abstract class TrackingView extends Canvas implements Observer
 	}
 
 	/** Override default update() to avoid flickering. */
+    @Override
 	public void update(Graphics g)
 	{
 		paint(g);
@@ -260,6 +268,7 @@ public abstract class TrackingView extends Canvas implements Observer
 	 *
 	 * @param g the <code>Graphics</code> objects of this view.
 	 */
+    @Override
 	public void paint(Graphics g)
 	{
 		// draw buffer
@@ -291,6 +300,7 @@ public abstract class TrackingView extends Canvas implements Observer
 	 * @param width the new width
 	 * @param height the new height
 	 */
+    @Override
 	public void setSize(int width, int height)
 	{
 		buffer = new BufferedImage(width+1,height+1,BufferedImage.TYPE_INT_BGR);
@@ -298,6 +308,7 @@ public abstract class TrackingView extends Canvas implements Observer
 		redraw();
 	}
 
+    @Override
 	public void setBounds(int x, int y, int width, int height)
 	{
 		width = width < 1 ? 1 : width;
@@ -338,16 +349,18 @@ public abstract class TrackingView extends Canvas implements Observer
                 out.println("# Timestamp: " + date.getTime()); // DOAS 06
 		String fieldsDesc = "";
 		for(int i=0; i<MAX_TRACK; i++)
-			if(show[i])
-				fieldsDesc += "<" + getSourceDesc(i) + ">" + (i==MAX_TRACK-1?"":SEP);
+			if(show[i]) {
+                fieldsDesc += "<" + getSourceDesc(i) + ">" + (i==MAX_TRACK-1?"":SEP);
+                }
 		out.println("# Format: <Cycle>" + SEP + fieldsDesc); out.println("#");
 
 		String ln;
 		for(int i=0; i<curIndex; i++) {
 			ln = (startCycle + i * trackRate) + SEP;
 			for(int j=0; j<MAX_TRACK; j++)
-				if(show[j])
-					ln += trackData[j][i] + (j==MAX_TRACK-1?"":SEP);
+				if(show[j]) {
+                    ln += trackData[j][i] + (j==MAX_TRACK-1?"":SEP);
+            }
 			out.println(ln);
 		}
 		out.close();
@@ -368,6 +381,7 @@ public abstract class TrackingView extends Canvas implements Observer
 	*/
 	protected class MyMouseListener extends MouseAdapter
 	{
+        @Override
 		public void mouseClicked(MouseEvent e)
 		{
 			if((e.getModifiers() & InputEvent.BUTTON3_MASK) > 0) // right-click
@@ -388,8 +402,9 @@ public abstract class TrackingView extends Canvas implements Observer
 				for(int i=0; i<MAX_TRACK; i++) {
 					highlightText[i] = getSourceDesc(i) + " = " + trackData[i][highlightIndex];
 					int dot;
-					if((dot = highlightText[i].indexOf(".")) > -1)
-						highlightText[i] = highlightText[i].substring(0,dot+2);
+					if((dot = highlightText[i].indexOf(".")) > -1) {
+                        highlightText[i] = highlightText[i].substring(0,dot+2);
+                    }
 				}
 			}
 			redraw();

@@ -16,11 +16,8 @@
 
 package com.github.cc007.trafficlights.infra;
 
-import com.github.cc007.trafficlights.xml.*;
 import java.awt.Graphics;
 import java.awt.Color;
-import java.io.IOException;
-import java.util.*;
 
 /**
  * Cycling through our world on two wheels. Aint it great to be alive?
@@ -44,9 +41,15 @@ public class Bicycle extends Roaduser
 		int r = color.getRed();
 		int g = color.getGreen();
 		int b = color.getBlue();
-		if(r==0) r = (int)(Math.random() * 160);
-		if(g==0) g = (int)(Math.random() * 160);
-		if(b==0) b = (int)(Math.random() * 160);
+		if(r==0) {
+            r = (int)(Math.random() * 160);
+        }
+		if(g==0) {
+            g = (int)(Math.random() * 160);
+        }
+		if(b==0) {
+            b = (int)(Math.random() * 160);
+        }
 		color = new Color(r,g,b);
 	}
 	
@@ -54,16 +57,23 @@ public class Bicycle extends Roaduser
 	 */
 	public Bicycle() {}
 	
+    @Override
 	public String getName() { return "Bicycle"; }
 	
 	/** Returns the speed of this Roaduser in blocks per cycle */
+    @Override
 	public int getSpeed() { return speed; }
+    @Override
 	public int getLength() { return length; }
+    @Override
 	public int getNumPassengers() { return passengers; }	
+    @Override
 	public int getType() { return type; }
 
+    @Override
 	public void paint(Graphics g, int x, int y, float zf) {}
 	
+    @Override
 	public void paint(Graphics g, int x, int y, float zf, double dlangle)
 	{
 		g.setColor(color);
@@ -86,6 +96,7 @@ public class Bicycle extends Roaduser
 	
     // Specific XMLSerializable implementation 
     
+    @Override
  	public String getXMLName ()
  	{ 	return parentName+".roaduser-bicycle";
  	}

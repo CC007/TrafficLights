@@ -68,14 +68,22 @@ public class FileMenu extends Menu implements ActionListener
     item.addActionListener(this);
 	}
 	
+    @Override
 	public void actionPerformed(ActionEvent e) {
 		String s = e.getActionCommand();
 			
-		if (s.equals("New")) controller.newFile();
-		else if (s.equals("Open...")) controller.openFile();
-		else if (s.equals("Save")) controller.saveFile();
-		else if (s.equals("Save as...")) controller.saveFileAs();
-		else if (s.equals("Properties...")) controller.showFilePropertiesDialog();
-		else if (s.equals("Quit")) controller.quit();
+		if (s.equals("New")) {
+            controller.newFile();
+        } else if (s.equals("Open...")) {
+            controller.openFile();
+        } else if (s.equals("Save")) {
+            controller.saveFile();
+        } else if (s.equals("Save as...")) {
+            controller.saveFileAs();
+        } else if (s.equals("Properties...")) {
+            controller.showFilePropertiesDialog();
+        } else if (s.equals("Quit")) {
+            controller.quit();
+        }
 	}
 }

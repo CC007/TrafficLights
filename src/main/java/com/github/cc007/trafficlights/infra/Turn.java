@@ -19,7 +19,6 @@ package com.github.cc007.trafficlights.infra;
 import com.github.cc007.trafficlights.xml.*;
 import java.awt.Point;
 import java.io.IOException;
-import java.util.*;
 
 /**
  *
@@ -85,6 +84,7 @@ public class Turn implements XMLSerializable
 
   // XML Serializable implementation
   
+    @Override
 	public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
 	{	point=new Point (myElement.getAttribute("x-pos").getIntValue(),
                 		 myElement.getAttribute("y-pos").getIntValue());
@@ -92,6 +92,7 @@ public class Turn implements XMLSerializable
 		position=myElement.getAttribute("rel-pos").getDoubleValue();
 	}
 
+    @Override
 	public XMLElement saveSelf () throws XMLCannotSaveException
 	{	XMLElement result=new XMLElement("turn");
 		result.addAttribute(new XMLAttribute("x-pos", (int)(point.getX())));
@@ -101,14 +102,17 @@ public class Turn implements XMLSerializable
 		return result;
 	}
  
+    @Override
 	public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
 	{ 	// A turn has no childs
 	}
 
+    @Override
 	public String getXMLName () 
 	{	return parentName+".turn";
 	}
 	
+    @Override
 	public void setParentName (String parentName)
 	{	this.parentName=parentName; 
 	}

@@ -18,9 +18,6 @@ package com.github.cc007.trafficlights.config;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
-
-import com.github.cc007.trafficlights.*;
 import com.github.cc007.trafficlights.infra.*;
 import com.github.cc007.trafficlights.sim.SimulationRunningException;
 import com.github.cc007.trafficlights.utils.*;
@@ -111,6 +108,7 @@ public class NetTunnelPanel extends ConfigPanel implements ActionListener
 		setNetTunnel(netTunnel);
 	}
 
+    @Override
 	public void reset() {
 		Road road = netTunnel.getRoad();
 		if (road != null) {
@@ -137,6 +135,7 @@ public class NetTunnelPanel extends ConfigPanel implements ActionListener
 		rhField.setText(netTunnel.getRemoteHostname()+"");
 	}
 
+    @Override
 	public void ok() {
 		setLocalPort();
 		setRemotePort();
@@ -144,14 +143,21 @@ public class NetTunnelPanel extends ConfigPanel implements ActionListener
 	}
 
 	
+    @Override
 	public void actionPerformed (ActionEvent e)
 	{
 		Object source = e.getSource();
-		if (source == lpField || source == lpSet) setLocalPort();
-		else if (source == rpField || source == rpSet) setRemotePort();
-		else if (source == rhField || source == rhSet) setRemoteHost();
-		else if (source == roadLink) confd.selectObject(netTunnel.getRoad());
-		else if (source == nodeLink) confd.selectObject(netTunnel.getRoad().getOtherNode(netTunnel));
+		if (source == lpField || source == lpSet) {
+            setLocalPort();
+        } else if (source == rpField || source == rpSet) {
+            setRemotePort();
+        } else if (source == rhField || source == rhSet) {
+            setRemoteHost();
+        } else if (source == roadLink) {
+            confd.selectObject(netTunnel.getRoad());
+        } else if (source == nodeLink) {
+            confd.selectObject(netTunnel.getRoad().getOtherNode(netTunnel));
+        }
 	}
 
 

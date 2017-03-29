@@ -36,29 +36,45 @@ public class SelectTool extends PopupMenuTool
 		selectAction = new SelectAction(con.getCurrentSelection());
 	}
 	
+    @Override
 	public void mousePressed(View view, Point p, Tool.Mask mask) {
 		super.mousePressed(view, p, mask);
-		if (mask.isLeft()) selectAction.doStart(view, p);
+		if (mask.isLeft()) {
+            selectAction.doStart(view, p);
+        }
 	}
 
+    @Override
 	public void mouseReleased(View view, Point p, Tool.Mask mask) {
 		if (selectAction.beingUsed()) {
 			int type = SelectAction.NEW;
-			if (mask.isControlDown()) type = SelectAction.INVERT;
-			if (mask.isShiftDown()) type = SelectAction.ADD;
+			if (mask.isControlDown()) {
+                type = SelectAction.INVERT;
+            }
+			if (mask.isShiftDown()) {
+                type = SelectAction.ADD;
+            }
 			selectAction.endDrag(view, p, type);
 		}
 	}
 
+    @Override
 	public void mouseMoved(View view, Point p, Tool.Mask mask) {
-		if (selectAction.beingUsed()) selectAction.doDrag(view, p);
+		if (selectAction.beingUsed()) {
+            selectAction.doDrag(view, p);
+        }
 	}
 	
+    @Override
 	public int overlayType() { return 1; }
 	
+    @Override
 	public void paint(Graphics g) throws GLDException {
-		if (selectAction.beingUsed()) selectAction.paint(g);
+		if (selectAction.beingUsed()) {
+            selectAction.paint(g);
+        }
 	}
 	
+    @Override
 	public Panel getPanel() { return new Panel(null); }
 }

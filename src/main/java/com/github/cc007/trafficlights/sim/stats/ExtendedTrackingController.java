@@ -25,7 +25,6 @@ import com.github.cc007.trafficlights.utils.Arrayutils;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
 
 /**
 *
@@ -53,9 +52,12 @@ public class ExtendedTrackingController extends TrackingController
 	{
 		super(_model, _controller, _extView);
 		extView = _extView;
-		if(!extView.useModes()) modeCM.setEnabled(false);
+		if(!extView.useModes()) {
+            modeCM.setEnabled(false);
+        }
 	}
 
+    @Override
 	protected void addToOptionsMenu(Menu menu)
 	{
 		Menu submenu; MenuItem item;
@@ -83,11 +85,12 @@ public class ExtendedTrackingController extends TrackingController
 	*/
 	public class ETCMenuListener implements ItemListener
 	{
+        @Override
 		public void itemStateChanged(ItemEvent e) {
 			CheckMenu menu = (CheckMenu)e.getItemSelectable();
-			if(menu == modeCM)
-				extView.setAllTime(modeCM.getSelectedIndex() == 0);
-			else {
+			if(menu == modeCM) {
+                extView.setAllTime(modeCM.getSelectedIndex() == 0);
+            } else {
 				CheckboxMenuItem[] citems = ruTypeCM.getItems();
 				for(int i=0; i<citems.length; i++) {
 					int statIndex = RoaduserFactory.getStatIndexByDesc(citems[i].getLabel());

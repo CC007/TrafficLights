@@ -26,7 +26,6 @@ import java.awt.PopupMenu;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.lang.Exception;
 
 
 /**
@@ -51,9 +50,15 @@ public class SimPopupMenuFactory
 	 */
 	public PopupMenu getPopupMenuFor(Selectable obj) throws PopupException
 	{
-		if (obj instanceof Node) return getNodeMenu((Node)obj);
-		if (obj instanceof Road) return getRoadMenu((Road)obj);
-		if (obj instanceof DriveLane) return getDrivelaneMenu((DriveLane)obj);
+		if (obj instanceof Node) {
+            return getNodeMenu((Node)obj);
+        }
+		if (obj instanceof Road) {
+            return getRoadMenu((Road)obj);
+        }
+		if (obj instanceof DriveLane) {
+            return getDrivelaneMenu((DriveLane)obj);
+        }
 		throw new PopupException("Unknown object type");
 	}
 
@@ -63,9 +68,15 @@ public class SimPopupMenuFactory
 	protected PopupMenu getNodeMenu(Node n) throws PopupException
 	{
 		PopupMenuListener pml = null;
-		if (n instanceof EdgeNode) return getEdgeNodeMenu((EdgeNode)n);
-		if (n instanceof Junction) return getJunctionMenu((Junction)n);
-		if (n instanceof NetTunnel) return getNetTunnelMenu((NetTunnel)n);
+		if (n instanceof EdgeNode) {
+            return getEdgeNodeMenu((EdgeNode)n);
+        }
+		if (n instanceof Junction) {
+            return getJunctionMenu((Junction)n);
+        }
+		if (n instanceof NetTunnel) {
+            return getNetTunnelMenu((NetTunnel)n);
+        }
 		throw new PopupException("Unknown Node type");
 	}
 
@@ -106,18 +117,20 @@ public class SimPopupMenuFactory
 			node = n;
 		}
 
+        @Override
 		public void actionPerformed(ActionEvent e) {
 			String sel = e.getActionCommand();
 			try
 			{
-				if (sel.equals("Properties..."))
-					controller.showConfigDialog();
-				else if(sel.equals("Track waiting queue length"))
-					TrackerFactory.showTracker(controller.getSimModel(), controller, node, TrackerFactory.SPECIAL_QUEUE);
-				else if(sel.equals("Track trip waiting time"))
-					TrackerFactory.showTracker(controller.getSimModel(), controller, node, TrackerFactory.SPECIAL_WAIT);
-				else if(sel.equals("Track roadusers arrived"))
-					TrackerFactory.showTracker(controller.getSimModel(), controller, node, TrackerFactory.SPECIAL_ROADUSERS);
+				if (sel.equals("Properties...")) {
+                    controller.showConfigDialog();
+                } else if(sel.equals("Track waiting queue length")) {
+                    TrackerFactory.showTracker(controller.getSimModel(), controller, node, TrackerFactory.SPECIAL_QUEUE);
+                } else if(sel.equals("Track trip waiting time")) {
+                    TrackerFactory.showTracker(controller.getSimModel(), controller, node, TrackerFactory.SPECIAL_WAIT);
+                } else if(sel.equals("Track roadusers arrived")) {
+                    TrackerFactory.showTracker(controller.getSimModel(), controller, node, TrackerFactory.SPECIAL_ROADUSERS);
+                }
 			}
 			catch(GLDException exc) { controller.showError(exc.toString()); }
 		}
@@ -159,20 +172,22 @@ public class SimPopupMenuFactory
 			node = n;
 		}
 
+    @Override
 		public void actionPerformed(ActionEvent e) {
 			String sel = e.getActionCommand();
 			try
 			{
-				if (sel.equals("Properties..."))
-					controller.showConfigDialog();
-				else if(sel.equals("Track trip waiting time"))
-					TrackerFactory.showTracker(controller.getSimModel(), controller, node, TrackerFactory.SPECIAL_WAIT);
-				else if(sel.equals("Track roadusers arrived"))
-					TrackerFactory.showTracker(controller.getSimModel(), controller, node, TrackerFactory.SPECIAL_ROADUSERS);
-				else if(sel.equals("Track waiting (receive) queue"))
-					TrackerFactory.showTracker(controller.getSimModel(),controller,node, TrackerFactory.SPECIAL_QUEUE);
-				else if(sel.equals("Track send queue"))
-					TrackerFactory.showTracker(controller.getSimModel(), controller,node, TrackerFactory.NETTUNNEL_SEND);
+				if (sel.equals("Properties...")) {
+                    controller.showConfigDialog();
+                } else if(sel.equals("Track trip waiting time")) {
+                    TrackerFactory.showTracker(controller.getSimModel(), controller, node, TrackerFactory.SPECIAL_WAIT);
+                } else if(sel.equals("Track roadusers arrived")) {
+                    TrackerFactory.showTracker(controller.getSimModel(), controller, node, TrackerFactory.SPECIAL_ROADUSERS);
+                } else if(sel.equals("Track waiting (receive) queue")) {
+                    TrackerFactory.showTracker(controller.getSimModel(),controller,node, TrackerFactory.SPECIAL_QUEUE);
+                } else if(sel.equals("Track send queue")) {
+                    TrackerFactory.showTracker(controller.getSimModel(), controller,node, TrackerFactory.NETTUNNEL_SEND);
+                }
 					
 				
 			}
@@ -217,18 +232,20 @@ public class SimPopupMenuFactory
 			node = n;
 		}
 	
+        @Override
 		public void actionPerformed(ActionEvent e) {
 			String sel = e.getActionCommand();
-			if (sel.equals("Properties..."))
-				controller.showConfigDialog();
-			else
-				try { 
-					if(sel.equals("Track roadusers that crossed"))
-						TrackerFactory.showTracker(controller.getSimModel(), controller, node, TrackerFactory.JUNCTION_ROADUSERS); 
-					else if(sel.equals("Track junction waiting time"))
-						TrackerFactory.showTracker(controller.getSimModel(), controller, node, TrackerFactory.JUNCTION_WAIT); 
-				}
-				catch(GLDException exc) {}
+			if (sel.equals("Properties...")) {
+                controller.showConfigDialog();
+            } else {
+                try {
+                    if (sel.equals("Track roadusers that crossed")) {
+                        TrackerFactory.showTracker(controller.getSimModel(), controller, node, TrackerFactory.JUNCTION_ROADUSERS);
+                    } else if (sel.equals("Track junction waiting time")) {
+                        TrackerFactory.showTracker(controller.getSimModel(), controller, node, TrackerFactory.JUNCTION_WAIT);
+                    }
+                }catch(GLDException exc) {}
+            }
 		}
 	}
 
@@ -258,9 +275,11 @@ public class SimPopupMenuFactory
 			road = r;
 		}
 	
+        @Override
 		public void actionPerformed(ActionEvent e) {
-			if (e.getActionCommand().equals("Properties..."))
-				controller.showConfigDialog();
+			if (e.getActionCommand().equals("Properties...")) {
+                controller.showConfigDialog();
+            }
 		}
 	}
 
@@ -289,9 +308,11 @@ public class SimPopupMenuFactory
 			lane = l;
 		}
 	
+        @Override
 		public void actionPerformed(ActionEvent e) {
-			if (e.getActionCommand().equals("Properties..."))
-				controller.showConfigDialog();
+			if (e.getActionCommand().equals("Properties...")) {
+                controller.showConfigDialog();
+            }
 		}
 	}
 

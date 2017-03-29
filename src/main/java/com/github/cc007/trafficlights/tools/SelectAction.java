@@ -47,13 +47,15 @@ public class SelectAction implements ToolAction
 	/** Returns the enclosing rectangle of the last (current) drag operation */
 	private Rectangle getEnclosingRectangle() {
 		Rectangle r = new Rectangle(startPoint);
-		if (endPoint == null)
-			r.add(prevPoint);
-		else
-			r.add(endPoint);
+		if (endPoint == null) {
+            r.add(prevPoint);
+        } else {
+            r.add(endPoint);
+        }
 		return r;
 	}
 
+    @Override
 	public boolean beingUsed() { return isDragging; }
 	
 	public void doStart(View view, Point p) {
@@ -67,8 +69,12 @@ public class SelectAction implements ToolAction
 		endPoint = p;
 		if (startPoint != null) {
 			Rectangle r = new Rectangle(view.toView(startPoint));
-			if (endPoint != null) r.add(view.toView(endPoint));
-			if (prevPoint != null) r.add(view.toView(prevPoint));
+			if (endPoint != null) {
+                r.add(view.toView(endPoint));
+            }
+			if (prevPoint != null) {
+                r.add(view.toView(prevPoint));
+            }
 			r.grow(1, 1);
 			view.repaint(r.x, r.y, r.width, r.height);
 		}
@@ -80,18 +86,20 @@ public class SelectAction implements ToolAction
 		Rectangle r = getEnclosingRectangle();
 		if (r.width < 5 && r.height < 5) {
 			Point p2 = new Point(r.x + 2, r.y + 2);
-			if (type == INVERT)
-				currentSelection.invertWithSelection(p2);
-			else if (type == ADD)
-				currentSelection.addToSelection(p2);
-			else
-				currentSelection.newSelection(p2);
+			if (type == INVERT) {
+                currentSelection.invertWithSelection(p2);
+            } else if (type == ADD) {
+                currentSelection.addToSelection(p2);
+            } else {
+                currentSelection.newSelection(p2);
+            }
 		}
 		else {
-			if (type == ADD || type == INVERT)
-				currentSelection.addToSelection(r);
-			else
-				currentSelection.newSelection(r);
+			if (type == ADD || type == INVERT) {
+                currentSelection.addToSelection(r);
+            } else {
+                currentSelection.newSelection(r);
+            }
 		}
 	}
 

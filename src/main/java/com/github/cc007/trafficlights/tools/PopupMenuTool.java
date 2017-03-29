@@ -38,7 +38,10 @@ public abstract class PopupMenuTool implements Tool
 	
 	public PopupMenuAction getPopupMenuAction() { return pma; }
 	
+    @Override
 	public void mousePressed(View view, Point p, Tool.Mask mask) {
-		if (mask.isRight()) pma.doPopupMenu(view, p);
+		if (mask.isRight()) {
+            pma.doPopupMenu(view, p);
+        }
 	}
 }

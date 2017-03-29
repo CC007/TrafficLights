@@ -39,16 +39,18 @@ public class TotalWaitTrackingView extends ExtendedTrackingView
 	}
 
 	/** Returns the next sample to be 'tracked'. */
+    @Override
 	protected float nextSample(int index) 
 	{ 
 		float sample = 0, count = 0;
 		int ru;
 
 		for(int i=0; i<stats.length; i++) {
-			if(allTime)
-				ru = stats[i][index].getTotalRoadusers();
-			else
-				ru = Math.min(Node.STAT_NUM_DATA, stats[i][index].getTotalRoadusers());
+			if(allTime) {
+                ru = stats[i][index].getTotalRoadusers();
+            } else {
+                ru = Math.min(Node.STAT_NUM_DATA, stats[i][index].getTotalRoadusers());
+            }
 			sample += stats[i][index].getAvgWaitingTime(allTime) * ru;
 			count += ru;
 		}
@@ -56,7 +58,9 @@ public class TotalWaitTrackingView extends ExtendedTrackingView
 		return count == 0 ? 0 : sample / count;
 	}
 
+    @Override
 	protected String getYLabel() { return "delay (cycles)"; }
 
+    @Override
 	public String getDescription() { return "average trip waiting time"; }
 }

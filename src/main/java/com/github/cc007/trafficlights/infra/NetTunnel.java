@@ -18,7 +18,6 @@ package com.github.cc007.trafficlights.infra;
 import com.github.cc007.trafficlights.*;
 import com.github.cc007.trafficlights.sim.SimModel;
 import com.github.cc007.trafficlights.sim.SimulationRunningException;
-import com.github.cc007.trafficlights.utils.*;
 import com.github.cc007.trafficlights.xml.*;
 
 import java.awt.Point;
@@ -80,6 +79,7 @@ public class NetTunnel extends SpecialNode {
         sendQueue = new LinkedList();
     }
 
+    @Override
     public void start() {
         try {
             sendQueue = new LinkedList();
@@ -92,6 +92,7 @@ public class NetTunnel extends SpecialNode {
         }
     }
 
+    @Override
     public void stop() {
         sigStop = true;
         sender.close();
@@ -100,6 +101,7 @@ public class NetTunnel extends SpecialNode {
         reset();
     }
 
+    @Override
     public void enter(Roaduser ru) {
         sendQueue.add(ru);
         super.enter(ru);
@@ -108,6 +110,7 @@ public class NetTunnel extends SpecialNode {
     /*============================================*/
  /* LOAD and SAVE                              */
  /*============================================*/
+    @Override
     public void load(XMLElement myElement, XMLLoader loader) throws XMLTreeException, IOException, XMLInvalidInputException {
         super.load(myElement, loader);
         remoteHostname = myElement.getAttribute("remote-host").getValue();
@@ -116,6 +119,7 @@ public class NetTunnel extends SpecialNode {
         sendQueue = (LinkedList) (XMLArray.loadArray(this, loader));
     }
 
+    @Override
     public XMLElement saveSelf() throws XMLCannotSaveException {
         XMLElement result = super.saveSelf();
         result.setName("node-tunnel");
@@ -125,19 +129,22 @@ public class NetTunnel extends SpecialNode {
         return result;
     }
 
+    @Override
     public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException, XMLCannotSaveException {
         super.saveChilds(saver);
         XMLUtils.setParentName(sendQueue.iterator(), getXMLName());
         XMLArray.saveArray(sendQueue, this, saver, "send-queue");
     }
 
+    @Override
     public String getXMLName() {
         return parentName + ".node-tunnel";
     }
 
-    public void loadSecondStage(Dictionary dictionaries) throws XMLInvalidInputException, XMLTreeException {
-        super.loadSecondStage(dictionaries);
-        XMLUtils.loadSecondStage(sendQueue.iterator(), dictionaries);
+    @Override
+    public void loadSecondStage(Map maps) throws XMLInvalidInputException, XMLTreeException {
+        super.loadSecondStage(maps);
+        XMLUtils.loadSecondStage(sendQueue, maps);
     }
 
     class TwoStageLoaderData {
@@ -151,6 +158,7 @@ public class NetTunnel extends SpecialNode {
     /**
      * Returns the type of this node
      */
+    @Override
     public int getType() {
         return type;
     }
@@ -158,6 +166,7 @@ public class NetTunnel extends SpecialNode {
     /**
      * Returns the name of this nettunnel.
      */
+    @Override
     public String getName() {
         return "NetTunnel " + nodeId;
     }
@@ -198,6 +207,7 @@ public class NetTunnel extends SpecialNode {
         }
     }
 
+    @Override
     public void reset() {
         super.reset();
         sendQueue = new LinkedList();
@@ -212,10 +222,12 @@ public class NetTunnel extends SpecialNode {
     /*============================================*/
  /* Graphics stuff                             */
  /*============================================*/
+    @Override
     public void paint(Graphics g) throws GLDException {
         paint(g, 0, 0, 1.0f, 0.0);
     }
 
+    @Override
     public void paint(Graphics g, int x, int y, float zf) throws GLDException {
         paint(g, x, y, zf, 0.0);
     }
@@ -245,6 +257,7 @@ public class NetTunnel extends SpecialNode {
             }
         }
 
+        @Override
         public void run() {
             Socket client;
             while (!sigStop) {
@@ -268,6 +281,7 @@ public class NetTunnel extends SpecialNode {
                 this, this, 0));
     }
 
+    @Override
     public void doStep(SimModel model) {
         super.doStep(model);
         try {
@@ -322,6 +336,7 @@ public class NetTunnel extends SpecialNode {
             }
         }
 
+        @Override
         public void run() {
             while (!sigStop) {
                 try {

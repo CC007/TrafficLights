@@ -22,13 +22,11 @@ import com.github.cc007.trafficlights.algo.tlc.*;
 import com.github.cc007.trafficlights.algo.dp.*;
 import com.github.cc007.trafficlights.algo.heuristic.*;
 import com.github.cc007.trafficlights.infra.*;
-import com.github.cc007.trafficlights.utils.*;
 import com.github.cc007.trafficlights.xml.*;
 
 import java.io.IOException;
 import java.util.*;
 import java.awt.Color;
-import java.awt.Point;
 
 /**
  *
@@ -75,6 +73,7 @@ public class TCCBG extends TCRL implements Colearning,
         super(infra);
     }
 
+    @Override
     public void setInfrastructure(Infrastructure infra)
     {
         super.setInfrastructure(infra);
@@ -163,6 +162,7 @@ public class TCCBG extends TCRL implements Colearning,
      * @param The TLDecision is a tuple consisting of a traffic light and a reward (Q) value, for it to be green
      * @see gld.algo.tlc.TLDecision
      */
+    @Override
     public TLDecision[][] decideTLs()
     {
         /* gain = 0
@@ -253,6 +253,7 @@ public class TCCBG extends TCRL implements Colearning,
         return tld;
     }
 
+    @Override
     public void updateRoaduserMove(Roaduser ru, DriveLane prevlane,
                                    Sign prevsign,
                                    int prevpos, DriveLane dlanenow,
@@ -494,15 +495,20 @@ public class TCCBG extends TCRL implements Colearning,
         return vTable[sign.getId()][pos][des.getId()][isCongested];
     }
 
+    @Override
     public float getColearnValue(Sign now, Sign sign, Node des, int pos)
     {
         return getVValue(sign, des, pos);
     }
 
+    @Override
     public void setHecAddon(boolean b, Controller c)
     {
-        if (b) c.setStatus("Using HEC on CBG");
-        else c.setStatus("Using CBG without HEC");
+        if (b) {
+            c.setStatus("Using HEC on CBG");
+        } else {
+            c.setStatus("Using CBG without HEC");
+        }
         hecAddon = b;
     }
 
@@ -592,6 +598,7 @@ public class TCCBG extends TCRL implements Colearning,
             return value;
         }
 
+        @Override
         public boolean equals(Object other)
         {
             if (other != null && other instanceof CountEntry)
@@ -658,6 +665,7 @@ public class TCCBG extends TCRL implements Colearning,
         }
 
         // XMLSerializable implementation of CountEntry
+        @Override
         public void load(XMLElement myElement, XMLLoader loader) throws
                 XMLTreeException, IOException, XMLInvalidInputException
         {
@@ -671,6 +679,7 @@ public class TCCBG extends TCRL implements Colearning,
             value = myElement.getAttribute("value").getLongValue();
         }
 
+        @Override
         public XMLElement saveSelf() throws XMLCannotSaveException
         {
             XMLElement result = new XMLElement("count");
@@ -685,17 +694,20 @@ public class TCCBG extends TCRL implements Colearning,
             return result;
         }
 
+        @Override
         public void saveChilds(XMLSaver saver) throws XMLTreeException,
                 IOException,
                 XMLCannotSaveException
         { // A count entry has no child objects
         }
 
+        @Override
         public String getXMLName()
         {
             return parentName + ".count";
         }
 
+        @Override
         public void setParentName(String parentName)
         {
             this.parentName = parentName;
@@ -761,6 +773,7 @@ public class TCCBG extends TCRL implements Colearning,
             return getSameSituation() / getSameStartSituation();
         }
 
+        @Override
         public boolean equals(Object other)
         {
             if (other != null && other instanceof PEntry)
@@ -818,6 +831,7 @@ public class TCCBG extends TCRL implements Colearning,
         }
 
         // XMLSerializable implementation of PEntry
+        @Override
         public void load(XMLElement myElement, XMLLoader loader) throws
                 XMLTreeException, IOException, XMLInvalidInputException
         {
@@ -834,6 +848,7 @@ public class TCCBG extends TCRL implements Colearning,
                             getLongValue();
         }
 
+        @Override
         public XMLElement saveSelf() throws XMLCannotSaveException
         {
             XMLElement result = new XMLElement("pval");
@@ -851,17 +866,20 @@ public class TCCBG extends TCRL implements Colearning,
             return result;
         }
 
+        @Override
         public void saveChilds(XMLSaver saver) throws XMLTreeException,
                 IOException,
                 XMLCannotSaveException
         { // A PEntry has no child objects
         }
 
+        @Override
         public void setParentName(String parentName)
         {
             this.parentName = parentName;
         }
 
+        @Override
         public String getXMLName()
         {
             return parentName + ".pval";
@@ -869,6 +887,7 @@ public class TCCBG extends TCRL implements Colearning,
     }
 
 
+    @Override
     public void showSettings(Controller c)
     {
         String[] descs =
@@ -887,6 +906,7 @@ public class TCCBG extends TCRL implements Colearning,
 
     // XMLSerializable, SecondStageLoader and InstantiationAssistant implementation
 
+    @Override
     public void load(XMLElement myElement, XMLLoader loader) throws
             XMLTreeException, IOException, XMLInvalidInputException
     {
@@ -899,6 +919,7 @@ public class TCCBG extends TCRL implements Colearning,
         pTable = (ArrayList[][][][]) XMLArray.loadArray(this, loader, this);
     }
 
+    @Override
     public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException,
             XMLCannotSaveException
     {
@@ -909,6 +930,7 @@ public class TCCBG extends TCRL implements Colearning,
         XMLArray.saveArray(pTable, this, saver, "p-table");
     }
 
+    @Override
     public XMLElement saveSelf() throws XMLCannotSaveException
     {
         XMLElement result = super.saveSelf();
@@ -918,11 +940,13 @@ public class TCCBG extends TCRL implements Colearning,
         return result;
     }
 
+    @Override
     public String getXMLName()
     {
         return "model." + shortXMLName;
     }
 
+    @Override
     public boolean canCreateInstance(Class request)
     {
         System.out.println("Called TCCBG instantiation assistant ??");
@@ -930,6 +954,7 @@ public class TCCBG extends TCRL implements Colearning,
                 PEntry.class.equals(request);
     }
 
+    @Override
     public Object createInstance(Class request) throws
             ClassNotFoundException, InstantiationException,
             IllegalAccessException

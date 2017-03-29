@@ -1,6 +1,5 @@
 package com.github.cc007.trafficlights.config;
 
-import com.github.cc007.trafficlights.Controller;
 import com.github.cc007.trafficlights.sim.SimController;
 
 import java.awt.BorderLayout;
@@ -31,7 +30,8 @@ public class StuckCarsDialog extends Dialog
 		// Window properties
 		setResizable(false);
 		setSize(250, 150);			
-		addWindowListener(new WindowAdapter() { public void windowClosing(WindowEvent e) { hide(); } });
+		addWindowListener(new WindowAdapter() {@Override
+ public void windowClosing(WindowEvent e) { setVisible(false); } });
 		setLayout(new BorderLayout());
 		
 		// Window content
@@ -46,6 +46,7 @@ public class StuckCarsDialog extends Dialog
 	/** Listens to the buttons of the dialog. */
 	public class StuckCarsActionListener implements ActionListener
 	{
+        @Override
 		public void actionPerformed(ActionEvent e)
 		{
 			String sel = ((Button)e.getSource()).getLabel();
@@ -63,7 +64,7 @@ public class StuckCarsDialog extends Dialog
 					System.out.println(ex.getMessage());
 				}
 			}
-			hide();
+			setVisible(false);
 		}
 	}
 	

@@ -35,13 +35,17 @@ public class SpecialNodeQueueTrackingView extends TrackingView
   }
 
 	/** Returns the next sample to be 'tracked'. */
+@Override
 	protected float nextSample(int src) 
 	{ 	return node.getWaitingQueueLength();
 	}
 	
 	/** Returns the description for this tracking window. */
+@Override
 	public String getDescription() { return "special node " + node.getId() + " - waiting queue length"; }
 	
+@Override
 	protected String getSourceDesc(int src) { return "length"; }
+@Override
 	protected String getYLabel() { return "queue length (roadusers)"; }
 }

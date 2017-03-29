@@ -42,6 +42,7 @@ public class LaneAction implements ToolAction
 		model = em;
 	}
 
+    @Override
 	public boolean beingUsed() { return alphaNode != null; }
 	
 	public void reset() {
@@ -85,7 +86,9 @@ public class LaneAction implements ToolAction
 
 		try {
 		
-			if (clicked == alphaNode) return true; // clicking the alpha node again does not end the action
+			if (clicked == alphaNode) {
+                return true; // clicking the alpha node again does not end the action
+            }
 			if (clicked == null) { reset(); return false; }
 			else {
 				
@@ -95,9 +98,13 @@ public class LaneAction implements ToolAction
 				Road[] betaRoads = betaNode.getAllRoads();
 				Road road = null;
 				for (int i=0; i < alphaRoads.length; i++)
-					if (alphaRoads[i] != null)
-						for (int j=0; j < betaRoads.length; j++)
-							if (alphaRoads[i] == betaRoads[j]) road = alphaRoads[i];
+					if (alphaRoads[i] != null) {
+                    for (int j = 0; j < betaRoads.length; j++) {
+                        if (alphaRoads[i] == betaRoads[j]) {
+                            road = alphaRoads[i];
+                        }
+                    }
+                }
 				
 				if (road == null || road.getNumInboundLanes(betaNode) >= 4) { reset(); return false; }
 				

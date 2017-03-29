@@ -19,7 +19,7 @@ package com.github.cc007.trafficlights.infra;
 import com.github.cc007.trafficlights.utils.Arrayutils;
 import com.github.cc007.trafficlights.xml.*;
 import java.io.IOException;
-import java.util.Dictionary;
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -67,10 +67,11 @@ public class SPData implements XMLSerializable,TwoStageLoader,InstantiationAssis
 		/*System.out.println("SPData.Gotten:"+p.getNodeId()+","+p.getRUType());
 		System.out.println("SPData.With "+p.getLanes());*/
 		
-		if (p != null)
-			return p.getLanes();
-		else
-			return new DriveLane[0];
+		if (p != null) {
+            return p.getLanes();
+        } else {
+            return new DriveLane[0];
+        }
 	}
 	
 	public int[] getShortestPathDestinations(int ruType) {
@@ -85,10 +86,11 @@ public class SPData implements XMLSerializable,TwoStageLoader,InstantiationAssis
 				counter++;
 			}
 		}
-		if(counter<num_paths)
-			return (int[]) Arrayutils.cropArray(ps, counter);
-		else
-			return ps;
+		if(counter<num_paths) {
+            return (int[]) Arrayutils.cropArray(ps, counter);
+        } else {
+            return ps;
+        }
 	}
 
 	/*============================================*/
@@ -108,9 +110,9 @@ public class SPData implements XMLSerializable,TwoStageLoader,InstantiationAssis
 	public void setShortestPath(DriveLane lane, int exitNodeId, int ruType, int length)
 	{
 		Path p = getPath(exitNodeId, ruType);
-		if(p==null)
-			paths.add(new Path(exitNodeId, ruType, lane, length));
-		else {
+		if(p==null) {
+            paths.add(new Path(exitNodeId, ruType, lane, length));
+        } else {
 			p.empty();
 			DriveLane[] lanes = {lane};
 			Integer[] lengths = {new Integer(length)};
@@ -133,10 +135,11 @@ public class SPData implements XMLSerializable,TwoStageLoader,InstantiationAssis
 	public void addShortestPath(DriveLane lane, int exitNodeId, int ruType, int length)
 	{
 		Path p = getPath(exitNodeId, ruType);
-		if(p==null)
-			paths.add(new Path(exitNodeId, ruType, lane, length));
-		else
-			p.addLane(lane, length);
+		if(p==null) {
+            paths.add(new Path(exitNodeId, ruType, lane, length));
+        } else {
+            p.addLane(lane, length);
+        }
 	}
 
 	/*============================================*/
@@ -151,8 +154,9 @@ public class SPData implements XMLSerializable,TwoStageLoader,InstantiationAssis
 	 */
 	public void remAllPaths(int exitNodeId, int ruType) {
 		Path p = getPath(exitNodeId, ruType);
-		if (p != null)
-			p.empty();
+		if (p != null) {
+            p.empty();
+        }
 	}
 	
 	/**
@@ -178,8 +182,9 @@ public class SPData implements XMLSerializable,TwoStageLoader,InstantiationAssis
 		Path p;
 		for (int i=0; i < paths.size(); i++) {
 			p = (Path)paths.get(i);
-			if (p.getNodeId() == exitNodeId && p.getRUType() == ruType)
-				return p;
+			if (p.getNodeId() == exitNodeId && p.getRUType() == ruType) {
+                return p;
+            }
 		}
 		return null;
 	}
@@ -188,39 +193,48 @@ public class SPData implements XMLSerializable,TwoStageLoader,InstantiationAssis
 	/* Load/save                                  */
 	/*============================================*/
 
+    @Override
  	public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
  	{ 	paths=(ArrayList)XMLArray.loadArray(this,loader,this);
  	}
 
+    @Override
  	public XMLElement saveSelf () throws XMLCannotSaveException
  	{ 	XMLElement result=new XMLElement("spdata");
    	result.addAttribute(new XMLAttribute("num-paths",paths.size()));
   		return result;
  	}
  
+    @Override
  	public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
  	{ 	XMLArray.saveArray(paths,this,saver,"paths");
  	}
 
+    @Override
  	public String getXMLName ()
  	{ 	return parentName+".spdata";
  	}
  
+    @Override
  	public void setParentName (String parentName)
  	{ 	this.parentName=parentName;
  	}
  
  
- 	public void loadSecondStage (Dictionary dictionaries) throws XMLInvalidInputException,XMLTreeException
+    @Override
+ 	public void loadSecondStage (Map maps) throws XMLInvalidInputException,XMLTreeException
  	{ 	Iterator it=paths.iterator();
-   		while (it.hasNext())
-         	((Path)(it.next())).loadSecondStage(dictionaries);
+   		while (it.hasNext()) {
+            ((Path)(it.next())).loadSecondStage(maps);
+     }
  	}
 	
+    @Override
 	public boolean canCreateInstance (Class request)
 	{	return Path.class.equals(request);
 	}
 	
+    @Override
 	public Object createInstance (Class request) throws 
 	      ClassNotFoundException,InstantiationException,IllegalAccessException
 	{	if (Path.class.equals(request))
@@ -326,6 +340,7 @@ public class SPData implements XMLSerializable,TwoStageLoader,InstantiationAssis
 		}
 		
 		//XMLSerializable implementation
+        @Override
 		public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
 		 { 	ruType=myElement.getAttribute("ru-type").getIntValue();
 		   	exitNodeId=myElement.getAttribute("exit-node").getIntValue();
@@ -333,6 +348,7 @@ public class SPData implements XMLSerializable,TwoStageLoader,InstantiationAssis
 				lengths=(Integer[])XMLArray.loadArray(this,loader);
 		 }
 
+        @Override
 		 public XMLElement saveSelf () throws XMLCannotSaveException
 		 { 	XMLElement result=new XMLElement("path");
 		   	result.addAttribute(new XMLAttribute("ru-type",ruType));
@@ -340,15 +356,18 @@ public class SPData implements XMLSerializable,TwoStageLoader,InstantiationAssis
 		   	return result;
 		 }
  
+        @Override
 		 public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
 		 { 	XMLArray.saveArray(getLaneIdArray(),this,saver,"lanes");
 		 		XMLArray.saveArray(lengths,this,saver,"lengths");
 		 }
 
+        @Override
 		 public String getXMLName ()
 		 { 	return parentName+".path";
 		 }
 		 
+        @Override
 		 public void setParentName (String parentName)
 		 { 	this.parentName=parentName;
 		 }
@@ -356,19 +375,21 @@ public class SPData implements XMLSerializable,TwoStageLoader,InstantiationAssis
 		 public int[] getLaneIdArray ()
 		 { 	int[] result=new int[lanes.length];
 		  		for (int t=0;t<lanes.length;t++)
-		   	{ if (lanes[t]==null)
-		     		result[t]=-1;
-		          else
-		     		result[t]=lanes[t].getSign().getId();
+		   	{ if (lanes[t]==null) {
+                result[t]=-1;
+               } else {
+                result[t]=lanes[t].getSign().getId();
+               }
 		     	}
 		   	return result;
 		 }
 		 
-		public void loadSecondStage (Dictionary dictionaries) throws XMLInvalidInputException,XMLTreeException
- 		{ 	Dictionary laneDictionary=(Dictionary)(dictionaries.get("lane"));
+        @Override
+		public void loadSecondStage (Map maps) throws XMLInvalidInputException,XMLTreeException
+ 		{ 	Map laneMap=(Map)(maps.get("lane"));
 		  	lanes=new DriveLane[loadData.laneIds.length];
 		  	for (int t=0;t<loadData.laneIds.length;t++)
-		      	lanes[t]=(DriveLane)(laneDictionary.get
+		      	lanes[t]=(DriveLane)(laneMap.get
 		                     (new Integer(loadData.laneIds[t])));		
  		}		 
 		

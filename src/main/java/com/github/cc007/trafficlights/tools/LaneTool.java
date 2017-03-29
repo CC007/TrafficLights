@@ -38,6 +38,7 @@ public class LaneTool extends PopupMenuTool
 		la = new LaneAction(c.getEditModel());
 	}
 
+    @Override
 	public void mousePressed(View view, Point p, Tool.Mask mask)
 	{
 		if (la.beingUsed()) {
@@ -50,17 +51,25 @@ public class LaneTool extends PopupMenuTool
 
 		super.mousePressed(view, p, mask);
 
-		if (!mask.isLeft()) return;
-		if (la.startAction(view, p)) view.repaint();
+		if (!mask.isLeft()) {
+            return;
+        }
+		if (la.startAction(view, p)) {
+            view.repaint();
+        }
 	}
 
+    @Override
 	public void mouseReleased(View view, Point p, Tool.Mask mask)
 	{
-		if (!mask.isLeft() && !la.beingUsed()) return;
+		if (!mask.isLeft() && !la.beingUsed()) {
+            return;
+        }
 		la.endAction(view, p);
 		view.repaint();
 	}
 
+    @Override
 	public void mouseMoved(View view, Point p, Tool.Mask mask) {
 		if (la.beingUsed()) {
 			la.moveAction(view, p);
@@ -68,11 +77,16 @@ public class LaneTool extends PopupMenuTool
 		}
 	}
 
+    @Override
 	public int overlayType() { return 1; }
 	
+    @Override
 	public void paint(Graphics g) throws GLDException {
-		if (la.beingUsed()) la.paint(g);
+		if (la.beingUsed()) {
+            la.paint(g);
+        }
 	}
 	
+    @Override
 	public Panel getPanel() { return new Panel(null); }
 }

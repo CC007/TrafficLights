@@ -23,7 +23,6 @@ import com.github.cc007.trafficlights.utils.CheckMenu;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
 import java.io.IOException;
 
 /**
@@ -56,7 +55,8 @@ public class StatisticsController extends Frame
 	{
 		stats = new StatisticsModel(model);
 		parent = _parent;
-		addWindowListener(new WindowAdapter() { public void windowClosing(WindowEvent e) { closeWindow(); } });
+		addWindowListener(new WindowAdapter() {@Override
+ public void windowClosing(WindowEvent e) { closeWindow(); } });
 		setBounds(200, 200, 400, 300);
 		setBackground(Color.lightGray);
 
@@ -119,8 +119,11 @@ public class StatisticsController extends Frame
 			view = new StatsSummaryView(this, stats);
 			modeCM.setEnabled(false);
 		}
-		else if(desc.equals("Table")) view = new StatsTableView(this, stats);
-		else if(desc.equals("Graphical")) view = new StatsBarView(this, stats);
+		else if(desc.equals("Table")) {
+            view = new StatsTableView(this, stats);
+        } else if(desc.equals("Graphical")) {
+            view = new StatsBarView(this, stats);
+        }
 
 		add(view);
 		stats.addObserver(view);
@@ -140,9 +143,11 @@ public class StatisticsController extends Frame
 	{
 		FileDialog diag = new FileDialog(parent, "Export...", FileDialog.SAVE);
 		diag.setFile("export - statistics " + stats.getSimName() + ".dat");
-		diag.show();
+		diag.setVisible(true);
 		String filename;
-		if((filename = diag.getFile()) == null) return;
+		if((filename = diag.getFile()) == null) {
+            return;
+        }
 		filename = diag.getDirectory() + filename;
 		try { stats.saveData(filename);	}
 		catch(IOException exc) { parent.showError("Couldn't export data to \"" + filename + "\"!"); }
@@ -221,33 +226,42 @@ public class StatisticsController extends Frame
 		* Handles the <code>ActionEvent</code> action.
 		* @param e The ActionEvent that has occured.
 		*/
+        @Override
 		public void actionPerformed( ActionEvent e )
 		{
 			String sel = ((MenuItem) e.getSource()).getLabel();
 
-			if (sel.equals("Export...")) exportData();
-			else if (sel.equals("Close")) closeWindow();
-			else if(sel.equals("Refresh")) refresh();
+			if (sel.equals("Export...")) {
+                exportData();
+            } else if (sel.equals("Close")) {
+                closeWindow();
+            } else if(sel.equals("Refresh")) {
+                refresh();
+            }
 		}
 
+        @Override
 		public void itemStateChanged(ItemEvent e)
 		{
 			CheckMenu menu = (CheckMenu)e.getItemSelectable();
-			if(menu == modeCM)
-				stats.setAllTimeAvg(menu.getSelectedIndex() == 0);
-			else
-				setView(menu.getSelectedItem().getLabel());
+			if(menu == modeCM) {
+                stats.setAllTimeAvg(menu.getSelectedIndex() == 0);
+            } else {
+                setView(menu.getSelectedItem().getLabel());
+            }
 		}
 	}
 
 	protected class ScrollListener implements AdjustmentListener
 	{
+        @Override
 		public void adjustmentValueChanged(AdjustmentEvent e)
 		{
-			if(e.getSource() == sbHorizontal)
-				view.setHorScroll(e.getValue());
-			else
-				view.setVerScroll(e.getValue());
+			if(e.getSource() == sbHorizontal) {
+                view.setHorScroll(e.getValue());
+            } else {
+                view.setVerScroll(e.getValue());
+            }
 		}
 	}
 }

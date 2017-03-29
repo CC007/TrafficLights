@@ -86,10 +86,11 @@ public class GLDStarter
 		{	System.out.println("No Splash!");
 			splashScreen=false;
 		}
-		else if ("--".equals(option))
-			noFurtherOptions=true;
-		else
-			illegalParametersError();
+		else if ("--".equals(option)) {
+            noFurtherOptions=true;
+    } else {
+            illegalParametersError();
+    }
 	}
 
 	/** This method is called when a command line parameter is encountered that
@@ -104,8 +105,9 @@ public class GLDStarter
 	public void start()
 	{	processParams();
 		Controller controller=getController();
-		if (loadFile)
-			controller.tryLoad(filename);
+		if (loadFile) {
+            controller.tryLoad(filename);
+    }
 	}
 
 	/** Method which gives the right controller for starting */

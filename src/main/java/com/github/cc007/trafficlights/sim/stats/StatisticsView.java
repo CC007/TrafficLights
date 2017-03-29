@@ -16,14 +16,9 @@
 
 package com.github.cc007.trafficlights.sim.stats;
 
-import com.github.cc007.trafficlights.infra.*;
-import com.github.cc007.trafficlights.infra.Node.NodeStatistics;
-import com.github.cc007.trafficlights.sim.SimModel;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.util.*;
-import java.io.*;
 
 /**
 *
@@ -64,6 +59,7 @@ public abstract class StatisticsView extends Canvas implements Observer
 
 
 	/** Invoked when the StatisticsModel is changed. */
+    @Override
 	public void update(Observable obs, Object obj) { update(); }
 	
 	/** Invoked when the view should be redone. */
@@ -74,6 +70,7 @@ public abstract class StatisticsView extends Canvas implements Observer
 	}
 	
 	/** Paints the view. */
+    @Override
 	public void paint(Graphics g) 
 	{
 		g.setColor(Color.white);
@@ -111,6 +108,7 @@ public abstract class StatisticsView extends Canvas implements Observer
 	/** Returns the extension-specific paint area of this view. */
 	protected Rectangle getPaintArea() { return paintArea; }
 	/** Overrides default method to change paintArea accordingly. */
+    @Override
 	public void setBounds(int x, int y, int w, int h)
 	{
 		int paw = Math.max(1, w - 40), pah = Math.max(1, h - 75);

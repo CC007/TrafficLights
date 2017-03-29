@@ -104,6 +104,7 @@ public class SimJunctionPanel extends ConfigPanel implements ActionListener, Ite
 		setJunction(j);
 	}
 
+    @Override
 	public void reset() {
 		awtLabel.setText("is " + junction.getStatistics()[typeList.getSelectedIndex()].getAvgWaitingTime(!awtType.getState()));
 	}
@@ -130,25 +131,30 @@ public class SimJunctionPanel extends ConfigPanel implements ActionListener, Ite
 		width.setText("Junction is " + junction.getWidth() + " units wide");
 	}
 
+    @Override
 	public void actionPerformed(ActionEvent e)
 	{
 		SimController sc = (SimController)confd.getController();
 
 		Object source = e.getSource();
 		for (int i=0; i < 4; i++)
-			if (source == roadLinks[i]) confd.selectObject(junction.getAllRoads()[i]);
+			if (source == roadLinks[i]) {
+                confd.selectObject(junction.getAllRoads()[i]);
+        }
 		
 		try {
-			if (source == awtLink)
-				TrackerFactory.showTracker(sc.getSimModel(), sc, junction, TrackerFactory.JUNCTION_WAIT);
-			else if (source == rucLink)
-				TrackerFactory.showTracker(sc.getSimModel(), sc, junction, TrackerFactory.JUNCTION_ROADUSERS);
+			if (source == awtLink) {
+                TrackerFactory.showTracker(sc.getSimModel(), sc, junction, TrackerFactory.JUNCTION_WAIT);
+            } else if (source == rucLink) {
+                TrackerFactory.showTracker(sc.getSimModel(), sc, junction, TrackerFactory.JUNCTION_ROADUSERS);
+            }
 		}
 		catch (GLDException ex) {
 			Controller.reportError(ex);
 		}
 	}
 	
+    @Override
 	public void itemStateChanged(ItemEvent e) {
 		reset();
 	}

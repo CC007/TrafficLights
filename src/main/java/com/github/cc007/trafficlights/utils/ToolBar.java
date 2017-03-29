@@ -16,7 +16,6 @@
 package com.github.cc007.trafficlights.utils;
 
 import java.awt.*;
-import java.util.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;

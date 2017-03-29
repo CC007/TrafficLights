@@ -38,20 +38,27 @@ public class NodeRoadusersTrackingView extends ExtendedTrackingView
 		super(startCycle);
 		stats = node.getStatistics();
 		desc = "node " + node.getId() + " - roadusers ";
-		if(node instanceof EdgeNode) desc += "arrived";
-		else desc += "crossed";
+		if(node instanceof EdgeNode) {
+            desc += "arrived";
+        } else {
+            desc += "crossed";
+        }
   }
 
 	/** Returns the next sample to be 'tracked'. */
+    @Override
 	protected float nextSample(int src) 
 	{ 
 		return stats[src].getTotalRoadusers();
 	}
 	
 	/** Returns the description for this tracking window. */
+    @Override
 	public String getDescription() { return desc; }
 	
+    @Override
 	protected String getYLabel() { return "(roadusers)"; }
 	
+    @Override
 	public boolean useModes() { return false; }
 }

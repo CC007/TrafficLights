@@ -139,6 +139,7 @@ public class SimEdgeNodePanel extends ConfigPanel implements ItemListener, Actio
 		setEdgeNode(e);
 	}
 
+    @Override
 	public void reset() {
 		setSpawnFreq();
 		try {
@@ -200,9 +201,12 @@ public class SimEdgeNodePanel extends ConfigPanel implements ItemListener, Actio
 		}
 	}
 
+    @Override
 	public void itemStateChanged(ItemEvent e) {
 		Object source = e.getItemSelectable();
-		if (source == spawnTypes) setSpawnFreq();
+		if (source == spawnTypes) {
+            setSpawnFreq();
+        }
 	}
 
 	/** Returns the currently selected roaduser type */
@@ -212,17 +216,26 @@ public class SimEdgeNodePanel extends ConfigPanel implements ItemListener, Actio
 	}
 
 
+    @Override
 	public void actionPerformed(ActionEvent e)
 	{
 		Object source = e.getSource();
 
-		if (source == setSpawn || source == spawnFreq) setSpawnType();
-		else if (source == wqlLink) track(TrackerFactory.SPECIAL_QUEUE);
-		else if (source == twtLink) track(TrackerFactory.SPECIAL_WAIT);
-		else if (source == ruaLink) track(TrackerFactory.SPECIAL_ROADUSERS);
-		else if (source == roadLink) confd.selectObject(edgenode.getRoad());
-		else if (source == nodeLink) confd.selectObject(edgenode.getRoad().getOtherNode(edgenode));
-		else if (source == dSpawnLink) confd.setConfigPanel(new SimDynamicSpawnPanel(confd,edgenode));
+		if (source == setSpawn || source == spawnFreq) {
+            setSpawnType();
+        } else if (source == wqlLink) {
+            track(TrackerFactory.SPECIAL_QUEUE);
+        } else if (source == twtLink) {
+            track(TrackerFactory.SPECIAL_WAIT);
+        } else if (source == ruaLink) {
+            track(TrackerFactory.SPECIAL_ROADUSERS);
+        } else if (source == roadLink) {
+            confd.selectObject(edgenode.getRoad());
+        } else if (source == nodeLink) {
+            confd.selectObject(edgenode.getRoad().getOtherNode(edgenode));
+        } else if (source == dSpawnLink) {
+            confd.setConfigPanel(new SimDynamicSpawnPanel(confd,edgenode));
+        }
 	}
 
 	public void track(int type) {

@@ -19,15 +19,11 @@
 package com.github.cc007.trafficlights.algo.tlc;
 
 import com.github.cc007.trafficlights.*;
-import com.github.cc007.trafficlights.sim.*;
-import com.github.cc007.trafficlights.algo.tlc.*;
 import com.github.cc007.trafficlights.infra.*;
-import com.github.cc007.trafficlights.utils.*;
 import com.github.cc007.trafficlights.xml.*;
 
 import java.io.IOException;
 import java.util.*;
-import java.awt.Point;
 
 /**
  *
@@ -95,6 +91,7 @@ public class SL1TLC extends TCRL implements InstantiationAssistant {
         random_number = new Random(GLDSim.seriesSeed[GLDSim.seriesSeedIndex]);
     }
 
+    @Override
     public void reset() {
         for (int j = 0; j < q_table.length; j++) {
             if (q_table[j] != null) {
@@ -122,6 +119,7 @@ public class SL1TLC extends TCRL implements InstantiationAssistant {
      * reward (Q) value, for it to be green
      * @see gld.algo.tlc.TLDecision
      */
+    @Override
     public TLDecision[][] decideTLs() {
         int num_dec;
         int num_tld = tld.length;
@@ -160,6 +158,7 @@ public class SL1TLC extends TCRL implements InstantiationAssistant {
         return tld;
     }
 
+    @Override
     public void updateRoaduserMove(Roaduser ru, DriveLane prevlane, Sign prevsign, int prevpos, DriveLane dlanenow, Sign signnow, int posnow, PosMov[] posMovs, DriveLane desired, int penalty) {
         //When a roaduser leaves the city; this will
         if (dlanenow == null || signnow == null) {
@@ -287,6 +286,7 @@ public class SL1TLC extends TCRL implements InstantiationAssistant {
             return value;
         }
 
+        @Override
         public boolean equals(Object other) {
             if (other != null && other instanceof CountEntry) {
                 CountEntry countnew = (CountEntry) other;
@@ -322,6 +322,7 @@ public class SL1TLC extends TCRL implements InstantiationAssistant {
         }
 
         // XMLSerializable implementation of CountEntry
+        @Override
         public void load(XMLElement myElement, XMLLoader loader) throws XMLTreeException, IOException, XMLInvalidInputException {
             pos = myElement.getAttribute("pos").getIntValue();
             loadData.oldTlId = myElement.getAttribute("tl-id").getIntValue();
@@ -332,6 +333,7 @@ public class SL1TLC extends TCRL implements InstantiationAssistant {
             value = myElement.getAttribute("value").getIntValue();
         }
 
+        @Override
         public XMLElement saveSelf() throws XMLCannotSaveException {
             XMLElement result = new XMLElement("count");
             result.addAttribute(new XMLAttribute("tl-id", tl.getId()));
@@ -344,13 +346,16 @@ public class SL1TLC extends TCRL implements InstantiationAssistant {
             return result;
         }
 
+        @Override
         public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException, XMLCannotSaveException {   // A count entry has no child objects
         }
 
+        @Override
         public String getXMLName() {
             return parentName + ".count";
         }
 
+        @Override
         public void setParentName(String parentName) {
             this.parentName = parentName;
         }
@@ -361,14 +366,15 @@ public class SL1TLC extends TCRL implements InstantiationAssistant {
             int oldTlId, newTlId, destNodeId;
         }
 
-        public void loadSecondStage(Dictionary dictionaries) {
-            Dictionary laneDictionary = (Dictionary) (dictionaries.get("lane")),
-                    nodeDictionary = (Dictionary) (dictionaries.get("node"));
-            tl = ((DriveLane) (laneDictionary.get(
+        @Override
+        public void loadSecondStage(Map maps) {
+            Map laneMap = (Map) (maps.get("lane")),
+                    nodeMap = (Map) (maps.get("node"));
+            tl = ((DriveLane) (laneMap.get(
                     new Integer(loadData.oldTlId)))).getSign();
-            tl_new = ((DriveLane) (laneDictionary.get(
+            tl_new = ((DriveLane) (laneMap.get(
                     new Integer(loadData.newTlId)))).getSign();
-            destination = (Node) (nodeDictionary.get(
+            destination = (Node) (nodeMap.get(
                     new Integer(loadData.destNodeId)));
         }
 
@@ -407,6 +413,7 @@ public class SL1TLC extends TCRL implements InstantiationAssistant {
             return value;
         }
 
+        @Override
         public boolean equals(Object other) {
             if (other != null && other instanceof PEntry) {
                 PEntry pnew = (PEntry) other;
@@ -442,6 +449,7 @@ public class SL1TLC extends TCRL implements InstantiationAssistant {
         }
 
         // XMLSerializable implementation of PEntry
+        @Override
         public void load(XMLElement myElement, XMLLoader loader) throws XMLTreeException, IOException, XMLInvalidInputException {
             pos = myElement.getAttribute("pos").getIntValue();
             loadData.oldTlId = myElement.getAttribute("tl-id").getIntValue();
@@ -452,6 +460,7 @@ public class SL1TLC extends TCRL implements InstantiationAssistant {
             value = myElement.getAttribute("value").getFloatValue();
         }
 
+        @Override
         public XMLElement saveSelf() throws XMLCannotSaveException {
             XMLElement result = new XMLElement("pval");
             result.addAttribute(new XMLAttribute("tl-id", tl.getId()));
@@ -464,13 +473,16 @@ public class SL1TLC extends TCRL implements InstantiationAssistant {
             return result;
         }
 
+        @Override
         public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException, XMLCannotSaveException {   // A PEntry has no child objects
         }
 
+        @Override
         public void setParentName(String parentName) {
             this.parentName = parentName;
         }
 
+        @Override
         public String getXMLName() {
             return parentName + ".pval";
         }
@@ -481,14 +493,15 @@ public class SL1TLC extends TCRL implements InstantiationAssistant {
             int oldTlId, newTlId, destNodeId;
         }
 
-        public void loadSecondStage(Dictionary dictionaries) {
-            Dictionary laneDictionary = (Dictionary) (dictionaries.get("lane")),
-                    nodeDictionary = (Dictionary) (dictionaries.get("node"));
-            tl = ((DriveLane) (laneDictionary.get(
+        @Override
+        public void loadSecondStage(Map maps) {
+            Map laneMap = (Map) (maps.get("lane")),
+                    nodeMap = (Map) (maps.get("node"));
+            tl = ((DriveLane) (laneMap.get(
                     new Integer(loadData.oldTlId)))).getSign();
-            tl_new = ((DriveLane) (laneDictionary.get(
+            tl_new = ((DriveLane) (laneMap.get(
                     new Integer(loadData.newTlId)))).getSign();
-            destination = (Node) (nodeDictionary.get(
+            destination = (Node) (nodeMap.get(
                     new Integer(loadData.destNodeId)));
         }
 
@@ -517,6 +530,7 @@ public class SL1TLC extends TCRL implements InstantiationAssistant {
             return pos;
         }
 
+        @Override
         public boolean equals(Object other) {
             if (other != null && other instanceof Target) {
                 Target qnew = (Target) other;
@@ -532,11 +546,13 @@ public class SL1TLC extends TCRL implements InstantiationAssistant {
         }
 
         // XMLSerializable implementation of Target
+        @Override
         public void load(XMLElement myElement, XMLLoader loader) throws XMLTreeException, IOException, XMLInvalidInputException {
             pos = myElement.getAttribute("pos").getIntValue();
             loadData.tlId = myElement.getAttribute("tl-id").getIntValue();
         }
 
+        @Override
         public XMLElement saveSelf() throws XMLCannotSaveException {
             XMLElement result = new XMLElement("target");
             result.addAttribute(new XMLAttribute("tl-id", tl.getId()));
@@ -544,13 +560,16 @@ public class SL1TLC extends TCRL implements InstantiationAssistant {
             return result;
         }
 
+        @Override
         public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException, XMLCannotSaveException {   // A Target has no child objects
         }
 
+        @Override
         public String getXMLName() {
             return parentName + ".target";
         }
 
+        @Override
         public void setParentName(String parentName) {
             this.parentName = parentName;
         }
@@ -561,14 +580,16 @@ public class SL1TLC extends TCRL implements InstantiationAssistant {
             int tlId;
         }
 
-        public void loadSecondStage(Dictionary dictionaries) throws XMLInvalidInputException, XMLTreeException {
-            Dictionary laneDictionary = (Dictionary) (dictionaries.get("lane"));
-            tl = ((DriveLane) (laneDictionary.get(
+        @Override
+        public void loadSecondStage(Map maps) throws XMLInvalidInputException, XMLTreeException {
+            Map laneMap = (Map) (maps.get("lane"));
+            tl = ((DriveLane) (laneMap.get(
                     new Integer(loadData.tlId)))).getSign();
         }
 
     }
 
+    @Override
     public void showSettings(Controller c) {
         String[] descs = {"Gamma (discount factor)", "Random decision chance", "Alpha"};
         float[] floats = {gamma, random_chance, alpha};
@@ -582,6 +603,7 @@ public class SL1TLC extends TCRL implements InstantiationAssistant {
     }
 
     // XMLSerializable, SecondStageLoader and InstantiationAssistant implementation
+    @Override
     public void load(XMLElement myElement, XMLLoader loader) throws XMLTreeException, IOException, XMLInvalidInputException {
         super.load(myElement, loader);
         gamma = myElement.getAttribute("gamma").getFloatValue();
@@ -592,6 +614,7 @@ public class SL1TLC extends TCRL implements InstantiationAssistant {
         //p_table=(ArrayList)XMLArray.loadArray(this,loader,this);
     }
 
+    @Override
     public XMLElement saveSelf() throws XMLCannotSaveException {
         XMLElement result = super.saveSelf();
         result.setName(shortXMLName);
@@ -600,6 +623,7 @@ public class SL1TLC extends TCRL implements InstantiationAssistant {
         return result;
     }
 
+    @Override
     public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException, XMLCannotSaveException {
         super.saveChilds(saver);
         XMLArray.saveArray(q_table, this, saver, "q-table");
@@ -608,21 +632,25 @@ public class SL1TLC extends TCRL implements InstantiationAssistant {
         //XMLArray.saveArray(p_table,this,saver,"p-table");
     }
 
+    @Override
     public String getXMLName() {
         return "model." + shortXMLName;
     }
 
-    public void loadSecondStage(Dictionary dictionaries) throws XMLInvalidInputException, XMLTreeException {
-        XMLUtils.loadSecondStage(count.iterator(), dictionaries);
-        //XMLUtils.loadSecondStage(p_table.iterator(),dictionaries);
+    @Override
+    public void loadSecondStage(Map maps) throws XMLInvalidInputException, XMLTreeException {
+        XMLUtils.loadSecondStage(count, maps);
+        //XMLUtils.loadSecondStage(p_table.iterator(),maps);
         System.out.println("SL1 second stage load finished.");
     }
 
+    @Override
     public boolean canCreateInstance(Class request) {
         return CountEntry.class.equals(request)
                 || PEntry.class.equals(request);
     }
 
+    @Override
     public Object createInstance(Class request) throws
             ClassNotFoundException, InstantiationException, IllegalAccessException {
         if (CountEntry.class.equals(request)) {

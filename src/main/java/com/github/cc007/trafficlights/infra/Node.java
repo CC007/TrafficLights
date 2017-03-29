@@ -15,12 +15,12 @@
 package com.github.cc007.trafficlights.infra;
 
 import com.github.cc007.trafficlights.*;
-import com.github.cc007.trafficlights.utils.*;
 import com.github.cc007.trafficlights.xml.*;
 import com.github.cc007.trafficlights.GLDException;
 import java.awt.*;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 
 /**
  *
@@ -352,6 +352,7 @@ public abstract class Node implements Selectable, XMLSerializable,
         }
 
         //// XMLSerializable implementation ///
+        @Override
         public void load(XMLElement myElement, XMLLoader loader) throws
                 XMLTreeException, IOException, XMLInvalidInputException {
             roadusers = myElement.getAttribute("roadusers").getIntValue();
@@ -362,6 +363,7 @@ public abstract class Node implements Selectable, XMLSerializable,
             delayTable = (int[]) XMLArray.loadArray(this, loader);
         }
 
+        @Override
         public XMLElement saveSelf() throws XMLCannotSaveException {
             XMLElement result = new XMLElement("statistics");
             result.addAttribute(new XMLAttribute("roadusers", roadusers));
@@ -372,15 +374,18 @@ public abstract class Node implements Selectable, XMLSerializable,
             return result;
         }
 
+        @Override
         public void saveChilds(XMLSaver saver) throws XMLTreeException,
                 IOException, XMLCannotSaveException {
             XMLArray.saveArray(delayTable, this, saver, "delay-table");
         }
 
+        @Override
         public String getXMLName() {
             return parentName + ".statistics";
         }
 
+        @Override
         public void setParentName(String parentName) throws XMLTreeException {
             this.parentName = parentName;
         }
@@ -391,6 +396,7 @@ public abstract class Node implements Selectable, XMLSerializable,
  /* LOAD and SAVE                              */
  /*============================================*/
     // Generic XMLSerializable implementation for subclasses
+    @Override
     public void load(XMLElement myElement, XMLLoader loader) throws
             XMLTreeException, IOException, XMLInvalidInputException {
         coord = new Point(myElement.getAttribute("x-pos").getIntValue(),
@@ -405,6 +411,7 @@ public abstract class Node implements Selectable, XMLSerializable,
         loader.load(this, spdata);
     }
 
+    @Override
     public XMLElement saveSelf() throws XMLCannotSaveException {
         XMLElement result = new XMLElement("node");
         result.addAttribute(new XMLAttribute("node-id", nodeId));
@@ -414,6 +421,7 @@ public abstract class Node implements Selectable, XMLSerializable,
         return result;
     }
 
+    @Override
     public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException,
             XMLCannotSaveException {
         if (Model.SAVE_STATS) {
@@ -422,19 +430,23 @@ public abstract class Node implements Selectable, XMLSerializable,
         saver.saveObject(spdata);
     }
 
-    public void loadSecondStage(Dictionary dictionaries) throws
+    @Override
+    public void loadSecondStage(Map maps) throws
             XMLInvalidInputException, XMLTreeException {
-        spdata.loadSecondStage(dictionaries);
+        spdata.loadSecondStage(maps);
     }
 
+    @Override
     public void setParentName(String parentName) {
         this.parentName = parentName;
     }
 
+    @Override
     public boolean canCreateInstance(Class request) {
         return NodeStatistics.class.equals(request);
     }
 
+    @Override
     public Object createInstance(Class request) throws
             ClassNotFoundException, InstantiationException,
             IllegalAccessException {
@@ -450,42 +462,51 @@ public abstract class Node implements Selectable, XMLSerializable,
     /*============================================*/
  /* Selectable                                 */
  /*============================================*/
+    @Override
     public Rectangle getBounds() {
         int w = getWidth();
         return new Rectangle((int) (coord.x - w * 5), (int) (coord.y - w * 5),
                 w * 10, w * 10);
     }
 
+    @Override
     public Shape getComplexBounds() {
         return getBounds();
     }
 
+    @Override
     public Point getSelectionPoint() {
         return new Point(coord.x + 5, coord.y + 5);
     }
 
+    @Override
     public Point[] getSelectionPoints() {
         return null;
     }
 
+    @Override
     public Point getCenterPoint() {
         return new Point(coord.x + 5, coord.y + 5);
     }
 
+    @Override
     public int getDistance(Point p) {
         return (int) p.distance(getSelectionPoint());
     }
 
+    @Override
     public boolean hasChildren() {
         return getNumAlphaRoads() > 0;
     }
 
+    @Override
     public boolean isSelectable() {
         return true;
     }
 
-    public Iterator getChildren() {
-        return new ArrayIterator(getAlphaRoads());
+    @Override
+    public List<Selectable> getChildren() {
+        return Arrays.asList(getAlphaRoads());
     }
 
     public abstract void paint(Graphics g) throws GLDException;

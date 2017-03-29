@@ -20,7 +20,6 @@ import com.github.cc007.trafficlights.View;
 
 import java.awt.Panel;
 import java.awt.Point;
-import java.awt.Graphics;
 import java.awt.event.InputEvent;
 
 /**
@@ -88,6 +87,7 @@ public interface Tool extends Overlay {
             return value;
         }
 
+        @Override
         public String toString() {
             return "Mask, val: " + value;
         }

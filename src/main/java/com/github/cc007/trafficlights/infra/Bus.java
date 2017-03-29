@@ -16,12 +16,8 @@
 
 package com.github.cc007.trafficlights.infra;
 
-import com.github.cc007.trafficlights.*;
-import com.github.cc007.trafficlights.xml.*;
 import java.awt.Graphics;
 import java.awt.Color;
-import java.io.IOException;
-import java.util.*;
 
 /**
  * The Bus. Red, Big, Mean and Lean people moving machine.
@@ -45,24 +41,37 @@ public class Bus extends Automobile
 		int r = color.getRed();
 		int g = color.getGreen();
 		int b = color.getBlue();
-		if(r==0) r = (int)(Math.random() * 160);
-		if(g==0) g = (int)(Math.random() * 160);
-		if(b==0) b = (int)(Math.random() * 160);
+		if(r==0) {
+            r = (int)(Math.random() * 160);
+        }
+		if(g==0) {
+            g = (int)(Math.random() * 160);
+        }
+		if(b==0) {
+            b = (int)(Math.random() * 160);
+        }
 		color = new Color(r,g,b);
 	}
 	
 	public Bus() { }
 	
+    @Override
 	public String getName() { return "Bus"; }
 	
 	/** Returns the speed of this Roaduser in blocks per cycle */
+    @Override
 	public int getSpeed() { return speed; }
+    @Override
 	public int getLength() { return length; }
+    @Override
 	public int getType() { return type; }
+    @Override
 	public int getNumPassengers() { return passengers; }	
 
+    @Override
 	public void paint(Graphics g, int x, int y, float zf) {}
 	
+    @Override
 	public void paint(Graphics g, int x, int y, float zf, double dlangle) {
 		g.setColor(color);
 		double angle = dlangle - Math.toRadians(45.0);
@@ -83,6 +92,7 @@ public class Bus extends Automobile
 	
 	// Specific XMLSerializable implementation 
     
+    @Override
 	public String getXMLName ()
 	{ 	return parentName+".roaduser-bus";
 	}

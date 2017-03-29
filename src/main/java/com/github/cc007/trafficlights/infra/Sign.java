@@ -18,7 +18,7 @@ package com.github.cc007.trafficlights.infra;
 
 import com.github.cc007.trafficlights.xml.*;
 import java.io.IOException;
-import java.util.Dictionary;
+import java.util.Map;
 
 /**
  *
@@ -52,8 +52,12 @@ public abstract class Sign implements XMLSerializable, TwoStageLoader
 	
 	/** Smallest factory ever */
 	public static Sign getInstance(int type) throws InfraException {
-		if (type == TRAFFICLIGHT) return new TrafficLight();
-		if (type == NO_SIGN) return new NoSign();
+		if (type == TRAFFICLIGHT) {
+            return new TrafficLight();
+        }
+		if (type == NO_SIGN) {
+            return new NoSign();
+        }
 		throw new InfraException("Unknown sign type: " + type);
 	}
 
@@ -95,12 +99,14 @@ public abstract class Sign implements XMLSerializable, TwoStageLoader
 	
 	// Common XMLSerializable implementation for subclasses
 	
+    @Override
 	public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
 	{
 		state=myElement.getAttribute("state").getBoolValue();
 		loadData.nodeId=myElement.getAttribute("node-id").getIntValue();
 	}
 
+    @Override
 	public XMLElement saveSelf () throws XMLCannotSaveException
 	{ 	XMLElement result=new XMLElement("sign");
 	  	result.addAttribute(new XMLAttribute("type",getType()));
@@ -111,10 +117,12 @@ public abstract class Sign implements XMLSerializable, TwoStageLoader
 	 	return result;
 	}
   
+    @Override
 	public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
 	{
 	}
 
+    @Override
 	public void setParentName (String parentName)
 	{	this.parentName=parentName; 
 	}
@@ -123,8 +131,9 @@ public abstract class Sign implements XMLSerializable, TwoStageLoader
  	{ 	int nodeId;
  	}
  
- 	public void loadSecondStage (Dictionary dictionaries) throws XMLInvalidInputException,XMLTreeException
- 	{ 	node=(Node)(((Dictionary)(dictionaries.get("node"))).get(new Integer(loadData.nodeId)));
+    @Override
+ 	public void loadSecondStage (Map maps) throws XMLInvalidInputException,XMLTreeException
+ 	{ 	node=(Node)(((Map)(maps.get("node"))).get(new Integer(loadData.nodeId)));
  		//System.out.println("Node gotten:"+node);
  	}
  }

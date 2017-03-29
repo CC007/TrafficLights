@@ -20,8 +20,6 @@ import com.github.cc007.trafficlights.infra.*;
 import com.github.cc007.trafficlights.infra.Node.NodeStatistics;
 import com.github.cc007.trafficlights.sim.SimModel;
 
-import java.awt.*;
-import java.awt.event.*;
 import java.util.*;
 import java.io.*;
 
@@ -181,11 +179,13 @@ public class StatisticsModel extends Observable
 		out.println("# Total number of roadusers that has arrived at its destination: " + roadusersArrived); 
 		out.println("# Total number of junction crossings: " + junctionCrossings); 
 		out.println("# Average trip waiting time (based on all roadusers arrived): " + allTimeTripWT); 
-		if(roadusersArrived != lastXTripCount) 
-			out.println("# Average trip waiting time (based on last " + lastXTripCount + " roadusers arrived): " + lastXTripWT); 
+		if(roadusersArrived != lastXTripCount) {
+            out.println("# Average trip waiting time (based on last " + lastXTripCount + " roadusers arrived): " + lastXTripWT);
+        } 
 		out.println("# Average junction waiting time (based on all junction crossings): " + allTimeJunctionWT); 
-		if(junctionCrossings != lastXJunctionCount)
-			out.println("# Average junction waiting time (based on last " + lastXJunctionCount + " junction crossings): " + lastXJunctionWT); 
+		if(junctionCrossings != lastXJunctionCount) {
+            out.println("# Average junction waiting time (based on last " + lastXJunctionCount + " junction crossings): " + lastXJunctionWT);
+        } 
 		out.println("#"); 
 		out.println("#"); out.println("# EdgeNodes"); 
 		out.println("# Data format: " + "<id"+SEP+"ruType"+SEP+"roadusersArrived"+SEP+"avgTripWaitingTimeAllTime"+SEP+"avgTripWaitingTimeLast" + Node.STAT_NUM_DATA + ">"); out.println("#");

@@ -20,13 +20,9 @@ package com.github.cc007.trafficlights.algo.dp;
  */
 
 import com.github.cc007.trafficlights.algo.tlc.TLController;
-import com.github.cc007.trafficlights.infra.InfraException;
-import com.github.cc007.trafficlights.infra.Infrastructure; 
 import com.github.cc007.trafficlights.sim.SimModel;
 import com.github.cc007.trafficlights.utils.StringUtils;
-import java.util.Dictionary;
-import java.util.Hashtable;
-import java.util.Random;
+import java.util.NoSuchElementException;
  
 public class DPFactory
 {
@@ -87,7 +83,7 @@ public class DPFactory
 	  *	    specified id.
 	*/
   	public static String getDescription (int algoId)
-  	{ 	return (String)(StringUtils.lookUpNumber(dpDescs,algoId));
+  	{ 	return dpDescs[algoId];
   	}
   
   	/** Gets the number of an algorithm from its XML tag name */

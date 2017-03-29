@@ -62,12 +62,19 @@ public class HelpMenu extends Menu implements ActionListener
     item.addActionListener(this);
 	}
 	
+    @Override
 	public void actionPerformed(ActionEvent e) {
 		String sel = e.getActionCommand();
-		if (     sel.equals("Help"))           controller.showHelp(HelpViewer.HELP_INDEX);
-		else if (sel.equals("Specifications")) controller.showHelp(HelpViewer.HELP_SPECS);
-		else if (sel.equals("Website"))        controller.showHelp(HelpViewer.HELP_WEBSITE);
-		else if (sel.equals("License"))        controller.showHelp(HelpViewer.HELP_LICENSE);
-		else if (sel.equals("About"))          controller.showHelp(HelpViewer.HELP_ABOUT);
+		if (     sel.equals("Help")) {
+            controller.showHelp(HelpViewer.HELP_INDEX);
+        } else if (sel.equals("Specifications")) {
+            controller.showHelp(HelpViewer.HELP_SPECS);
+        } else if (sel.equals("Website")) {
+            controller.showHelp(HelpViewer.HELP_WEBSITE);
+        } else if (sel.equals("License")) {
+            controller.showHelp(HelpViewer.HELP_LICENSE);
+        } else if (sel.equals("About")) {
+            controller.showHelp(HelpViewer.HELP_ABOUT);
+        }
 	}
 }

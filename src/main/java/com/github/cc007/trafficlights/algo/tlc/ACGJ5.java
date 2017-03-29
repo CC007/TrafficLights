@@ -17,7 +17,6 @@
 package com.github.cc007.trafficlights.algo.tlc;
 
 import com.github.cc007.trafficlights.*;
-import com.github.cc007.trafficlights.sim.*;
 import com.github.cc007.trafficlights.algo.tlc.*;
 import com.github.cc007.trafficlights.infra.*;
 import com.github.cc007.trafficlights.utils.*;
@@ -25,8 +24,6 @@ import com.github.cc007.trafficlights.xml.*;
 
 import java.io.IOException;
 import java.util.Random;
-import java.util.*;
-import java.awt.Point;
 
 public class ACGJ5 extends TLController implements InstantiationAssistant,XMLSerializable
 {
@@ -81,6 +78,7 @@ public class ACGJ5 extends TLController implements InstantiationAssistant,XMLSer
 	 *
 	 * @param i The new infrastructure for which the algorithm has to be set up
 	 */
+    @Override
 	public void setInfrastructure(Infrastructure _i)
 	{	super.setInfrastructure(_i);
 		tlc.setInfrastructure(_i);
@@ -98,6 +96,7 @@ public class ACGJ5 extends TLController implements InstantiationAssistant,XMLSer
 	 * @return Returns a double array of TLDecision's. These are tuples of a TrafficLight and the gain-value of when it's set to green.
 	 * @see gld.algo.tlc.TLDecision
 	 */
+    @Override
 	public TLDecision[][] decideTLs()
 	{	if(num_step==NUM_STEPS) {
 			pop.getNextIndividual(num_wait,num_move);
@@ -112,12 +111,13 @@ public class ACGJ5 extends TLController implements InstantiationAssistant,XMLSer
 			int num_tl = tld[i].length;
 			for(int j=0;j<num_tl;j++) {
 				float gain = (ind.getFactor(i,j))*tld[i][j].getGain();
-	    		if(trackNode!=-1)
-					if(i==trackNode) {
-						DriveLane currentlane = tld[i][j].getTL().getLane();
-						boolean[] targets = currentlane.getTargets();
-						System.out.println("N:"+i+" L:"+j+" G:"+gain+" <:"+targets[0]+" |:"+targets[1]+" >:"+targets[2]+" W:"+currentlane.getNumRoadusersWaiting());
-					}
+	    		if(trackNode!=-1) {
+                    if(i==trackNode) {
+                        DriveLane currentlane = tld[i][j].getTL().getLane();
+                        boolean[] targets = currentlane.getTargets();
+                        System.out.println("N:"+i+" L:"+j+" G:"+gain+" <:"+targets[0]+" |:"+targets[1]+" >:"+targets[2]+" W:"+currentlane.getNumRoadusersWaiting());
+                    }
+                }
 				tld[i][j].setGain(gain);
 			}
 		}
@@ -127,6 +127,7 @@ public class ACGJ5 extends TLController implements InstantiationAssistant,XMLSer
 	}
 
 	/** Resets the algorithm */
+    @Override
 	public void reset() {
 		ind.reset();
 	}
@@ -145,6 +146,7 @@ public class ACGJ5 extends TLController implements InstantiationAssistant,XMLSer
 	 * @param _possiblelanes
 	 * @param _ranges
 	 */
+    @Override
 	public void updateRoaduserMove(Roaduser _ru, DriveLane _prevlane, Sign _prevsign, int _prevpos, DriveLane _dlanenow, Sign _signnow, int _posnow, PosMov[] posMovs, DriveLane _desired)
 	{
 		if(_prevsign == _signnow && _prevpos == _posnow) {
@@ -375,10 +377,11 @@ public class ACGJ5 extends TLController implements InstantiationAssistant,XMLSer
 					float diff = r_bound - l_bound;
 					diff = diff/2;
 					int dif = (int) Math.ceil(diff);
-					if(random.nextBoolean())
-						r_bound = r_bound - dif;
-					else
-						l_bound = l_bound + dif;
+					if(random.nextBoolean()) {
+                        r_bound = r_bound - dif;
+                    } else {
+                        l_bound = l_bound + dif;
+                    }
 				}
 				for(int i=l_bound;i<num_genes-1;i++)
 					new_genes[i] = pa_genes[i];
@@ -387,18 +390,21 @@ public class ACGJ5 extends TLController implements InstantiationAssistant,XMLSer
 			/* Mutation? */
 			for(int i=0;i<num_genes;i++)
 				for(int j=0;j<8;j++)
-					if(random.nextFloat()<MUTATION_CHANCE)
-						new_genes[i] = random.nextFloat();
+					if(random.nextFloat()<MUTATION_CHANCE) {
+                        new_genes[i] = random.nextFloat();
+            }
 			return new_genes;
 		}
 
 		// XMLSerializable implementation of ACGJ3Population
+        @Override
 		public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
 		{	this_ind=myElement.getAttribute("this-ind").getIntValue();
 			this_gen=myElement.getAttribute("this-gen").getIntValue();
 			inds=(Individual[])XMLArray.loadArray(this,loader,assistant);
 		}
 
+        @Override
 		public XMLElement saveSelf () throws XMLCannotSaveException
 		{ 	XMLElement result=new XMLElement("population");
 			result.addAttribute(new XMLAttribute("this-ind",this_ind));
@@ -406,14 +412,17 @@ public class ACGJ5 extends TLController implements InstantiationAssistant,XMLSer
 	  		return result;
 		}
 
+        @Override
 		public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
 		{	XMLArray.saveArray(inds,this,saver,"individuals");
 		}
 
+        @Override
 		public String getXMLName ()
 		{ 	return "model.tlc.population";
 		}
 
+        @Override
 		public void setParentName (String parentName_) throws XMLTreeException
 		{ 	throw new XMLTreeException
 				("Operation not supported. ACGJ3Population has a fixed parentname");
@@ -506,6 +515,7 @@ public class ACGJ5 extends TLController implements InstantiationAssistant,XMLSer
 
 
 		// XMLSerializable implementation of ACGJ3Individual
+    @Override
 		public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
 		{	wait=myElement.getAttribute("wait").getIntValue();
 			move=myElement.getAttribute("move").getIntValue();
@@ -514,6 +524,7 @@ public class ACGJ5 extends TLController implements InstantiationAssistant,XMLSer
 			me=(float[][])XMLArray.loadArray(this,loader);
 		}
 
+    @Override
 		public XMLElement saveSelf () throws XMLCannotSaveException
 		{ 	XMLElement result=new XMLElement("individual");
 			result.addAttribute(new XMLAttribute("wait",wait));
@@ -522,20 +533,24 @@ public class ACGJ5 extends TLController implements InstantiationAssistant,XMLSer
 			return result;
 		}
 
+    @Override
 		public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
 		{ 	XMLArray.saveArray(genes,this,saver,"genes");
 			XMLArray.saveArray(me,this,saver,"me");
 		}
 
+    @Override
 		public String getXMLName ()
 		{ 	return myParentName+".individual";
 		}
 
+    @Override
 		public void setParentName (String parentName) throws XMLTreeException
 		{ 	myParentName=parentName;
 		}
 	}
 
+    @Override
 	public void showSettings(Controller c)
 	{
 		String[] descs = {"# of steps an individual may run", "Number of Individuals in Population", "Crossover chance", "Mutation chance"};
@@ -554,6 +569,7 @@ public class ACGJ5 extends TLController implements InstantiationAssistant,XMLSer
 
 	// XMLSerializable implementation
 
+    @Override
 	public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
 	{	super.load(myElement,loader);
 		NUM_STEPS=myElement.getAttribute("s-num-steps").getIntValue();
@@ -569,6 +585,7 @@ public class ACGJ5 extends TLController implements InstantiationAssistant,XMLSer
 		ind=pop.inds[myElement.getAttribute("ind-index").getIntValue()];
 	}
 
+    @Override
 	public XMLElement saveSelf () throws XMLCannotSaveException
 	{ 	XMLElement result=super.saveSelf();
 		result.setName(shortXMLName);
@@ -585,17 +602,20 @@ public class ACGJ5 extends TLController implements InstantiationAssistant,XMLSer
 	  	return result;
 	}
 
+    @Override
 	public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
 	{ 	super.saveChilds(saver);
 		saver.saveObject(pop);
 	}
 
+    @Override
 	public String getXMLName ()
 	{ 	return "model."+shortXMLName;
 	}
 
 	// InstantiationAssistant implementation
 
+    @Override
 	public Object createInstance (Class request) throws
 	      ClassNotFoundException,InstantiationException,IllegalAccessException
 	{ 	if (Population.class.equals(request))
@@ -611,6 +631,7 @@ public class ACGJ5 extends TLController implements InstantiationAssistant,XMLSer
 		}
 	}
 
+    @Override
 	public boolean canCreateInstance (Class request)
 	{ 	return Population.class.equals(request) ||
 	        	 Individual.class.equals(request);

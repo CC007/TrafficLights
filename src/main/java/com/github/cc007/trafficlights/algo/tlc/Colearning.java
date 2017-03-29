@@ -17,12 +17,7 @@
 package com.github.cc007.trafficlights.algo.tlc;
 
 
-import com.github.cc007.trafficlights.*;
-import com.github.cc007.trafficlights.sim.*;
-import com.github.cc007.trafficlights.algo.tlc.*;
 import com.github.cc007.trafficlights.infra.*;
-import com.github.cc007.trafficlights.utils.*;
-import com.github.cc007.trafficlights.xml.*;
 
 
 public interface Colearning

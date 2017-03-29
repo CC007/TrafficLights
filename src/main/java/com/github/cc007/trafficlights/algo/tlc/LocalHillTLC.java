@@ -26,7 +26,6 @@ import com.github.cc007.trafficlights.algo.dp.*;
 
 import java.io.IOException;
 import java.util.*;
-import java.awt.Point;
 
 /**
  *
@@ -58,6 +57,7 @@ public class LocalHillTLC extends TLController implements Colearning
 	{	super(infra);
 	}
 
+    @Override
 	public void setInfrastructure(Infrastructure infra)
 	{	super.setInfrastructure(infra);
 		allnodes = infra.getAllNodes(); //Moet Edge zijn eigenlijk, alleen testSimModel knalt er dan op
@@ -84,6 +84,7 @@ public class LocalHillTLC extends TLController implements Colearning
 	* @param The TLDecision is a tuple consisting of a traffic light and a reward (Q) value, for it to be green
 	* @see gld.algo.tlc.TLDecision
 	*/
+    @Override
 	public TLDecision[][] decideTLs() {
 		// tld[Node][Sign] the gain per node
 		// Perform the local hill climbing algorithm
@@ -133,7 +134,9 @@ public class LocalHillTLC extends TLController implements Colearning
 		for (int i=0; i<allnodes.length; i++)
 		{
 			Node currentNode = allnodes[i];
-			if (! (currentNode instanceof Junction)) continue;
+			if (! (currentNode instanceof Junction)) {
+                continue;
+            }
 			DriveLane [] dls=null;
 			try{dls= currentNode.getInboundLanes();}catch(Exception e){}
 
@@ -152,7 +155,9 @@ public class LocalHillTLC extends TLController implements Colearning
 						boolean isRed = true;
 						for (int k=0; k<tld[currentNode.getId()].length; k++)
 							if (tld[currentNode.getId()][k].getTL()==s)	{
-								if (tld[currentNode.getId()][k].getGain()==1) isRed=false;
+								if (tld[currentNode.getId()][k].getGain()==1) {
+                                    isRed=false;
+                                }
 							}
 						if (isRed) {
 							if (v_table[s.getId()]!=0) {
@@ -166,9 +171,11 @@ public class LocalHillTLC extends TLController implements Colearning
 							DriveLane destLane = dp.getDirection(firstRU, dls[j], currentNode);
 							int value = v_table[s.getId()];
 
-							if (destLane==null) value = 1; // when it is an end-node
-							else if (!destLane.isFull()) value = 1;
-							else {
+							if (destLane==null) {
+                                value = 1; // when it is an end-node
+                            } else if (!destLane.isFull()) {
+                                value = 1;
+                            } else {
 								// When destLane is full
 								value = v_table[destLane.getSign().getId()];
 							}
@@ -201,19 +208,26 @@ public class LocalHillTLC extends TLController implements Colearning
 					DriveLane [] dls = allnodes[j].getInboundLanes();
 					for (int k=0; k<dls.length; k++)
 					{
-						if (dls[k].getSign().getId()==i) s=dls[k].getSign();
+						if (dls[k].getSign().getId()==i) {
+                            s=dls[k].getSign();
+                        }
 					}
 				}
 
 				Node n1=s.getNode();
 
-				if (!(n1 instanceof SpecialNode)) Points++;
+				if (!(n1 instanceof SpecialNode)) {
+                    Points++;
+                }
 			}
-				else Points += v_table[i];
+				else {
+                Points += v_table[i];
+            }
 		}
 		return Points;
 	}
 
+    @Override
 	public void updateRoaduserMove(Roaduser ru, DriveLane currentlane, Sign currentsign, int prevpos, DriveLane nextlane, Sign nextsign, int posnow, PosMov[] posMovs, DriveLane desired)
 	{
 	/* If this road user is on the first position in the road, this one is used for calcing. We want to know his new direction (node, tl)
@@ -227,7 +241,9 @@ public class LocalHillTLC extends TLController implements Colearning
 		Sign sign;
 		for(int i=0; i<num_tld_node; i++) {
 			sign = tld_node[i].getTL();
-			if(sign.getId() == sign_id) return !sign.mayDrive();
+			if(sign.getId() == sign_id) {
+                return !sign.mayDrive();
+            }
 		}
 		return false;
 	}
@@ -247,10 +263,11 @@ public class LocalHillTLC extends TLController implements Colearning
 			int num_lanes = tld[thisnode.getId()].length;
 			for (int j=0; j<num_lanes; j++) {
 				tld_backup.add(tld[thisnode.getId()][j]);
-				if (Arrayutils.findElement(config, tld[thisnode.getId()][j].getTL()) != -1)
-					tld[thisnode.getId()][j].setGain(1);
-				else
-					tld[thisnode.getId()][j].setGain(0);
+				if (Arrayutils.findElement(config, tld[thisnode.getId()][j].getTL()) != -1) {
+                    tld[thisnode.getId()][j].setGain(1);
+                } else {
+                    tld[thisnode.getId()][j].setGain(0);
+                }
 			}
 		}
 		catch (Exception e)
@@ -288,6 +305,7 @@ public class LocalHillTLC extends TLController implements Colearning
 
 // ================================================
 
+    @Override
 	public float getColearnValue(Sign now, Sign sign, Node des, int pos) {
 		return 0;
 	}
@@ -295,32 +313,38 @@ public class LocalHillTLC extends TLController implements Colearning
 
 	// XMLSerializable and SecondStageLoader implementation
 
+    @Override
 	public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
 	{	super.load(myElement,loader);
 		v_table=(int[])XMLArray.loadArray(this,loader);
 		tld_backup=(ArrayList)(XMLArray.loadArray(this,loader));
 	}
 
+    @Override
 	public XMLElement saveSelf () throws XMLCannotSaveException {
 		XMLElement result=super.saveSelf();
 		result.setName(shortXMLName);
 	  	return result;
 	}
 
+    @Override
 	public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
 	{	super.saveChilds(saver);
 		XMLArray.saveArray(v_table,this,saver,"v-table");
 		XMLArray.saveArray(tld_backup,this,saver,"tld-backup");
 	}
 
+    @Override
 	public String getXMLName () {
 		return "model."+shortXMLName;
 	}
 
-	public void loadSecondStage (Dictionary dictionaries) throws XMLInvalidInputException,XMLTreeException {
+    @Override
+	public void loadSecondStage (Map maps) throws XMLInvalidInputException,XMLTreeException {
 		System.out.println("Local Hillclimbing second stage load finished.");
 	}
 
+    @Override
 	public void showSettings(Controller c) {
 	}
 

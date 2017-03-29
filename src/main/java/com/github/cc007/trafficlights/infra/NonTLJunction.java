@@ -16,23 +16,10 @@
 
 package com.github.cc007.trafficlights.infra;
 
-import com.github.cc007.trafficlights.*;
-import com.github.cc007.trafficlights.utils.*;
-import com.github.cc007.trafficlights.GLDException;
 import com.github.cc007.trafficlights.xml.*;
 
 import java.awt.Point;
-import java.awt.Graphics;
-import java.awt.Color;
-import java.io.IOException;
-import java.util.*;
 
-/**
- *
- * Junction without trafficlights, so normal traffic rules are applied
- * @author Group Datastructures
- * @version 1.0
- */
 
 
 public class NonTLJunction extends Junction
@@ -47,6 +34,7 @@ public class NonTLJunction extends Junction
 	 public NonTLJunction () { }
 	
 	// Guess you want to change this to a new sign?
+    @Override
 	public int getDesiredSignType() { return Sign.NO_SIGN; }
 
 	/**
@@ -60,10 +48,12 @@ public class NonTLJunction extends Junction
 
 	// Specific XMLSerializable implementation 
 
+    @Override
 	public String getXMLName ()
 	{ 	return parentName+".node-junction-nontl";
 	}
 	
+    @Override
 	public XMLElement saveSelf () throws XMLCannotSaveException
 	{ 	XMLElement result=super.saveSelf();
 		result.setName("node-junction-nontl");

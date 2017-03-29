@@ -17,10 +17,8 @@
 
 package com.github.cc007.trafficlights.infra;
 
-import com.github.cc007.trafficlights.infra.*;
 import com.github.cc007.trafficlights.xml.*;
 import java.io.IOException;
-import java.util.Hashtable;
 
 /**
 * Contains a destination frequency for a certain roaduser type.
@@ -56,11 +54,13 @@ public class SpawnFrequencyCycles implements XMLSerializable
 
         // XML Serializable implementation
 
+        @Override
         public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
         { 	ruType=myElement.getAttribute("ru-type").getIntValue();
                   freq=myElement.getAttribute("freq").getFloatValue();
                   cycle=myElement.getAttribute("cycle").getIntValue();
         }
+        @Override
         public XMLElement saveSelf () throws XMLCannotSaveException
         { 	XMLElement result=new XMLElement("dspawnfreq");
                   result.addAttribute(new XMLAttribute("ru-type",ruType));
@@ -69,18 +69,22 @@ public class SpawnFrequencyCycles implements XMLSerializable
                  return result;
         }
 
+        @Override
         public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
         { 	// A spawnfrequencycycle has no child objects
         }
 
+        @Override
         public String getXMLName ()
         { 	return parentName+".dspawnfreq";
         }
 
+        @Override
         public void setParentName (String newParentName)
         {	this.parentName=parentName;
         }
 
+        @Override
         public String toString()
         {
                return new String("At Cycle " + cycle + ": " + freq);

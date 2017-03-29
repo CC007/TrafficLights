@@ -15,7 +15,6 @@
  *------------------------------------------------------------------------*/
 package com.github.cc007.trafficlights.infra;
 
-import com.github.cc007.trafficlights.*;
 import com.github.cc007.trafficlights.utils.*;
 import com.github.cc007.trafficlights.GLDException;
 import com.github.cc007.trafficlights.xml.*;
@@ -93,6 +92,7 @@ public class Junction extends Node {
     /**
      * Returns the type of this junction
      */
+    @Override
     public int getType() {
         return type;
     }
@@ -100,6 +100,7 @@ public class Junction extends Node {
     /**
      * Returns the name of this junction.
      */
+    @Override
     public String getName() {
         return "Junction " + nodeId;
     }
@@ -107,6 +108,7 @@ public class Junction extends Node {
     /**
      * Returns all roads connected to this node
      */
+    @Override
     public Road[] getAllRoads() {
         return allRoads;
     }
@@ -123,6 +125,7 @@ public class Junction extends Node {
     /**
      * Returns the alpha roads connected to this node
      */
+    @Override
     public Road[] getAlphaRoads() {
         return alphaRoads;
     }
@@ -159,6 +162,7 @@ public class Junction extends Node {
     /**
      * Sets the signs on this Node
      */
+    @Override
     public void setSigns(Sign[] s) throws InfraException {
         signs = s;
     }
@@ -166,6 +170,7 @@ public class Junction extends Node {
     /**
      * Returns the width of this Node in number of lanes
      */
+    @Override
     public int getWidth() {
         return width;
     }
@@ -180,6 +185,7 @@ public class Junction extends Node {
     /*============================================*/
  /* STATISTICS                                 */
  /*============================================*/
+    @Override
     protected int calcDelay(Roaduser ru, int stop, int distance) {
         // calculate the delay for the drivelane leading to this Junction
         int start = ru.getDrivelaneStartTime();
@@ -201,6 +207,7 @@ public class Junction extends Node {
     /*============================================*/
  /* MODIFYING DATA                             */
  /*============================================*/
+    @Override
     public void reset() {
         super.reset();
         for (int i = 0; i < alphaRoads.length; i++) {
@@ -212,6 +219,7 @@ public class Junction extends Node {
         accidentsCount = 0;   //(DOAS 06)
     }
 
+    @Override
     public void addRoad(Road r, int pos) throws InfraException {
         if (r == null) {
             throw new InfraException("Parameter r is null");
@@ -231,6 +239,7 @@ public class Junction extends Node {
         calculateWidth();
     }
 
+    @Override
     public void setAlphaRoad(int pos) throws InfraException {
         if (pos > 3 || pos < 0) {
             throw new InfraException("Position out of range");
@@ -242,6 +251,7 @@ public class Junction extends Node {
         updateLanes();
     }
 
+    @Override
     public void remRoad(int pos) throws InfraException {
         if (pos > 3 || pos < 0) {
             throw new InfraException("Position out of range");
@@ -256,6 +266,7 @@ public class Junction extends Node {
         calculateWidth();
     }
 
+    @Override
     public void remRoad(Road r) throws InfraException {
         if (r == null) {
             throw new InfraException("Parameter r is null");
@@ -272,6 +283,7 @@ public class Junction extends Node {
         throw new InfraException("Road not found in this node");
     }
 
+    @Override
     public void remAllRoads() throws InfraException {
         for (int i = 0; i < allRoads.length; i++) {
             allRoads[i] = null;
@@ -308,6 +320,7 @@ public class Junction extends Node {
     /*============================================*/
  /* SMALL GET                                  */
  /*============================================*/
+    @Override
     public boolean isAlphaRoad(Road r) throws InfraException {
         if (r == null) {
             throw new InfraException("Parameter r == null");
@@ -320,10 +333,12 @@ public class Junction extends Node {
         return false;
     }
 
+    @Override
     public boolean isConnected(Road r) throws InfraException {
         return isConnectedAt(r) != -1;
     }
 
+    @Override
     public int isConnectedAt(Road r) throws InfraException {
         if (r == null) {
             throw new InfraException("Parameter r == null");
@@ -343,6 +358,7 @@ public class Junction extends Node {
         throw new InfraException("Road is not connected to this node");
     }
 
+    @Override
     public boolean isConnectionPosFree(int pos) throws InfraException {
         if (pos > 3 || pos < 0) {
             throw new InfraException("Position out of range");
@@ -350,6 +366,7 @@ public class Junction extends Node {
         return (allRoads[pos] == null);
     }
 
+    @Override
     public int getNumRoads() {
         int i = 0;
         if (allRoads[0] != null) {
@@ -367,10 +384,12 @@ public class Junction extends Node {
         return i;
     }
 
+    @Override
     public int getNumAlphaRoads() {
         return alphaRoads.length;
     }
 
+    @Override
     public int getNumInboundLanes() throws InfraException {
         int num = 0;
         for (int i = 0; i < allRoads.length; i++) {
@@ -381,6 +400,7 @@ public class Junction extends Node {
         return num;
     }
 
+    @Override
     public int getNumOutboundLanes() throws InfraException {
         int num = 0;
         for (int i = 0; i < allRoads.length; i++) {
@@ -391,6 +411,7 @@ public class Junction extends Node {
         return num;
     }
 
+    @Override
     public int getNumAllLanes() {
         int num = 0;
         for (int i = 0; i < allRoads.length; i++) {
@@ -401,10 +422,12 @@ public class Junction extends Node {
         return num;
     }
 
+    @Override
     public int getNumSigns() {
         return signs.length;
     }
 
+    @Override
     public int getNumRealSigns() {
         int c = 0;
         for (int i = 0; i < signs.length; i++) {
@@ -415,6 +438,7 @@ public class Junction extends Node {
         return c;
     }
 
+    @Override
     public int getDesiredSignType() throws InfraException {
         return getNumRoads() > 2 ? Sign.TRAFFICLIGHT : Sign.NO_SIGN;
     }
@@ -480,6 +504,7 @@ public class Junction extends Node {
     /*============================================*/
  /* LARGE GET                                  */
  /*============================================*/
+    @Override
     public DriveLane[] getLanesLeadingTo(DriveLane lane, int ruType) throws InfraException {
         Road road = lane.getRoad();
         // Road[] which will contain the Roads of this Node in a sorted fashion:
@@ -529,6 +554,7 @@ public class Junction extends Node {
     }
 
     /* Needs Testing! */
+    @Override
     public DriveLane[] getLanesLeadingFrom(DriveLane lane, int ruType) throws InfraException {
         Road road = lane.getRoad();
         // Road[] which will contain the Roads of this Node in a sorted fashion:
@@ -628,6 +654,7 @@ public class Junction extends Node {
     /**
      * Returns an array of all outbound lanes on this junction
      */
+    @Override
     public DriveLane[] getOutboundLanes() throws InfraException {
         int pointer = 0;
         //System.out.println("NewNumOutboundLanes: "+getNumOutboundLanes());
@@ -646,6 +673,7 @@ public class Junction extends Node {
     /**
      * Returns an array of all inbound lanes on this junction
      */
+    @Override
     public DriveLane[] getInboundLanes() throws InfraException {
         //System.out.println("Junction.getInboundLanes()");
         int pointer = 0;
@@ -663,6 +691,7 @@ public class Junction extends Node {
 
 
     /* clockwise order guaranteed */
+    @Override
     public DriveLane[] getAllLanes() throws InfraException {
         int pointer = 0;
         DriveLane[] lanes = new DriveLane[getNumAllLanes()];
@@ -759,10 +788,12 @@ public class Junction extends Node {
 
     }
 
+    @Override
     public void paint(Graphics g) throws GLDException {
         paint(g, 0, 0, 1.0f, 0.0);
     }
 
+    @Override
     public void paint(Graphics g, int x, int y, float zf) throws GLDException {
         paint(g, x, y, zf, 0.0);
     }
@@ -794,6 +825,7 @@ public class Junction extends Node {
     /*============================================*/
  /* LOAD and SAVE                              */
  /*============================================*/
+    @Override
     public void load(XMLElement myElement, XMLLoader loader) throws XMLTreeException, IOException, XMLInvalidInputException {
         super.load(myElement, loader);
         width = myElement.getAttribute("width").getIntValue();
@@ -803,6 +835,7 @@ public class Junction extends Node {
         loadData.signs = (int[]) XMLArray.loadArray(this, loader);
     }
 
+    @Override
     public XMLElement saveSelf() throws XMLCannotSaveException {
         XMLElement result = super.saveSelf();
         result.setName("node-junction");
@@ -810,6 +843,7 @@ public class Junction extends Node {
         return result;
     }
 
+    @Override
     public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException, XMLCannotSaveException {
         super.saveChilds(saver);
         XMLArray.saveArray(alphaRoads, this, saver, "alpha-roads");
@@ -862,6 +896,7 @@ public class Junction extends Node {
         return result;
     }
 
+    @Override
     public String getXMLName() {
         return parentName + ".node-junction";
     }
@@ -873,30 +908,31 @@ public class Junction extends Node {
         int[][] signconfigs; // For the sign configs
     }
 
-    public void loadSecondStage(Dictionary dictionaries) throws XMLInvalidInputException, XMLTreeException {
-        super.loadSecondStage(dictionaries);
+    @Override
+    public void loadSecondStage(Map maps) throws XMLInvalidInputException, XMLTreeException {
+        super.loadSecondStage(maps);
         // Load roads
-        Dictionary roadDictionary = (Dictionary) (dictionaries.get("road"));
+        Map roadMap = (Map) (maps.get("road"));
         allRoads = new Road[loadData.roads.length];
         for (int t = 0; t < loadData.roads.length; t++) {
-            allRoads[t] = (Road) (roadDictionary.get(new Integer(loadData.roads[t])));
+            allRoads[t] = (Road) (roadMap.get(new Integer(loadData.roads[t])));
             if (allRoads[t] == null && loadData.roads[t] != -1) {
                 System.out.println("Warning : " + getName() + " could not find road "
                         + loadData.roads[t]);
             }
         }
         // Load normal signs		       
-        Dictionary laneDictionary = (Dictionary) (dictionaries.get("lane"));
+        Map laneMap = (Map) (maps.get("lane"));
         signs = new Sign[loadData.signs.length];
         for (int t = 0; t < loadData.signs.length; t++) {
-            signs[t] = getSign(laneDictionary, loadData.signs[t]);
+            signs[t] = getSign(laneMap, loadData.signs[t]);
         }
         // Load Signconfigurations
         signconfigs = new Sign[loadData.signconfigs.length][2];
         for (int t = 0; t < signconfigs.length; t++) {
             signconfigs[t] = new Sign[loadData.signconfigs[t].length];
             for (int u = 0; u < signconfigs[t].length; u++) {
-                signconfigs[t][u] = getSign(laneDictionary, loadData.signconfigs[t][u]);
+                signconfigs[t][u] = getSign(laneMap, loadData.signconfigs[t][u]);
             }
         }
         // Tell *all* roads to load themselves
@@ -908,7 +944,7 @@ public class Junction extends Node {
         while (it.hasNext()) {
             tmpRoad = (Road) it.next();
             if (tmpRoad != null) {
-                tmpRoad.loadSecondStage(dictionaries);
+                tmpRoad.loadSecondStage(maps);
             }
         }
         try {	//System.out.println("Trying to updateLanes()");
@@ -918,8 +954,8 @@ public class Junction extends Node {
         }
     }
 
-    protected Sign getSign(Dictionary laneDictionary, int id) {
-        DriveLane tmp = (DriveLane) (laneDictionary.get(new Integer(id)));
+    protected Sign getSign(Map laneMap, int id) {
+        DriveLane tmp = (DriveLane) (laneMap.get(new Integer(id)));
         if (tmp == null) {
             return null;
         } else {

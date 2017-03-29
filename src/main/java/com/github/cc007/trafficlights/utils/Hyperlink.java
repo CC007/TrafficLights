@@ -119,8 +119,9 @@ public class Hyperlink extends Component
 	public void removeActionListener(ActionListener l) {
 		if (l != null) {
 			listeners.remove(l);
-			if (listeners.isEmpty())
-				disableEvents(AWTEvent.MOUSE_EVENT_MASK | AWTEvent.KEY_EVENT_MASK);
+			if (listeners.isEmpty()) {
+                disableEvents(AWTEvent.MOUSE_EVENT_MASK | AWTEvent.KEY_EVENT_MASK);
+            }
 		}
 	}
 	
@@ -137,8 +138,11 @@ public class Hyperlink extends Component
 	}
 	
 
-	/** Returns true to allow hyperlinks to receive focus. */
-	public boolean isFocusTraversable() { return false; }
+	/** Returns true to allow hyperlinks to receive focus.
+     * @return  */
+    @Override
+	public boolean isFocusable() { return false;
+    }
 	
 	
 	
@@ -150,6 +154,7 @@ public class Hyperlink extends Component
 		 * 
 		 * @param e The mouse event.
 		 */
+        @Override
 		public void mouseClicked(MouseEvent e) {
 			if ((e.getModifiers() & MouseEvent.BUTTON1_MASK) == MouseEvent.BUTTON1_MASK && isEnabled()) {
 				requestFocus();
@@ -165,6 +170,7 @@ public class Hyperlink extends Component
 		 * 
 		 * @param e The key event.
 		 */
+        @Override
 		public void keyReleased(KeyEvent e) {
 			int key = e.getKeyCode();
 			if ((key == KeyEvent.VK_SPACE || key == KeyEvent.VK_ENTER) && isEnabled()) {
@@ -177,25 +183,36 @@ public class Hyperlink extends Component
 		/**
 		 * Changes the cursor into a hand if the cursor position lies within the bounds of the text
 		 */
+        @Override
 		public void mouseMoved(MouseEvent e) {
-			if (textBounds != null && textBounds.contains(e.getPoint()) && isEnabled())
-				setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-			else
-				setCursor(null);
+			if (textBounds != null && textBounds.contains(e.getPoint()) && isEnabled()) {
+                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            } else {
+                setCursor(null);
+            }
 		}
 
 		/** Calls repaint to show this hyperlink received focus. */
+        @Override
 		public void focusGained(FocusEvent e) { repaint(); }
 		/** Calls repaint to show this hyperlink lost focus. */
+        @Override
 		public void focusLost(FocusEvent e) { repaint(); }
 		
+        @Override
 		public void mousePressed(MouseEvent e) { }
+        @Override
 		public void mouseReleased(MouseEvent e) { }
+        @Override
 		public void mouseEntered(MouseEvent e) { }
+        @Override
 		public void mouseExited(MouseEvent e) { }
+        @Override
 		public void mouseDragged(MouseEvent e) { }
 
+        @Override
 		public void keyPressed(KeyEvent e) { }
+        @Override
 		public void keyTyped(KeyEvent e) { }
 	}
 		
@@ -211,6 +228,7 @@ public class Hyperlink extends Component
 	 *
 	 * @param g The Graphics object to paint this hyperlink on.
 	 */
+    @Override
 	public void paint(Graphics gr)
 	{
 		Graphics2D g = (Graphics2D)gr;
@@ -222,11 +240,17 @@ public class Hyperlink extends Component
 		int width = fm.stringWidth(label);
 		int x = 0, y = (int)((getHeight() - height) / 2);
 
-		if (alignment == CENTER) x = (int)((getWidth() - width) / 2);
-		if (alignment == RIGHT)  x = getWidth() - width - 1;
+		if (alignment == CENTER) {
+            x = (int)((getWidth() - width) / 2);
+        }
+		if (alignment == RIGHT) {
+            x = getWidth() - width - 1;
+        }
 		
 		g.drawString(label, x, y + ascent - 1);
-		if (underline) g.drawLine(x, y + height - 1, x + width, y + height - 1);
+		if (underline) {
+            g.drawLine(x, y + height - 1, x + width, y + height - 1);
+        }
 		
 		if (hasFocus()) {
 			float[] pattern = { 1.0f, 1.0f };
@@ -238,6 +262,7 @@ public class Hyperlink extends Component
 		textBounds = new Rectangle(x, y, width, height);
 	}
 	
+    @Override
 	public void paintAll(Graphics g) {
 		paint(g);
 	}

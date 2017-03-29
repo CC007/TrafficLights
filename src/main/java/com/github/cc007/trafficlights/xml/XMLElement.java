@@ -82,8 +82,9 @@ public class XMLElement
    */
   protected int getAttributeIndex (String name) throws NoSuchElementException
   { for (int t=0;t<attributes.size();t++)
-    { if (name.equals(((XMLAttribute)(attributes.get(t))).name))
-         return t;
+    { if (name.equals(((XMLAttribute)(attributes.get(t))).name)) {
+        return t;
+    }
     }
     throw new NoSuchElementException 
       ("Could not find XML attribute named "+name);        
@@ -100,12 +101,14 @@ public class XMLElement
   
   /* @return A string which describes this XMLElemet
   */
+@Override
   public String toString ()
   { return "XML element named "+name;
   }
 
   /* @return An object copy of this XML element
   */
+@Override
   public Object clone ()
   { return new XMLElement(name,getAttributesArray());
   }

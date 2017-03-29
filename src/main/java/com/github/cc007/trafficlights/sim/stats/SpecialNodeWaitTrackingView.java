@@ -39,12 +39,15 @@ public class SpecialNodeWaitTrackingView extends ExtendedTrackingView
   }
 
 	/** Returns the next sample to be 'tracked'. */
+    @Override
 	protected float nextSample(int src) 
 	{ 	return stats[src].getAvgWaitingTime(allTime);
 	}
 	
 	/** Returns the description for this tracking window. */
+    @Override
 	public String getDescription() { return "Special node " + id + " - average trip waiting time"; }
 	
+    @Override
 	protected String getYLabel() { return "delay (cycles)"; }
 }

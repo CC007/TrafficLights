@@ -17,8 +17,6 @@
 package com.github.cc007.trafficlights.infra;
 
 import com.github.cc007.trafficlights.xml.*;
-import java.io.IOException;
-import java.util.*;
 
 /**
  *
@@ -39,20 +37,25 @@ public class NoSign extends Sign
 	public NoSign () { }	
 
 	/** Returns the type of this Sign */
+    @Override
 	public int getType() { return type; }
 
+    @Override
 	public boolean needsExternalAlgorithm() { return false; }
 	
+    @Override
 	public boolean mayDrive() { return true; }
 
 	
 	// Specific XMLSerializable implementation 
 
+    @Override
 	public String getXMLName ()
 	{ 	return parentName+".sign-no";
 	}
 	
 	
+    @Override
 	public XMLElement saveSelf () throws XMLCannotSaveException
 	{ 	XMLElement result=super.saveSelf();
 		result.setName("sign-no");

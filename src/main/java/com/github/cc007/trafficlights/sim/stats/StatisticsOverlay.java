@@ -72,11 +72,13 @@ public class StatisticsOverlay implements Overlay, Observer, XMLSerializable
 	}
 	
 	/** Updates the current data. */
+    @Override
 	public void update(Observable obs, Object obj)
 	{
 		Infrastructure _infra = ((SimModel)obs).getInfrastructure();
-		if(infra != _infra)
-			setInfrastructure(_infra);
+		if(infra != _infra) {
+            setInfrastructure(_infra);
+        }
 		refreshData();
 	}
 	
@@ -87,16 +89,20 @@ public class StatisticsOverlay implements Overlay, Observer, XMLSerializable
 		junctionMax = 0.01f;
 		
 		for(int i=0; i<specialNum; i++)
-			if((specialData[i] = specialNodes[i].getWaitingQueueLength()) > specialMax) 
-				specialMax = specialData[i];
+			if((specialData[i] = specialNodes[i].getWaitingQueueLength()) > specialMax) {
+                specialMax = specialData[i];
+        }
 			
 		for(int i=0; i<junctionNum; i++)
-			if((junctionData[i] = junctions[i].getStatistics(0).getAvgWaitingTime(true)) > junctionMax) 
-				junctionMax = junctionData[i];
+			if((junctionData[i] = junctions[i].getStatistics(0).getAvgWaitingTime(true)) > junctionMax) {
+                junctionMax = junctionData[i];
+        }
 	}
 	
+    @Override
 	public int overlayType() { return 2; }
 	
+    @Override
 	public void paint(Graphics g) throws GLDException
 	{
 		g.setPaintMode();
@@ -107,10 +113,11 @@ public class StatisticsOverlay implements Overlay, Observer, XMLSerializable
 		{
 			Rectangle r = specialNodes[i].getBounds();
 			int dy = (int)(specialData[i] / 2);
-			if(specialNodes[i].getRoadPos() == 3)
-				r.x += r.width + 5;
-			else
-				r.x -= 10;
+			if(specialNodes[i].getRoadPos() == 3) {
+                r.x += r.width + 5;
+            } else {
+                r.x -= 10;
+            }
 			r.y += r.height - dy + 1;
 			r.width = 5;
 			r.height = dy;
@@ -126,6 +133,7 @@ public class StatisticsOverlay implements Overlay, Observer, XMLSerializable
 		}
 	}
 	
+    @Override
 	public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
 	{ 	specialMax=myElement.getAttribute("special-max").getFloatValue();
 		junctionMax=myElement.getAttribute("junction-max").getFloatValue();
@@ -133,6 +141,7 @@ public class StatisticsOverlay implements Overlay, Observer, XMLSerializable
 		junctionData=(float[])XMLArray.loadArray(this,loader);	
 	}
 
+    @Override
 	public XMLElement saveSelf () throws XMLCannotSaveException
 	{ 	XMLElement result=new XMLElement("overlaystats");
 		result.addAttribute(new XMLAttribute("special-max",specialMax));
@@ -140,15 +149,18 @@ public class StatisticsOverlay implements Overlay, Observer, XMLSerializable
 	  	return result;
 	}
   
+    @Override
 	public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
 	{ 	XMLArray.saveArray(specialData,this,saver,"special-data");
 		XMLArray.saveArray(junctionData,this,saver,"junction-data");
 	}
 
+    @Override
 	public String getXMLName ()
 	{ 	return parentName+".overlaystats";
 	}
 	
+    @Override
 	public void setParentName (String parentName)
 	{	this.parentName=parentName; 
 	}

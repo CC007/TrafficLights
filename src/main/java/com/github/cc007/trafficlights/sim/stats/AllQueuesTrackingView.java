@@ -40,6 +40,7 @@ public class AllQueuesTrackingView extends TrackingView
   }
 
 	/** Returns the next sample to be 'tracked'. */
+    @Override
 	protected float nextSample(int src) 
 	{ 
 		int sample = 0;
@@ -49,8 +50,11 @@ public class AllQueuesTrackingView extends TrackingView
 	}
 	
 	/** Returns the description for this tracking window. */
+    @Override
 	public String getDescription() { return "total waiting queue length"; }
 	
+    @Override
 	protected String getSourceDesc(int i) { return "length"; }
+    @Override
 	protected String getYLabel() { return "queue length (roadusers)"; }
 }

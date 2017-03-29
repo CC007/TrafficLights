@@ -49,18 +49,21 @@ public class ToolListener implements MouseListener, MouseMotionListener
 	}
 	
 	/** Invoked when a mouse button is pressed on the View. */
+    @Override
 	public void mousePressed(MouseEvent e) {
 		controller.getCurrentTool().mousePressed(view, view.toInfra(e.getPoint()),
 			new Tool.Mask(e.getModifiers()));
 	}
 	
 	/** Invoked when a mouse button is released on the View. */
+    @Override
 	public void mouseReleased( MouseEvent e ) {
 		controller.getCurrentTool().mouseReleased(view, view.toInfra(e.getPoint()),
 			new Tool.Mask(e.getModifiers()));
 	}
 	
 	/** Invoked when the mouse cursor is moved over the View. */
+    @Override
 	public void mouseMoved( MouseEvent e )
 	{
 		try {
@@ -70,15 +73,19 @@ public class ToolListener implements MouseListener, MouseMotionListener
 		catch(Exception x) {}
 	}
 	
+    @Override
 	public void mouseDragged( MouseEvent e ) {
 		controller.getCurrentTool().mouseMoved(view, view.toInfra(e.getPoint()),
 			new Tool.Mask(e.getModifiers()));
 	}
 	
 	/** Empty implementation, required by the MouseListener interface. */
+    @Override
 	public void mouseEntered(MouseEvent e) { }
 	/** Empty implementation, required by the MouseListener interface. */
+    @Override
 	public void mouseExited(MouseEvent e) { }
 	/** Empty implementation, required by the MouseListener interface. */
+    @Override
 	public void mouseClicked(MouseEvent e) { }
 }

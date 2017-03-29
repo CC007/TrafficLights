@@ -18,9 +18,6 @@ package com.github.cc007.trafficlights.config;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
-
-import com.github.cc007.trafficlights.*;
 import com.github.cc007.trafficlights.infra.*;
 import com.github.cc007.trafficlights.utils.*;
 
@@ -59,6 +56,7 @@ public class EditEdgeNodePanel extends ConfigPanel implements ActionListener
 		setEdgeNode(e);
 	}
 	
+    @Override
 	public void reset() {
 		Road road = edgenode.getRoad();
 		if (road != null) {
@@ -81,11 +79,13 @@ public class EditEdgeNodePanel extends ConfigPanel implements ActionListener
 		reset();
 	}
 
+    @Override
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
-		if (source == roadLink)
-			confd.selectObject(edgenode.getRoad());
-		else if (source == nodeLink)
-			confd.selectObject(edgenode.getRoad().getOtherNode(edgenode));
+		if (source == roadLink) {
+            confd.selectObject(edgenode.getRoad());
+        } else if (source == nodeLink) {
+            confd.selectObject(edgenode.getRoad().getOtherNode(edgenode));
+        }
 	}
 }

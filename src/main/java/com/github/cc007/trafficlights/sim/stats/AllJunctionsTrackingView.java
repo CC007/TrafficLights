@@ -39,16 +39,18 @@ public class AllJunctionsTrackingView extends ExtendedTrackingView
 	}
 
 	/** Returns the next sample to be 'tracked'. */
+    @Override
 	protected float nextSample(int index) 
 	{ 
 		float sample = 0, count = 0;
 		int ru;
 
 		for(int i=0; i<stats.length; i++) {
-			if(allTime)
-				ru = stats[i][index].getTotalRoadusers();
-			else
-				ru = Math.min(Node.STAT_NUM_DATA, stats[i][index].getTotalRoadusers());
+			if(allTime) {
+                ru = stats[i][index].getTotalRoadusers();
+            } else {
+                ru = Math.min(Node.STAT_NUM_DATA, stats[i][index].getTotalRoadusers());
+            }
 			sample += stats[i][index].getAvgWaitingTime(allTime) * ru;
 			count += ru;
 		}
@@ -57,7 +59,9 @@ public class AllJunctionsTrackingView extends ExtendedTrackingView
 	}
 	
 	/** Returns the description for this tracking window. */
+    @Override
 	public String getDescription() { return "average junction waiting time"; }
 	
+    @Override
 	protected String getYLabel() { return "delay (cycles)"; }
 }

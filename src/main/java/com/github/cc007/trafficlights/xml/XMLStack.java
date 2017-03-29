@@ -33,6 +33,7 @@ public class XMLStack extends java.util.Stack
   }
   
   /** Standard stack push method */
+@Override
   public Object push (Object x)
   { Object result=super.push(x);
     updateBranchName();
@@ -40,6 +41,7 @@ public class XMLStack extends java.util.Stack
   }
   
   /** Standard stack pop method */
+@Override
   public Object pop ()
   { Object result=super.pop();
     updateBranchName();
@@ -72,8 +74,9 @@ public class XMLStack extends java.util.Stack
     *  stack
    */
   public void assertIsCurrentParent (String s) throws XMLTreeException
-  { if (isCurrentParent(s))
-       return; // OK
+  { if (isCurrentParent(s)) {
+      return; // OK
+  }
     if (("").equals(s))
     { throw new XMLTreeException 
       ("Main parser tried to access the root of the XML tree when the "+

@@ -18,15 +18,12 @@
 package com.github.cc007.trafficlights.algo.tlc;
 
 import com.github.cc007.trafficlights.*;
-import com.github.cc007.trafficlights.sim.*;
 import com.github.cc007.trafficlights.algo.tlc.*;
 import com.github.cc007.trafficlights.infra.*;
-import com.github.cc007.trafficlights.utils.*;
 import com.github.cc007.trafficlights.xml.*;
 
 import java.io.IOException;
 import java.util.*;
-import java.awt.Point;
 
 /**
  *
@@ -66,6 +63,7 @@ public class TC2Final extends TCRL implements Colearning,InstantiationAssistant
 	{	super(infra);
 	}
 
+    @Override
 	public void setInfrastructure(Infrastructure infra)
 	{	super.setInfrastructure(infra);
 		try{
@@ -130,6 +128,7 @@ public class TC2Final extends TCRL implements Colearning,InstantiationAssistant
 	* @param The TLDecision is a tuple consisting of a traffic light and a reward (Q) value, for it to be green
 	* @see gld.algo.tlc.TLDecision
 	*/
+    @Override
 	public TLDecision[][] decideTLs()
 	{
 		/* gain = 0
@@ -148,7 +147,9 @@ public class TC2Final extends TCRL implements Colearning,InstantiationAssistant
 
 		//Determine wheter it should be random or not
 		boolean randomrun = false;
-		if (random_number.nextFloat() < random_chance) randomrun = true;
+		if (random_number.nextFloat() < random_chance) {
+            randomrun = true;
+        }
 
 		for (int i=0;i<num_nodes;i++) {
 			num_dec = tld[i].length;
@@ -179,17 +180,20 @@ public class TC2Final extends TCRL implements Colearning,InstantiationAssistant
 				}
 
 				// If this is a random run, set all gains randomly
-                if(randomrun)
-                	gain = random_number.nextFloat();
+                if(randomrun) {
+                    gain = random_number.nextFloat();
+                }
 
-                if(gain >50.0 || gain < -50.0f)
-                	System.out.println("Gain might be too high? : "+gain);
+                if(gain >50.0 || gain < -50.0f) {
+                    System.out.println("Gain might be too high? : "+gain);
+                }
 	    		tld[i][j].setGain(gain);
 	    	}
 	    }
 	    return tld;
 	}
 
+    @Override
 	public void updateRoaduserMove(Roaduser ru, DriveLane prevlane, Sign prevsign, int prevpos, DriveLane dlanenow, Sign signnow, int posnow, PosMov[] posMovs, DriveLane desired, int penalty)
 	{
 		//When a roaduser leaves the city; this will
@@ -251,9 +255,9 @@ public class TC2Final extends TCRL implements Colearning,InstantiationAssistant
 		PKtlEntry thisChanceKtl = new PKtlEntry(tlId,pos,desId,light,tlNewId,posNew,Ktl);
 		int pKtl_index = pKtlTable[tlId][pos][desId].indexOf(thisChanceKtl);
 
-		if(pKtl_index >= 0)
-			thisChanceKtl = (PKtlEntry) pKtlTable[tlId][pos][desId].get(pKtl_index);
-		else {
+		if(pKtl_index >= 0) {
+            thisChanceKtl = (PKtlEntry) pKtlTable[tlId][pos][desId].get(pKtl_index);
+        } else {
 			pKtlTable[tlId][pos][desId].add(thisChanceKtl);
 			pKtl_index = pKtlTable[tlId][pos][desId].indexOf(thisChanceKtl);
 		}
@@ -266,8 +270,9 @@ public class TC2Final extends TCRL implements Colearning,InstantiationAssistant
 		PKtlEntry curPKtl;
 		for(int i=0;i<num_pKtl;i++) {
 			curPKtl = (PKtlEntry) pKtlTable[tlId][pos][desId].get(i);
-			if(curPKtl.sameStartSituationWithKtl(thisSituation) && i!=pKtl_index)
-				curPKtl.addSameStartSituation();
+			if(curPKtl.sameStartSituationWithKtl(thisSituation) && i!=pKtl_index) {
+                curPKtl.addSameStartSituation();
+            }
 		}
 	}
 
@@ -393,10 +398,11 @@ public class TC2Final extends TCRL implements Colearning,InstantiationAssistant
 		long pKtlGC2=0,pKtlRC2=0;
 		for(;pKtlsize>=0;pKtlsize--) {
 			PKtlEntry cur = (PKtlEntry) pKtlTable[tlId][pos][desId].get(pKtlsize);
-			if(cur.light==green)
-				pKtlGC2 += cur.getSameSituation();
-			else
-				pKtlRC2 += cur.getSameSituation();
+			if(cur.light==green) {
+                pKtlGC2 += cur.getSameSituation();
+            } else {
+                pKtlRC2 += cur.getSameSituation();
+            }
 		}
 
 		counters[green_index] = (float) (((double)pKtlGC2)/((double)(pKtlGC2+pKtlRC2)));
@@ -406,16 +412,18 @@ public class TC2Final extends TCRL implements Colearning,InstantiationAssistant
 	}
 
 	protected int calcReward(int tlId, int pos, int tlNewId, int posNew) {
-		if(pos==posNew && tlId==tlNewId)
-			return 1;
-		else
-			return 0;
+		if(pos==posNew && tlId==tlNewId) {
+            return 1;
+        } else {
+            return 0;
+        }
 	}
 
 	protected boolean calcPossibleCross(int tlId, PosMov[] posMovs) {
 		for(int i=0;i<posMovs.length;i++) {
-			if(posMovs[i].tlId!=tlId)
-				return true;
+			if(posMovs[i].tlId!=tlId) {
+                return true;
+            }
 		}
 		return false;
 	}
@@ -425,6 +433,7 @@ public class TC2Final extends TCRL implements Colearning,InstantiationAssistant
 	}
 
 
+    @Override
 	public float getColearnValue(Sign sign_new, Sign sign, Node destination, int pos)	{
 		int Ktl = sign.getLane().getNumRoadusersWaiting();
 
@@ -486,16 +495,31 @@ public class TC2Final extends TCRL implements Colearning,InstantiationAssistant
 			return value;
 		}
 
+        @Override
 		public boolean equals(Object other) {
 			if(other != null && other instanceof CountEntry) {
 				CountEntry countnew = (CountEntry) other;
-				if(countnew.tlId!=tlId) return false;
-				if(countnew.pos!=pos) return false;
-				if(countnew.desId!=desId) return false;
-				if(countnew.light!=light) return false;
-				if(countnew.tlNewId!=tlNewId) return false;
-				if(countnew.posNew!=posNew) return false;
-				if(countnew.Ktl!=Ktl) return false;
+				if(countnew.tlId!=tlId) {
+                    return false;
+                }
+				if(countnew.pos!=pos) {
+                    return false;
+                }
+				if(countnew.desId!=desId) {
+                    return false;
+                }
+				if(countnew.light!=light) {
+                    return false;
+                }
+				if(countnew.tlNewId!=tlNewId) {
+                    return false;
+                }
+				if(countnew.posNew!=posNew) {
+                    return false;
+                }
+				if(countnew.Ktl!=Ktl) {
+                    return false;
+                }
 				return true;
 			}
 			return false;
@@ -503,34 +527,39 @@ public class TC2Final extends TCRL implements Colearning,InstantiationAssistant
 
 		// Retuns the count-value if the startingsituations match
 		public long sameStartSituationDiffKtl(CountEntry other) {
-			if(other.tlId==tlId && other.pos==pos && other.desId==desId && other.light==light)
-				return value;
-			else
-				return 0;
+			if(other.tlId==tlId && other.pos==pos && other.desId==desId && other.light==light) {
+                return value;
+            } else {
+                return 0;
+            }
 		}
 
 		public long sameStartSituationWithKtl(CountEntry other) {
-			if(other.tlId==tlId && other.pos==pos && other.desId==desId && other.light==light && other.Ktl==Ktl)
-				return value;
-			else
-				return 0;
+			if(other.tlId==tlId && other.pos==pos && other.desId==desId && other.light==light && other.Ktl==Ktl) {
+                return value;
+            } else {
+                return 0;
+            }
 		}
 
 		public long sameSituationDiffKtl(CountEntry other) {
-			if(other.tlId==tlId && other.pos==pos && other.light==light && other.desId==desId && other.tlNewId==tlNewId && other.posNew==posNew)
-				return value;
-			else
-				return 0;
+			if(other.tlId==tlId && other.pos==pos && other.light==light && other.desId==desId && other.tlNewId==tlNewId && other.posNew==posNew) {
+                return value;
+            } else {
+                return 0;
+            }
 		}
 
 		public long sameSituationWithKtl(CountEntry other) {
-			if(equals(other))
-				return value;
-			else
-				return 0;
+			if(equals(other)) {
+                return value;
+            } else {
+                return 0;
+            }
 		}
 
 		// XMLSerializable implementation of CountEntry
+        @Override
 		public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
 		{	pos=myElement.getAttribute("pos").getIntValue();
 			tlId=myElement.getAttribute("tl-id").getIntValue();
@@ -542,6 +571,7 @@ public class TC2Final extends TCRL implements Colearning,InstantiationAssistant
 			value=myElement.getAttribute("value").getLongValue();
 		}
 
+        @Override
 		public XMLElement saveSelf () throws XMLCannotSaveException
 		{ 	XMLElement result=new XMLElement("count");
 			result.addAttribute(new XMLAttribute("pos",pos));
@@ -555,14 +585,17 @@ public class TC2Final extends TCRL implements Colearning,InstantiationAssistant
 	  		return result;
 		}
 
+        @Override
 		public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
 		{ 	// A count entry has no child objects
 		}
 
+        @Override
 		public String getXMLName ()
 		{ 	return parentName+".count";
 		}
 
+        @Override
 		public void setParentName (String parentName)
 		{	this.parentName=parentName;
 		}
@@ -599,50 +632,70 @@ public class TC2Final extends TCRL implements Colearning,InstantiationAssistant
 		public float getSameSituation() 			{	return sameSituation;		}
 
 		public float getChance()	{
-			if(getSameStartSituation()==0)
-				return 0;
-			else
-				return (float) ((float)getSameSituation())/((float)getSameStartSituation());
+			if(getSameStartSituation()==0) {
+                return 0;
+            } else {
+                return (float) ((float)getSameSituation())/((float)getSameStartSituation());
+            }
 		}
 
 
 		public boolean sameStartSituationDiffKtl(CountEntry other) {
-			if(other.tlId==tlId && other.pos==pos && other.desId==desId && other.light==light)
-				return true;
-			else
-				return false;
+			if(other.tlId==tlId && other.pos==pos && other.desId==desId && other.light==light) {
+                return true;
+            } else {
+                return false;
+            }
 		}
 
 		public boolean sameStartSituationWithKtl(CountEntry other) {
-			if(other.tlId==tlId && other.pos==pos && other.desId==desId && other.light==light && other.Ktl==Ktl)
-				return true;
-			else
-				return false;
+			if(other.tlId==tlId && other.pos==pos && other.desId==desId && other.light==light && other.Ktl==Ktl) {
+                return true;
+            } else {
+                return false;
+            }
 		}
 
 		public boolean sameSituationDiffKtl(PKtlEntry other) {
-			if(other.tlId==tlId && other.pos==pos && other.desId==desId && other.light==light && other.tlNewId==tlNewId && other.posNew==posNew)
-				return true;
-			else
-				return false;
+			if(other.tlId==tlId && other.pos==pos && other.desId==desId && other.light==light && other.tlNewId==tlNewId && other.posNew==posNew) {
+                return true;
+            } else {
+                return false;
+            }
 		}
 
+        @Override
 		public boolean equals(Object other) {
 			if(other != null && other instanceof PKtlEntry) {
 				PKtlEntry pnew = (PKtlEntry) other;
-				if(pnew.tlId!=tlId) return false;
-				if(pnew.pos!=pos) return false;
-				if(pnew.desId!=desId) return false;
-				if(pnew.light!=light) return false;
-				if(pnew.tlNewId!=tlNewId) return false;
-				if(pnew.posNew!=posNew) return false;
-				if(pnew.Ktl!=Ktl) return false;
+				if(pnew.tlId!=tlId) {
+                    return false;
+                }
+				if(pnew.pos!=pos) {
+                    return false;
+                }
+				if(pnew.desId!=desId) {
+                    return false;
+                }
+				if(pnew.light!=light) {
+                    return false;
+                }
+				if(pnew.tlNewId!=tlNewId) {
+                    return false;
+                }
+				if(pnew.posNew!=posNew) {
+                    return false;
+                }
+				if(pnew.Ktl!=Ktl) {
+                    return false;
+                }
 				return true;
 			}
 			return false;
 		}
 
 		// XMLSerializable implementation of PEntry
+        @Override
 		public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
 		{	pos=myElement.getAttribute("pos").getIntValue();
 			tlId=myElement.getAttribute("tl-id").getIntValue();
@@ -655,6 +708,7 @@ public class TC2Final extends TCRL implements Colearning,InstantiationAssistant
 			Ktl=myElement.getAttribute("ktl").getIntValue();
 		}
 
+        @Override
 		public XMLElement saveSelf () throws XMLCannotSaveException
 		{ 	XMLElement result=new XMLElement("pval");
 			result.addAttribute(new XMLAttribute("pos",pos));
@@ -669,14 +723,18 @@ public class TC2Final extends TCRL implements Colearning,InstantiationAssistant
 	  		return result;
 		}
 
+        @Override
 		public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
 		{ 	// A PEntry has no child objects
 		}
 
+        @Override
 		public void setParentName (String parentName)	{	this.parentName=parentName;		}
+        @Override
 		public String getXMLName ()						{	return parentName+".pktlval";	}
 	}
 
+    @Override
 	public void showSettings(Controller c)	{
 		String[] descs = {"Gamma (discount factor)", "Random decision chance"};
 		float[] floats = {gamma, random_chance};
@@ -688,6 +746,7 @@ public class TC2Final extends TCRL implements Colearning,InstantiationAssistant
 	}
 
 	// XMLSerializable, SecondStageLoader and InstantiationAssistant implementation
+    @Override
 	public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
 	{	super.load(myElement,loader);
 		qTable=(float[][][][])XMLArray.loadArray(this,loader);
@@ -698,6 +757,7 @@ public class TC2Final extends TCRL implements Colearning,InstantiationAssistant
 		pKtlTable=(ArrayList[][][])XMLArray.loadArray(this,loader,this);
 	}
 
+    @Override
 	public XMLElement saveSelf () throws XMLCannotSaveException
 	{ 	XMLElement result=super.saveSelf();
 		result.setName(shortXMLName);
@@ -706,6 +766,7 @@ public class TC2Final extends TCRL implements Colearning,InstantiationAssistant
 	  	return result;
 	}
 
+    @Override
 	public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
 	{	super.saveChilds(saver);
 		XMLArray.saveArray(qTable,this,saver,"q-table");
@@ -714,18 +775,22 @@ public class TC2Final extends TCRL implements Colearning,InstantiationAssistant
 		XMLArray.saveArray(pKtlTable,this,saver,"pKtlTable");
 	}
 
+    @Override
 	public String getXMLName ()
 	{ 	return "model."+shortXMLName;
 	}
 
-	public void loadSecondStage (Dictionary dictionaries) throws XMLInvalidInputException,XMLTreeException
+    @Override
+	public void loadSecondStage (Map maps) throws XMLInvalidInputException,XMLTreeException
 	{	}
 
+    @Override
 	public boolean canCreateInstance (Class request)
 	{ 	return CountEntry.class.equals(request) ||
 			PKtlEntry.class.equals(request);
 	}
 
+    @Override
 	public Object createInstance (Class request) throws
 	      ClassNotFoundException,InstantiationException,IllegalAccessException
 	{ 	if (CountEntry.class.equals(request))

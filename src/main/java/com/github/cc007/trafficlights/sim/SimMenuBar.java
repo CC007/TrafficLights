@@ -23,7 +23,6 @@ import com.github.cc007.trafficlights.algo.tlc.*;
 import com.github.cc007.trafficlights.sim.stats.*;
 
 import java.awt.*;
-import java.util.*;
 import java.awt.event.*;
 
 /**
@@ -206,6 +205,7 @@ public class SimMenuBar extends MenuBar {
             select(1);
         }
         
+        @Override
         public void itemStateChanged(ItemEvent e) {
             controller.setSpeed(getSelectedIndex());
         }
@@ -242,13 +242,16 @@ public class SimMenuBar extends MenuBar {
             setTLC(0, 0);
         }
         
+        @Override
         public void itemStateChanged(ItemEvent e) {
             CheckMenu cm = (CheckMenu)e.getItemSelectable();
             for (int i=0; i < submenus.length; i++) {
                 if (submenus[i] == cm) {
                     selectedMenu = i;
                     controller.setTLC(i, cm.getSelectedIndex());
-                } else submenus[i].deselectAll();
+                } else {
+                    submenus[i].deselectAll();
+                }
             }
         }
         
@@ -273,6 +276,7 @@ public class SimMenuBar extends MenuBar {
             select(0);
         }
         
+        @Override
         public void itemStateChanged(ItemEvent e) {
             controller.setDrivingPolicy(getSelectedIndex());
         }
@@ -292,6 +296,7 @@ public class SimMenuBar extends MenuBar {
     
     /** Listens to the "Statistics" menu */
     public class StatsListener implements ActionListener, ItemListener {
+        @Override
         public void actionPerformed(ActionEvent e) {
             String sel = e.getActionCommand();
             
@@ -300,59 +305,84 @@ public class SimMenuBar extends MenuBar {
                 return;
             }
             
-            if (sel.equals("Show statistics")) controller.showStatistics();
-            else if (sel.equals("Total waiting queue length")) controller.showTracker(TrackerFactory.TOTAL_QUEUE);
-            else if (sel.equals("Total roadusers arrived")) controller.showTracker(TrackerFactory.TOTAL_ROADUSERS);
-            else if (sel.equals("Average trip waiting time")) controller.showTracker(TrackerFactory.TOTAL_WAIT);
-            else if (sel.equals("Average junction waiting time")) controller.showTracker(TrackerFactory.TOTAL_JUNCTION);
-            else if (sel.equals("Number of accidents")) controller.showTracker(TrackerFactory.ACCIDENTS_COUNT);
-            else if (sel.equals("Number of removed cars")) controller.showTracker(TrackerFactory.REMOVEDCARS_COUNT);
+            if (sel.equals("Show statistics")) {
+                controller.showStatistics();
+            } else if (sel.equals("Total waiting queue length")) {
+                controller.showTracker(TrackerFactory.TOTAL_QUEUE);
+            } else if (sel.equals("Total roadusers arrived")) {
+                controller.showTracker(TrackerFactory.TOTAL_ROADUSERS);
+            } else if (sel.equals("Average trip waiting time")) {
+                controller.showTracker(TrackerFactory.TOTAL_WAIT);
+            } else if (sel.equals("Average junction waiting time")) {
+                controller.showTracker(TrackerFactory.TOTAL_JUNCTION);
+            } else if (sel.equals("Number of accidents")) {
+                controller.showTracker(TrackerFactory.ACCIDENTS_COUNT);
+            } else if (sel.equals("Number of removed cars")) {
+                controller.showTracker(TrackerFactory.REMOVEDCARS_COUNT);
+            }
         }
         
+        @Override
         public void itemStateChanged(ItemEvent e) {
             CheckboxMenuItem item = (CheckboxMenuItem)e.getItemSelectable();
-            if(item.getState()) controller.enableOverlay();
-            else controller.disableOverlay();
+            if(item.getState()) {
+                controller.enableOverlay();
+            } else {
+                controller.disableOverlay();
+            }
         }
     }
     
     
     /** Listens to the "Options" menu */
     public class OptionMenuListener implements ActionListener, ItemListener {
+        @Override
         public void actionPerformed(ActionEvent e) {
             String ac = e.getActionCommand();
-            if (ac == "Open editor") controller.openEditor();
-            else if (ac == "Settings...") controller.showSettings();
+            if (ac == "Open editor") {
+                controller.openEditor();
+            } else if (ac == "Settings...") {
+                controller.showSettings();
+            }
         }
         
+        @Override
         public void itemStateChanged(ItemEvent e) {
             CheckboxMenuItem item = (CheckboxMenuItem)e.getItemSelectable();
             boolean enable = item.getState();
-            if(item.getName().equals("view"))
+            if(item.getName().equals("view")) {
                 controller.setViewEnabled(enable);
-            else if(item.getName().equals("hec"))       //(DOAS 05)
+            } else if(item.getName().equals("hec")) {       //(DOAS 05)
                 controller.setHecAddon(enable);
-            else if(item.getName().equals("accidents")) //(DOAS 06)
+            } else if(item.getName().equals("accidents")) { //(DOAS 06)
                 controller.setAccidents(enable);
-            else if(item.getName().equals("removeStuckCars")) //(DOAS 06)
+            } else if(item.getName().equals("removeStuckCars")) { //(DOAS 06)
                 controller.setRemoveStuckCars(enable);
-            else if(item.getName().equals("reroutingOn")) //(DOAS 06)
+            } else if(item.getName().equals("reroutingOn")) { //(DOAS 06)
                 controller.setRerouting(enable);
-            else
+            } else {
                 controller.setCycleCounterEnabled(enable);
+            }
         }
     }
     
     
     /** Listens to the "Simulation" menu */
     public class SimListener implements ActionListener {
+        @Override
         public void actionPerformed(ActionEvent e) {
             String sel = e.getActionCommand();
-            if (sel.equals("Do one step")) controller.doStep();
-            else if (sel.equals("Run")) controller.unpause();
-            else if (sel.equals("Pause")) controller.pause();
-            else if (sel.equals("Stop")) controller.stop();
-            else if (sel.equals("Run Series")) controller.runSeries();
+            if (sel.equals("Do one step")) {
+                controller.doStep();
+            } else if (sel.equals("Run")) {
+                controller.unpause();
+            } else if (sel.equals("Pause")) {
+                controller.pause();
+            } else if (sel.equals("Stop")) {
+                controller.stop();
+            } else if (sel.equals("Run Series")) {
+                controller.runSeries();
+            }
         }
     }
 }

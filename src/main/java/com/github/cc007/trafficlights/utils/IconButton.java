@@ -54,6 +54,7 @@ public class IconButton extends Button
 	 * Draw this IconButton
 	 * @param g The Graphics object to draw onto
 	 */
+    @Override
 	public void paint(Graphics g)
 	{
 		super.paint(g);

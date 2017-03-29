@@ -49,16 +49,25 @@ public class ZoomTool implements Tool
 	 * @param p The coordinates in the infrastructure the mouse cursor was at when the event was generated.
 	 * @param mask Identifies which button was pressed, as well as any aditional sytem keys
 	 */
+    @Override
 	public void mousePressed(View view, Point p, Tool.Mask mask)
 	{
-		if (mask.isLeft()) za.doZoom(view, p, ZoomAction.IN);
-		else if (mask.isRight()) za.doZoom(view, p, ZoomAction.OUT);
+		if (mask.isLeft()) {
+            za.doZoom(view, p, ZoomAction.IN);
+        } else if (mask.isRight()) {
+            za.doZoom(view, p, ZoomAction.OUT);
+        }
 	}
 
+    @Override
 	public void mouseReleased(View view, Point p, Tool.Mask mask) { }
+    @Override
 	public void mouseMoved(View view, Point p, Tool.Mask mask) { }
+    @Override
 	public int overlayType() { return 0; }
+    @Override
 	public void paint(Graphics g) throws GLDException { }
 
+    @Override
 	public Panel getPanel() { return new Panel(null); }
 }

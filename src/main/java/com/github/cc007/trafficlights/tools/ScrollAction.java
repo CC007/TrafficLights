@@ -39,6 +39,7 @@ public class ScrollAction implements ToolAction
 		viewScroller = vs;
 	}
 
+    @Override
 	public boolean beingUsed() { return startPoint != null; }
 
 	public boolean startScroll(View view, Point p)

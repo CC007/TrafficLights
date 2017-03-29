@@ -19,10 +19,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
-import com.github.cc007.trafficlights.*;
 import com.github.cc007.trafficlights.infra.*;
-import com.github.cc007.trafficlights.edit.*;
-import com.github.cc007.trafficlights.utils.*;
 
 
 /**
@@ -45,7 +42,7 @@ public class SimDynamicSpawnPanel extends ConfigPanel implements ActionListener,
         Button setSpawn;
         Button deleteSpawn;
 
-        ArrayList[] ruCyclesLists;
+        java.util.List<SpawnFrequencyCycles>[] ruCyclesLists;
 
         int deleteType = -1;
         int deleteCycle = -1;
@@ -64,7 +61,9 @@ public class SimDynamicSpawnPanel extends ConfigPanel implements ActionListener,
                 for (int i=0; i < numItems; i++)
                 {
                   int pos = 0;
-                  if (i % 2 != 0) pos = 200;
+                  if (i % 2 != 0) {
+                      pos = 200;
+                  }
                   Label lab = new Label("Cycles list for " + descs[i]);
                   lab.setBounds(pos, ((int)i / 2) * 70, 200, 20);
                   add(lab);
@@ -124,6 +123,7 @@ public class SimDynamicSpawnPanel extends ConfigPanel implements ActionListener,
 
         }
 
+        @Override
         public void paint(Graphics g) {
                 super.paint(g);
                 g.setColor(Color.black);
@@ -142,13 +142,14 @@ public class SimDynamicSpawnPanel extends ConfigPanel implements ActionListener,
         }
 
 
+        @Override
         public void reset() {
                int [] types = RoaduserFactory.getConcreteTypes();
                ruCyclesLists = new ArrayList[types.length];
                boolean containsAnyItem = false;
                for (int i = 0; i < types.length; i++) {
                    ruList[i].removeAll();
-                   ArrayList dSpawnList = eNode.dSpawnCyclesForRu(types[i]);
+                   java.util.List<SpawnFrequencyCycles> dSpawnList = eNode.dSpawnCyclesForRu(types[i]);
                    for (int j = 0; j < dSpawnList.size(); j++) {
                      SpawnFrequencyCycles sf = (SpawnFrequencyCycles)dSpawnList.get(j);
                      ruList[i].add(sf.toString());
@@ -163,6 +164,7 @@ public class SimDynamicSpawnPanel extends ConfigPanel implements ActionListener,
 
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
                 Object source = e.getSource();
 
@@ -191,14 +193,16 @@ public class SimDynamicSpawnPanel extends ConfigPanel implements ActionListener,
                 reset();
         }
 
+        @Override
         public void itemStateChanged(ItemEvent e) {
                 ItemSelectable es = e.getItemSelectable();
 
                 for (int i = 0; i < ruList.length; i++) {
                       if (es == ruList[i])
                       {
-                         if(deleteType > -1 && deleteCycle > -1)
-                            ruList[deleteType].deselect(deleteCycle);
+                         if(deleteType > -1 && deleteCycle > -1) {
+                             ruList[deleteType].deselect(deleteCycle);
+                         }
                          deleteType = i;
                          deleteCycle = ruList[i].getSelectedIndex();
                          if (deleteCycle > -1)
@@ -210,8 +214,9 @@ public class SimDynamicSpawnPanel extends ConfigPanel implements ActionListener,
                                                 descs[deleteType]);
                            deleteSpawn.setVisible(true);
                          }
-                         else
-                           deleteSpawn.setVisible(false);
+                         else {
+                             deleteSpawn.setVisible(false);
+                         }
                       }
                 }
 

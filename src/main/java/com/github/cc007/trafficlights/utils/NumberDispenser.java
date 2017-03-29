@@ -34,39 +34,46 @@ public class NumberDispenser implements XMLSerializable
   	}
   
   	public int get ()
-  	{ 	if (stack.isEmpty())
-    			return counter++;
-    		else
-    			return ((Integer)(stack.pop())).intValue();
+  	{ 	if (stack.isEmpty()) {
+        return counter++;
+      } else {
+        return ((Integer)(stack.pop())).intValue();
+      }
 	}
   
   	public void giveBack (int number)
-  	{ 	if (number == counter - 1)
-    			counter--;
-    		else if (number < counter && ! stack.contains(new Integer (number)))
-    			stack.push (new Integer (number));
+  	{ 	if (number == counter - 1) {
+        counter--;
+      } else if (number < counter && ! stack.contains(new Integer (number))) {
+          stack.push (new Integer (number));
+      }
   	}
 	
+@Override
 	public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
 	{ 	stack=new Stack();
 		stack.addAll((ArrayList)(XMLArray.loadArray(this,loader)));
 		counter=myElement.getAttribute("counter").getIntValue();
 	}
 
+@Override
 	public XMLElement saveSelf () throws XMLCannotSaveException
 	{ 	XMLElement result=new XMLElement("dispenser");
 		result.addAttribute(new XMLAttribute ("counter",counter));
 	  	return result;
 	}
   
+@Override
 	public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
 	{ 	XMLArray.saveArray(stack,this,saver,"stack");
 	}
 
+@Override
 	public String getXMLName ()
 	{ 	return parentName+".dispenser";
 	}
 	
+@Override
 	public void setParentName (String parentName)
 	{	this.parentName=parentName; 
 	}

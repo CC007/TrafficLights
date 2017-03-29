@@ -17,15 +17,12 @@
 package com.github.cc007.trafficlights.algo.tlc;
 
 import com.github.cc007.trafficlights.*;
-import com.github.cc007.trafficlights.sim.*;
 import com.github.cc007.trafficlights.algo.tlc.*;
 import com.github.cc007.trafficlights.infra.*;
-import com.github.cc007.trafficlights.utils.*;
 import com.github.cc007.trafficlights.xml.*;
 
 import java.io.IOException;
 import java.util.*;
-import java.awt.Point;
 
 /**
  *
@@ -70,6 +67,7 @@ public class TC1B1 extends TCRL implements Colearning, InstantiationAssistant {
         super(infra);
     }
 
+    @Override
     public void setInfrastructure(Infrastructure infra) {
         super.setInfrastructure(infra);
         try {
@@ -133,6 +131,7 @@ public class TC1B1 extends TCRL implements Colearning, InstantiationAssistant {
      * reward (Q) value, for it to be green
      * @see gld.algo.tlc.TLDecision
      */
+    @Override
     public TLDecision[][] decideTLs() {
         /* gain = 0
 		 * For each TL
@@ -198,6 +197,7 @@ public class TC1B1 extends TCRL implements Colearning, InstantiationAssistant {
         return tld;
     }
 
+    @Override
     public void updateRoaduserMove(Roaduser ru, DriveLane prevlane, Sign prevsign, int prevpos, DriveLane dlanenow, Sign signnow, int posnow, PosMov[] posMovs, DriveLane desired, int penalty) {
         // Roaduser has just left the building!
         if (dlanenow == null || signnow == null) {
@@ -461,6 +461,7 @@ avg wT:			V([tl,p,d]) = Sum(L) [P([tl,p,d],L)Q([tl,p,d],L)]
         return v_table[sign.getId()][pos][des.getId()];
     }
 
+    @Override
     public float getColearnValue(Sign now, Sign sign, Node des, int pos) {
         return getVValue(sign, des, pos);
     }
@@ -501,6 +502,7 @@ avg wT:			V([tl,p,d]) = Sum(L) [P([tl,p,d],L)Q([tl,p,d],L)]
             return value;
         }
 
+        @Override
         public boolean equals(Object other) {
             if (other != null && other instanceof CountEntry) {
                 CountEntry countnew = (CountEntry) other;
@@ -537,6 +539,7 @@ avg wT:			V([tl,p,d]) = Sum(L) [P([tl,p,d],L)Q([tl,p,d],L)]
         }
 
         // XMLSerializable implementation of CountEntry
+        @Override
         public void load(XMLElement myElement, XMLLoader loader) throws XMLTreeException, IOException, XMLInvalidInputException {
             pos = myElement.getAttribute("pos").getIntValue();
             tlId = myElement.getAttribute("tl-id").getIntValue();
@@ -547,6 +550,7 @@ avg wT:			V([tl,p,d]) = Sum(L) [P([tl,p,d],L)Q([tl,p,d],L)]
             value = myElement.getAttribute("value").getIntValue();
         }
 
+        @Override
         public XMLElement saveSelf() throws XMLCannotSaveException {
             XMLElement result = new XMLElement("count");
             result.addAttribute(new XMLAttribute("pos", pos));
@@ -559,13 +563,16 @@ avg wT:			V([tl,p,d]) = Sum(L) [P([tl,p,d],L)Q([tl,p,d],L)]
             return result;
         }
 
+        @Override
         public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException, XMLCannotSaveException { 	// A count entry has no child objects
         }
 
+        @Override
         public String getXMLName() {
             return parentName + ".count";
         }
 
+        @Override
         public void setParentName(String parentName) {
             this.parentName = parentName;
         }
@@ -619,6 +626,7 @@ avg wT:			V([tl,p,d]) = Sum(L) [P([tl,p,d],L)Q([tl,p,d],L)]
             return getSameSituation() / getSameStartSituation();
         }
 
+        @Override
         public boolean equals(Object other) {
             if (other != null && other instanceof PEntry) {
                 PEntry pnew = (PEntry) other;
@@ -658,6 +666,7 @@ avg wT:			V([tl,p,d]) = Sum(L) [P([tl,p,d],L)Q([tl,p,d],L)]
         }
 
         // XMLSerializable implementation of PEntry
+        @Override
         public void load(XMLElement myElement, XMLLoader loader) throws XMLTreeException, IOException, XMLInvalidInputException {
             pos = myElement.getAttribute("pos").getIntValue();
             tlId = myElement.getAttribute("tl-id").getIntValue();
@@ -669,6 +678,7 @@ avg wT:			V([tl,p,d]) = Sum(L) [P([tl,p,d],L)Q([tl,p,d],L)]
             sameSituation = myElement.getAttribute("same-situation").getIntValue();
         }
 
+        @Override
         public XMLElement saveSelf() throws XMLCannotSaveException {
             XMLElement result = new XMLElement("pval");
             result.addAttribute(new XMLAttribute("pos", pos));
@@ -682,13 +692,16 @@ avg wT:			V([tl,p,d]) = Sum(L) [P([tl,p,d],L)Q([tl,p,d],L)]
             return result;
         }
 
+        @Override
         public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException, XMLCannotSaveException { 	// A PEntry has no child objects
         }
 
+        @Override
         public void setParentName(String parentName) {
             this.parentName = parentName;
         }
 
+        @Override
         public String getXMLName() {
             return parentName + ".pval";
         }
@@ -715,6 +728,7 @@ avg wT:			V([tl,p,d]) = Sum(L) [P([tl,p,d],L)Q([tl,p,d],L)]
             return pos;
         }
 
+        @Override
         public boolean equals(Object other) {
             if (other != null && other instanceof Target) {
                 Target qnew = (Target) other;
@@ -730,11 +744,13 @@ avg wT:			V([tl,p,d]) = Sum(L) [P([tl,p,d],L)Q([tl,p,d],L)]
         }
 
         // XMLSerializable implementation of Target
+        @Override
         public void load(XMLElement myElement, XMLLoader loader) throws XMLTreeException, IOException, XMLInvalidInputException {
             pos = myElement.getAttribute("pos").getIntValue();
             tlId = myElement.getAttribute("tl-id").getIntValue();
         }
 
+        @Override
         public XMLElement saveSelf() throws XMLCannotSaveException {
             XMLElement result = new XMLElement("target");
             result.addAttribute(new XMLAttribute("pos", pos));
@@ -742,18 +758,22 @@ avg wT:			V([tl,p,d]) = Sum(L) [P([tl,p,d],L)Q([tl,p,d],L)]
             return result;
         }
 
+        @Override
         public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException, XMLCannotSaveException { 	// A Target has no child objects
         }
 
+        @Override
         public String getXMLName() {
             return parentName + ".target";
         }
 
+        @Override
         public void setParentName(String parentName) {
             this.parentName = parentName;
         }
     }
 
+    @Override
     public void showSettings(Controller c) {
         String[] descs = {"Gamma (discount factor)", "Random decision chance"};
         float[] floats = {gamma, random_chance};
@@ -765,6 +785,7 @@ avg wT:			V([tl,p,d]) = Sum(L) [P([tl,p,d],L)Q([tl,p,d],L)]
     }
 
     // XMLSerializable, SecondStageLoader and InstantiationAssistant implementation
+    @Override
     public void load(XMLElement myElement, XMLLoader loader) throws XMLTreeException, IOException, XMLInvalidInputException {
         super.load(myElement, loader);
         gamma = myElement.getAttribute("gamma").getFloatValue();
@@ -776,6 +797,7 @@ avg wT:			V([tl,p,d]) = Sum(L) [P([tl,p,d],L)Q([tl,p,d],L)]
         p_table = (ArrayList[][][]) XMLArray.loadArray(this, loader, this);
     }
 
+    @Override
     public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException, XMLCannotSaveException {
         super.saveChilds(saver);
         XMLArray.saveArray(bucket, this, saver, "bucket");
@@ -785,6 +807,7 @@ avg wT:			V([tl,p,d]) = Sum(L) [P([tl,p,d],L)Q([tl,p,d],L)]
         XMLArray.saveArray(p_table, this, saver, "p-table");
     }
 
+    @Override
     public XMLElement saveSelf() throws XMLCannotSaveException {
         XMLElement result = super.saveSelf();
         result.setName(shortXMLName);
@@ -793,16 +816,19 @@ avg wT:			V([tl,p,d]) = Sum(L) [P([tl,p,d],L)Q([tl,p,d],L)]
         return result;
     }
 
+    @Override
     public String getXMLName() {
         return "model." + shortXMLName;
     }
 
+    @Override
     public boolean canCreateInstance(Class request) {
         System.out.println("Called TC1TLC-opt instantiation assistant ??");
         return CountEntry.class.equals(request)
                 || PEntry.class.equals(request);
     }
 
+    @Override
     public Object createInstance(Class request) throws
             ClassNotFoundException, InstantiationException, IllegalAccessException {
         System.out.println("Called TC1TLC-opt instantiation assistant");

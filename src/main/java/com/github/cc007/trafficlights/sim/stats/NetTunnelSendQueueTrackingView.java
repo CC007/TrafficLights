@@ -35,14 +35,18 @@ public class NetTunnelSendQueueTrackingView extends TrackingView
   }
 
 	/** Returns the next sample to be 'tracked'. */
+@Override
 	protected float nextSample(int src) 
 	{ 	return node.getSendQueueLength();
 	}
 	
 	/** Returns the description for this tracking window. */
+@Override
 	public String getDescription() { return "NetTunnel " + node.getId() + 
 		" - send queue length"; }
 	
+@Override
 	protected String getSourceDesc(int src) { return "length"; }
+@Override
 	protected String getYLabel() { return "send queue length (roadusers)"; }
 }

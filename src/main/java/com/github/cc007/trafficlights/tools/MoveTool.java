@@ -37,20 +37,32 @@ public class MoveTool extends PopupMenuTool
 		ma = new MoveAction(c.getEditModel());
 	}
 
+    @Override
 	public void mousePressed(View view, Point p, Tool.Mask mask)
 	{
 		super.mousePressed(view, p, mask);
-		if (mask.isLeft()) ma.startMove(view, p);
+		if (mask.isLeft()) {
+            ma.startMove(view, p);
+        }
 	}
 
+    @Override
 	public void mouseMoved(View view, Point p, Tool.Mask mask) {
-		if (mask.isLeft()) ma.doMove(view, p);
+		if (mask.isLeft()) {
+            ma.doMove(view, p);
+        }
 	}
+    @Override
 	public void mouseReleased(View view, Point p, Tool.Mask mask) {
-		if (mask.isLeft()) ma.endMove(view, p);
+		if (mask.isLeft()) {
+            ma.endMove(view, p);
+        }
 	}
+    @Override
 	public int overlayType() { return 0; }
+    @Override
 	public void paint(Graphics g) throws GLDException { }
 
+    @Override
 	public Panel getPanel() { return new Panel(null); }
 }

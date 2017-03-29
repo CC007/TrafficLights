@@ -16,13 +16,8 @@
 
 package com.github.cc007.trafficlights.sim.stats;
 
-import com.github.cc007.trafficlights.infra.*;
-import com.github.cc007.trafficlights.infra.Node.NodeStatistics;
-import com.github.cc007.trafficlights.sim.SimModel;
 
 import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
 
 /**
 *
@@ -43,6 +38,7 @@ public class StatsSummaryView extends StatisticsView
 		parent.setScrollMax(0,0);
 	}
 	
+    @Override
 	public void paintStats(Graphics g)
 	{
 		g.setColor(Color.black);
@@ -56,11 +52,13 @@ public class StatsSummaryView extends StatisticsView
 		infoLine(g, "Total number of junction crossings: " + stats.getJunctionCrossings());
 		emptyLine();
 		infoLine(g, "Average trip waiting time (based on all roadusers arrived): " + stats.getAllTimeTripWT());
-		if(stats.getLastXTripCount() != stats.getRoadusersArrived())
-				infoLine(g, "Average trip waiting time (based on last "+stats.getLastXTripCount()+" roadusers arrived): " + stats.getLastXTripWT());
+		if(stats.getLastXTripCount() != stats.getRoadusersArrived()) {
+            infoLine(g, "Average trip waiting time (based on last "+stats.getLastXTripCount()+" roadusers arrived): " + stats.getLastXTripWT());
+        }
 		infoLine(g, "Average junction waiting time (based on all junction crossings): " + stats.getAllTimeJunctionWT());
-		if(stats.getLastXJunctionCount() != stats.getJunctionCrossings())
-				infoLine(g, "Average junction waiting time (based on last "+stats.getLastXJunctionCount()+" junction crossings): " + stats.getLastXJunctionWT());
+		if(stats.getLastXJunctionCount() != stats.getJunctionCrossings()) {
+            infoLine(g, "Average junction waiting time (based on last "+stats.getLastXJunctionCount()+" junction crossings): " + stats.getLastXJunctionWT());
+        }
 	}
 	
 	protected void infoLine(Graphics g, String s) {
@@ -70,6 +68,7 @@ public class StatsSummaryView extends StatisticsView
 	
 	protected void emptyLine() { y += LINE_HEIGHT; }
 
+    @Override
 	protected void paintAreaChanged() {
 		x = paintArea.x;
 	}

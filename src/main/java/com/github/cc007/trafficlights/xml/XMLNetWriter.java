@@ -17,7 +17,6 @@
 package com.github.cc007.trafficlights.xml;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.Socket;
 
 /** A XMLWriter which can write to sockets

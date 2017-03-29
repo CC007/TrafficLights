@@ -16,232 +16,213 @@
  *
  * Changed to use Sarsa(0) with random decision instead of DP - S. Louring
  *------------------------------------------------------------------------*/
-
 package com.github.cc007.trafficlights.algo.tlc;
 
 import com.github.cc007.trafficlights.*;
-import com.github.cc007.trafficlights.sim.*;
 import com.github.cc007.trafficlights.algo.tlc.*;
 import com.github.cc007.trafficlights.infra.*;
-import com.github.cc007.trafficlights.utils.*;
 import com.github.cc007.trafficlights.xml.*;
 
 import java.io.IOException;
 import java.util.*;
-import java.awt.Point;
 
 /**
  *
- * This controller will decide it's Q values for the traffic lights according to the traffic situation on
- * the lane connected to the TrafficLight. It will learn how to alter it's outcome by reinforcement learning.
+ * This controller will decide it's Q values for the traffic lights according to
+ * the traffic situation on the lane connected to the TrafficLight. It will
+ * learn how to alter it's outcome by reinforcement learning.
  *
  * @author Arne K, Jilles V, Søren Louring
  * @version 1.1
  */
-public class SL2TLC extends TCRL implements InstantiationAssistant
-{	protected Infrastructure infrastructure;
-	protected TrafficLight[][] tls;
-	protected Node[] allnodes;
-	protected int num_nodes;
+public class SL2TLC extends TCRL implements InstantiationAssistant {
 
-	protected ArrayList count; //, p_table;
-	protected float [][][][] q_table; //sign, pos, des, color (red=0, green=1)
-	protected static float gamma=0.95f;				//Discount Factor; used to decrease the influence of previous V values, that's why: 0 < gamma < 1
-	protected static float random_chance=0.01f;				//A random gain setting is chosen instead of the on the TLC dictates with this chance
-	protected static float alpha  = 0.7f;
-	protected final static boolean red=false, green=true;
-	protected final static int green_index=0, red_index=1;
-	protected final static String shortXMLName="tlc-sl2";
-	private Random random_number;
+    protected Infrastructure infrastructure;
+    protected TrafficLight[][] tls;
+    protected Node[] allnodes;
+    protected int num_nodes;
 
-	protected float time_step = 0;
+    protected ArrayList count; //, p_table;
+    protected float[][][][] q_table; //sign, pos, des, color (red=0, green=1)
+    protected static float gamma = 0.95f;				//Discount Factor; used to decrease the influence of previous V values, that's why: 0 < gamma < 1
+    protected static float random_chance = 0.01f;				//A random gain setting is chosen instead of the on the TLC dictates with this chance
+    protected static float alpha = 0.7f;
+    protected final static boolean red = false, green = true;
+    protected final static int green_index = 0, red_index = 1;
+    protected final static String shortXMLName = "tlc-sl2";
+    private Random random_number;
 
-	/**
-	 * The constructor for TL controllers
-	 * @param The model being used.
-	 */
+    protected float time_step = 0;
 
-	public SL2TLC( Infrastructure infra ) throws InfraException
-	{	super(infra);
-		Node[] nodes = infra.getAllNodes(); //Moet Edge zijn eigenlijk, alleen testSimModel knalt er dan op
-		int num_nodes = nodes.length;
+    /**
+     * The constructor for TL controllers
+     *
+     * @param The model being used.
+     */
+    public SL2TLC(Infrastructure infra) throws InfraException {
+        super(infra);
+        Node[] nodes = infra.getAllNodes(); //Moet Edge zijn eigenlijk, alleen testSimModel knalt er dan op
+        int num_nodes = nodes.length;
 
-		count = new ArrayList();
+        count = new ArrayList();
 
-		int numSigns = infra.getAllInboundLanes().size();
-		q_table = new float [numSigns+1][][][];
-		int num_specialnodes = infra.getNumSpecialNodes();
-		for (int i=0; i<nodes.length; i++)
-		{
-			Node n = nodes[i];
-			DriveLane [] dls = n.getInboundLanes();
-			for (int j=0; j<dls.length; j++)
-			{
-				DriveLane d = dls[j];
-				Sign s = d.getSign();
-				int id = s.getId();
-				int num_pos_on_dl = d.getCompleteLength();
-				q_table[id] = new float [num_pos_on_dl][][];
-				for (int k=0; k<num_pos_on_dl; k++)
-				{
-					q_table[id][k]=new float[num_specialnodes][];
-					for (int l=0; l<q_table[id][k].length;l++)
-					{
-						q_table[id][k][l]=new float [2];
-						q_table[id][k][l][0]=0.0f;
-						q_table[id][k][l][1]=0.0f;
-						//v_table[id][k][l]=0.0f;
-					}
-				}
-			}
-		}
-		System.out.println("tl = " + numSigns);
-		System.out.println("des = " + num_specialnodes);
-		System.out.println("Alpha = " + alpha);
-		random_number = new Random(GLDSim.seriesSeed[GLDSim.seriesSeedIndex]);
-	}
+        int numSigns = infra.getAllInboundLanes().size();
+        q_table = new float[numSigns + 1][][][];
+        int num_specialnodes = infra.getNumSpecialNodes();
+        for (int i = 0; i < nodes.length; i++) {
+            Node n = nodes[i];
+            DriveLane[] dls = n.getInboundLanes();
+            for (int j = 0; j < dls.length; j++) {
+                DriveLane d = dls[j];
+                Sign s = d.getSign();
+                int id = s.getId();
+                int num_pos_on_dl = d.getCompleteLength();
+                q_table[id] = new float[num_pos_on_dl][][];
+                for (int k = 0; k < num_pos_on_dl; k++) {
+                    q_table[id][k] = new float[num_specialnodes][];
+                    for (int l = 0; l < q_table[id][k].length; l++) {
+                        q_table[id][k][l] = new float[2];
+                        q_table[id][k][l][0] = 0.0f;
+                        q_table[id][k][l][1] = 0.0f;
+                        //v_table[id][k][l]=0.0f;
+                    }
+                }
+            }
+        }
+        System.out.println("tl = " + numSigns);
+        System.out.println("des = " + num_specialnodes);
+        System.out.println("Alpha = " + alpha);
+        random_number = new Random(GLDSim.seriesSeed[GLDSim.seriesSeedIndex]);
+    }
 
+    @Override
+    public void reset() {
+        for (int j = 0; j < q_table.length; j++) {
+            if (q_table[j] != null) {
+                for (int k = 0; k < q_table[j].length; k++) {
+                    if (q_table[j][k] != null) {
+                        for (int l = 0; l < q_table[j][k].length; l++) {
+                            if (q_table[j][k][l] != null) {
+                                q_table[j][k][l][0] = 0.0f;
+                                q_table[j][k][l][1] = 0.0f;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        System.out.println("Q table nulstillet.");
+    } //Reset slut
 
-	public void reset() {
-		for(int j=0; j<q_table.length; j++) {
-			if (q_table[j] != null) {
-				for (int k=0; k<q_table[j].length; k++) {
-					if (q_table[j][k] != null)  {
-						for (int l=0; l<q_table[j][k].length;l++) {
-							if (q_table[j][k][l] != null) {
-								q_table[j][k][l][0] = 0.0f;
-								q_table[j][k][l][1] = 0.0f;
-							}
-						}
-					}
-				}
-			}
-		}
-	System.out.println("Q table nulstillet.");
-	} //Reset slut
+    /**
+     * Calculates how every traffic light should be switched Per node, per sign
+     * the waiting roadusers are passed and per each roaduser the gain is
+     * calculated.
+     *
+     * @param The TLDecision is a tuple consisting of a traffic light and a
+     * reward (Q) value, for it to be green
+     * @see gld.algo.tlc.TLDecision
+     */
+    @Override
+    public TLDecision[][] decideTLs() {
+        int num_dec;
+        int num_tld = tld.length;
 
+        //Determine wheter it should be random or not
+        boolean do_this_random = false;
 
+        time_step++;
+        random_chance = (1.0f / ((float) Math.sqrt(time_step)));
 
-	/**
-	* Calculates how every traffic light should be switched
-	* Per node, per sign the waiting roadusers are passed and per each roaduser the gain is calculated.
-	* @param The TLDecision is a tuple consisting of a traffic light and a reward (Q) value, for it to be green
-	* @see gld.algo.tlc.TLDecision
-	*/
-	public TLDecision[][] decideTLs()
-	{
-		int num_dec;
-	    int num_tld = tld.length;
+        if (random_number.nextFloat() < random_chance) {
+            do_this_random = true;
+        }
 
-	    //Determine wheter it should be random or not
-	    boolean do_this_random = false;
+        for (int i = 0; i < num_tld; i++) {
+            num_dec = tld[i].length;
+            for (int j = 0; j < num_dec; j++) {
+                Sign currenttl = tld[i][j].getTL();
+                float gain = 0;
 
-	    time_step++;
-	    random_chance = (1.0f / ((float) Math.sqrt(time_step) ) ) ;
+                DriveLane currentlane = currenttl.getLane();
+                int waitingsize = currentlane.getNumRoadusersWaiting();
+                ListIterator queue = currentlane.getQueue().listIterator();
 
+                if (!do_this_random) {
+                    for (; waitingsize > 0; waitingsize--) {
+                        Roaduser ru = (Roaduser) queue.next();
+                        int pos = ru.getPosition();
+                        Node destination = ru.getDestNode();
+                        gain += q_table[currenttl.getId()][pos][destination.getId()][1] - q_table[currenttl.getId()][pos][destination.getId()][0];  //red - green
+                        // System.out.println(gain + " ");
+                    }
+                    float q = gain;
+                } else {
+                    gain = random_number.nextFloat();
+                }
 
-	    if (random_number.nextFloat() < random_chance) do_this_random = true;
+                tld[i][j].setGain(gain);
+            }
+        }
+        return tld;
+    }
 
-	    for (int i=0;i<num_tld;i++)  {
-	    	num_dec = tld[i].length;
-	    	for(int j=0;j<num_dec;j++)  {
-	    		Sign currenttl = tld[i][j].getTL();
-	    		float gain=0;
+    @Override
+    public void updateRoaduserMove(Roaduser ru, DriveLane prevlane, Sign prevsign, int prevpos, DriveLane dlanenow, Sign signnow, int posnow, PosMov[] posMovs, DriveLane desired, int penalty) {
+        //When a roaduser leaves the city; this will
+        if (dlanenow == null || signnow == null) {
+            dlanenow = prevlane;
+            signnow = prevsign;
+            posnow = -1;
+            return;	// ?? is recalculation is not necessary ??
+        }
+        //This ordening is important for the execution of the algorithm!
 
-	    		DriveLane currentlane = currenttl.getLane();
-	    		int waitingsize = currentlane.getNumRoadusersWaiting();
-	    		ListIterator queue = currentlane.getQueue().listIterator();
+        if (prevsign.getType() == Sign.TRAFFICLIGHT && (signnow.getType() == Sign.TRAFFICLIGHT || signnow.getType() == Sign.NO_SIGN)) {
+            Node dest = ru.getDestNode();
+            recalcQ(prevsign, prevpos, dest, prevsign.mayDrive(), signnow, posnow, signnow.mayDrive(), posMovs, penalty);
+        }
+    }
 
-	    		if(!do_this_random)  {
-	    			for(; waitingsize>0; waitingsize--)
-	    			{
-	    				Roaduser ru = (Roaduser) queue.next();
-	    				int pos = ru.getPosition();
-	    				Node destination = ru.getDestNode();
-    					gain += q_table[currenttl.getId()][pos][destination.getId()][1] - q_table[currenttl.getId()][pos][destination.getId()][0];  //red - green
-					// System.out.println(gain + " ");
-	    			}
-	    			float q = gain;
-                			}
-                			else gain = random_number.nextFloat();
+    protected void recalcQ(Sign tl, int pos, Node destination, boolean light, Sign tl_new, int pos_new, boolean light_new, PosMov[] posMovs, int penalty) {
+        /*	Recalculate the Q values, only one PEntry has changed, meaning also only 1 QEntry has to change
+         */
 
-	    		tld[i][j].setGain(gain);
-	    	}
-	    }
-	    return tld;
-	}
+        int R;
 
-	public void updateRoaduserMove(Roaduser ru, DriveLane prevlane, Sign prevsign, int prevpos, DriveLane dlanenow, Sign signnow, int posnow, PosMov[] posMovs, DriveLane desired, int penalty)
-	{
-		//When a roaduser leaves the city; this will
-		if(dlanenow == null || signnow == null)
-		{
-			dlanenow = prevlane;
-			signnow = prevsign;
-			posnow = -1;
-			return;	// ?? is recalculation is not necessary ??
-		}
-		//This ordening is important for the execution of the algorithm!
+        float oldQvalue = 0;
+        float Qmark = 0;
+        float newQvalue = 0;
 
-		if(prevsign.getType()==Sign.TRAFFICLIGHT && (signnow.getType()==Sign.TRAFFICLIGHT || signnow.getType()==Sign.NO_SIGN)) {
-			Node dest = ru.getDestNode();
-			recalcQ(prevsign, prevpos, dest, prevsign.mayDrive(), signnow, posnow, signnow.mayDrive(), posMovs, penalty);
-		}
-	}
+        R = penalty + rewardFunction(tl_new, pos_new, posMovs);
 
+        try {
+            oldQvalue = q_table[tl.getId()][pos][destination.getId()][light ? green_index : red_index];
+            Qmark = q_table[tl_new.getId()][pos_new][destination.getId()][light_new ? green_index : red_index];// Q( [ tl' , p' ] , L')
+        } catch (Exception e) {
+            System.out.println("ERROR");
+            System.out.println("tl: " + tl.getId());
+            System.out.println("pos:" + pos);
+            System.out.println("des:" + destination.getId());
+        }
 
+        newQvalue = oldQvalue + alpha * (R + gamma * Qmark - oldQvalue);
 
-	protected void recalcQ(Sign tl, int pos, Node destination, boolean light, Sign tl_new, int pos_new, boolean light_new, PosMov[] posMovs, int penalty)
-	{
-		/*	Recalculate the Q values, only one PEntry has changed, meaning also only 1 QEntry has to change
-		*/
+        q_table[tl.getId()][pos][destination.getId()][light ? green_index : red_index] = newQvalue;
+    }
 
-		int R;
-
-		float oldQvalue = 0;
-		float Qmark = 0;
-		float newQvalue = 0;
-
-			R = penalty + rewardFunction(tl_new, pos_new, posMovs);
-
-			try
-			{
-				oldQvalue = q_table[tl.getId()][pos][destination.getId()][light?green_index:red_index];
-				Qmark = q_table[tl_new.getId()][pos_new][destination.getId()][light_new?green_index:red_index];// Q( [ tl' , p' ] , L')
-			}
-			catch (Exception e)
-			{
-				System.out.println("ERROR");
-				System.out.println("tl: "+tl.getId());
-				System.out.println("pos:"+pos);
-				System.out.println("des:"+destination.getId());
-			}
-
-
-			newQvalue = oldQvalue + alpha * ( R + gamma * Qmark - oldQvalue ) ;
-
-		q_table[tl.getId()][pos][destination.getId()][light?green_index:red_index]=newQvalue;
-	}
-
-
-
-
-
-	/*
+    /*
 				==========================================================================
 							Additional methods, used by the recalc methods
 				==========================================================================
-	*/
-
-
-
-    protected int rewardFunction(Sign tl_new, int pos_new, PosMov[] posMovs)
-    {
+     */
+    protected int rewardFunction(Sign tl_new, int pos_new, PosMov[] posMovs) {
         //Ok, the reward function is actually very simple; it searches for the tuple (tl_new, pos_new) in the given set
         int size = posMovs.length;
-        for(int i=0; i<size; i++) {
-            if(posMovs[i].tlId == tl_new.getId() && posMovs[i].pos == pos_new)
+        for (int i = 0; i < size; i++) {
+            if (posMovs[i].tlId == tl_new.getId() && posMovs[i].pos == pos_new) {
                 return 0;
+            }
         }
 
         /*int size = possiblelanes.length;
@@ -257,405 +238,438 @@ public class SL2TLC extends TCRL implements InstantiationAssistant
         return 1;
     }
 
-	protected Target[] ownedTargets(Sign tl, int pos, Node des, boolean light)
-	{
-		//This method will determine to which destinations you can go starting at this source represented in this QEntry
+    protected Target[] ownedTargets(Sign tl, int pos, Node des, boolean light) {
+        //This method will determine to which destinations you can go starting at this source represented in this QEntry
 
-		CountEntry dummy = new CountEntry(tl, pos, des, light, tl, pos);
-		Target[] ownedtargets;
-		ArrayList candidate_targets;
-		candidate_targets = new ArrayList();
+        CountEntry dummy = new CountEntry(tl, pos, des, light, tl, pos);
+        Target[] ownedtargets;
+        ArrayList candidate_targets;
+        candidate_targets = new ArrayList();
 
-		//Use the count table to sort this out, we need all Targets from
-		//Only the elements in the count table are used, other  just give a P
-
-		Iterator it = count.iterator();
-		while(it.hasNext()) {
-			CountEntry current_entry = (CountEntry) it.next();
-			if(current_entry.sameSource(dummy) != 0) {
-				candidate_targets.add(new Target(current_entry.tl_new , current_entry.pos_new));
-			}
-		}
+        //Use the count table to sort this out, we need all Targets from
+        //Only the elements in the count table are used, other  just give a P
+        Iterator it = count.iterator();
+        while (it.hasNext()) {
+            CountEntry current_entry = (CountEntry) it.next();
+            if (current_entry.sameSource(dummy) != 0) {
+                candidate_targets.add(new Target(current_entry.tl_new, current_entry.pos_new));
+            }
+        }
         return (Target[]) candidate_targets.toArray();
-	}
+    }
 
-
-
-	/*
+    /*
 				==========================================================================
 					Internal Classes to provide a way to put entries into the tables
 				==========================================================================
-	*/
+     */
+    public class CountEntry implements XMLSerializable, TwoStageLoader {
 
-	public class CountEntry implements XMLSerializable , TwoStageLoader
-	{
-		Sign tl;
-		int pos;
-		Node destination;
-		boolean light;
-		Sign tl_new;
-		int pos_new;
-		int value;
-		TwoStageLoaderData loadData=new TwoStageLoaderData();
-		String parentName="model.tlc";
+        Sign tl;
+        int pos;
+        Node destination;
+        boolean light;
+        Sign tl_new;
+        int pos_new;
+        int value;
+        TwoStageLoaderData loadData = new TwoStageLoaderData();
+        String parentName = "model.tlc";
 
-		CountEntry(Sign _tl, int _pos, Node _destination, boolean _light, Sign _tl_new, int _pos_new) {
-			tl = _tl;
-			pos = _pos;
-			destination = _destination;
-			light = _light;
-			tl_new = _tl_new;
-			pos_new = _pos_new;
-			value=1;
-		}
+        CountEntry(Sign _tl, int _pos, Node _destination, boolean _light, Sign _tl_new, int _pos_new) {
+            tl = _tl;
+            pos = _pos;
+            destination = _destination;
+            light = _light;
+            tl_new = _tl_new;
+            pos_new = _pos_new;
+            value = 1;
+        }
 
-		CountEntry ()
-		{ // Empty constructor for loading
-		}
+        CountEntry() { // Empty constructor for loading
+        }
 
-		public void incrementValue() {
-			value++;
-		}
+        public void incrementValue() {
+            value++;
+        }
 
-		public int getValue() {
-			return value;
-		}
+        public int getValue() {
+            return value;
+        }
 
-		public boolean equals(Object other) {
-			if(other != null && other instanceof CountEntry)
-			{	CountEntry countnew = (CountEntry) other;
-				if(!countnew.tl.equals(tl)) return false;
-				if(countnew.pos!=pos) return false;
-				if(!countnew.destination.equals(destination)) return false;
-				if(countnew.light!=light) return false;
-				if(!countnew.tl_new.equals(tl_new)) return false;
-				if(countnew.pos_new!=pos_new) return false;
-				return true;
-			}
-			return false;
-		}
+        @Override
+        public boolean equals(Object other) {
+            if (other != null && other instanceof CountEntry) {
+                CountEntry countnew = (CountEntry) other;
+                if (!countnew.tl.equals(tl)) {
+                    return false;
+                }
+                if (countnew.pos != pos) {
+                    return false;
+                }
+                if (!countnew.destination.equals(destination)) {
+                    return false;
+                }
+                if (countnew.light != light) {
+                    return false;
+                }
+                if (!countnew.tl_new.equals(tl_new)) {
+                    return false;
+                }
+                if (countnew.pos_new != pos_new) {
+                    return false;
+                }
+                return true;
+            }
+            return false;
+        }
 
-		public int sameSource(CountEntry other) {
-			if(other.tl.equals(tl) && other.pos == pos && other.light==light && other.destination.equals(destination)) {
-				return value;
-			}
-			else {
-				return 0;
-			}
-		}
+        public int sameSource(CountEntry other) {
+            if (other.tl.equals(tl) && other.pos == pos && other.light == light && other.destination.equals(destination)) {
+                return value;
+            } else {
+                return 0;
+            }
+        }
 
-		// XMLSerializable implementation of CountEntry
+        // XMLSerializable implementation of CountEntry
+        @Override
+        public void load(XMLElement myElement, XMLLoader loader) throws XMLTreeException, IOException, XMLInvalidInputException {
+            pos = myElement.getAttribute("pos").getIntValue();
+            loadData.oldTlId = myElement.getAttribute("tl-id").getIntValue();
+            loadData.destNodeId = myElement.getAttribute("destination").getIntValue();
+            light = myElement.getAttribute("light").getBoolValue();
+            loadData.newTlId = myElement.getAttribute("newtl-id").getIntValue();
+            pos_new = myElement.getAttribute("new-pos").getIntValue();
+            value = myElement.getAttribute("value").getIntValue();
+        }
 
-		public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
-		{	pos=myElement.getAttribute("pos").getIntValue();
-		   	loadData.oldTlId=myElement.getAttribute("tl-id").getIntValue();
-		   	loadData.destNodeId=myElement.getAttribute("destination").getIntValue();
-		   	light=myElement.getAttribute("light").getBoolValue();
-			loadData.newTlId=myElement.getAttribute("newtl-id").getIntValue();
-			pos_new=myElement.getAttribute("new-pos").getIntValue();
-			value=myElement.getAttribute("value").getIntValue();
-		}
+        @Override
+        public XMLElement saveSelf() throws XMLCannotSaveException {
+            XMLElement result = new XMLElement("count");
+            result.addAttribute(new XMLAttribute("tl-id", tl.getId()));
+            result.addAttribute(new XMLAttribute("pos", pos));
+            result.addAttribute(new XMLAttribute("destination", destination.getId()));
+            result.addAttribute(new XMLAttribute("light", light));
+            result.addAttribute(new XMLAttribute("newtl-id", tl_new.getId()));
+            result.addAttribute(new XMLAttribute("new-pos", pos_new));
+            result.addAttribute(new XMLAttribute("value", value));
+            return result;
+        }
 
-		public XMLElement saveSelf () throws XMLCannotSaveException
-		{ 	XMLElement result=new XMLElement("count");
-			result.addAttribute(new XMLAttribute("tl-id",tl.getId()));
-			result.addAttribute(new XMLAttribute("pos",pos));
-			result.addAttribute(new	XMLAttribute("destination",destination.getId()));
-			result.addAttribute(new XMLAttribute("light",light));
-			result.addAttribute(new XMLAttribute("newtl-id",tl_new.getId()));
-			result.addAttribute(new XMLAttribute("new-pos",pos_new));
-			result.addAttribute(new XMLAttribute("value",value));
-	  		return result;
-		}
+        @Override
+        public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException, XMLCannotSaveException { 	// A count entry has no child objects
+        }
 
-		public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
-		{ 	// A count entry has no child objects
-		}
+        @Override
+        public String getXMLName() {
+            return parentName + ".count";
+        }
 
-		public String getXMLName ()
-		{ 	return parentName+".count";
-		}
+        @Override
+        public void setParentName(String parentName) {
+            this.parentName = parentName;
+        }
 
-		public void setParentName (String parentName)
-		{	this.parentName=parentName;
-		}
+        // TwoStageLoader implementation of CountEntry
+        class TwoStageLoaderData {
 
-		// TwoStageLoader implementation of CountEntry
+            int oldTlId, newTlId, destNodeId;
+        }
 
-		class TwoStageLoaderData
-		{ int oldTlId,newTlId,destNodeId;
-		}
+        @Override
+        public void loadSecondStage(Map maps) {
+            Map laneMap = (Map) (maps.get("lane")),
+                    nodeMap = (Map) (maps.get("node"));
+            tl = ((DriveLane) (laneMap.get(
+                    new Integer(loadData.oldTlId)))).getSign();
+            tl_new = ((DriveLane) (laneMap.get(
+                    new Integer(loadData.newTlId)))).getSign();
+            destination = (Node) (nodeMap.get(
+                    new Integer(loadData.destNodeId)));
+        }
 
-		public void loadSecondStage (Dictionary dictionaries)
-		{ Dictionary laneDictionary=(Dictionary)(dictionaries.get("lane")),
-		             nodeDictionary=(Dictionary)(dictionaries.get("node"));
-		  tl=((DriveLane)(laneDictionary.get(
-		      new Integer(loadData.oldTlId)))).getSign();
-		  tl_new=((DriveLane)(laneDictionary.get(
-		      new Integer(loadData.newTlId)))).getSign();
-		  destination=(Node)(nodeDictionary.get(
-		      new Integer(loadData.destNodeId)));
-		}
+    }
 
-	}
+    public class PEntry implements XMLSerializable, TwoStageLoader {
 
-	public class PEntry implements XMLSerializable, TwoStageLoader
-	{
-		Sign tl;
-		int pos;
-		Node destination;
-		boolean light;
-		Sign tl_new;
-		int pos_new;
-		float value;
-		TwoStageLoaderData loadData=new TwoStageLoaderData();
-		String parentName="model.tlc";
+        Sign tl;
+        int pos;
+        Node destination;
+        boolean light;
+        Sign tl_new;
+        int pos_new;
+        float value;
+        TwoStageLoaderData loadData = new TwoStageLoaderData();
+        String parentName = "model.tlc";
 
-		PEntry(Sign _tl, int _pos, Node _destination, boolean _light, Sign _tl_new, int _pos_new) {
-			tl = _tl;
-			pos = _pos;
-			destination = _destination;
-			light = _light;
-			tl_new = _tl_new;
-			pos_new = _pos_new;
-			value=0;
-		}
+        PEntry(Sign _tl, int _pos, Node _destination, boolean _light, Sign _tl_new, int _pos_new) {
+            tl = _tl;
+            pos = _pos;
+            destination = _destination;
+            light = _light;
+            tl_new = _tl_new;
+            pos_new = _pos_new;
+            value = 0;
+        }
 
-		PEntry ()
-		{	// Empty constructor for loading
-		}
+        PEntry() {	// Empty constructor for loading
+        }
 
-		public void setValue(float v) {
-			value = v;
-		}
+        public void setValue(float v) {
+            value = v;
+        }
 
-		public float getValue() {
-			return value;
-		}
+        public float getValue() {
+            return value;
+        }
 
-		public boolean equals(Object other) {
-			if(other != null && other instanceof PEntry)
-			{
-				PEntry pnew = (PEntry) other;
-				if(!pnew.tl.equals(tl)) return false;
-				if(pnew.pos!=pos) return false;
-				if(!pnew.destination.equals(destination)) return false;
-				if(pnew.light!=light) return false;
-				if(!pnew.tl_new.equals(tl_new)) return false;
-				if(pnew.pos_new!=pos_new) return false;
-				return true;
-			}
-			return false;
-		}
+        @Override
+        public boolean equals(Object other) {
+            if (other != null && other instanceof PEntry) {
+                PEntry pnew = (PEntry) other;
+                if (!pnew.tl.equals(tl)) {
+                    return false;
+                }
+                if (pnew.pos != pos) {
+                    return false;
+                }
+                if (!pnew.destination.equals(destination)) {
+                    return false;
+                }
+                if (pnew.light != light) {
+                    return false;
+                }
+                if (!pnew.tl_new.equals(tl_new)) {
+                    return false;
+                }
+                if (pnew.pos_new != pos_new) {
+                    return false;
+                }
+                return true;
+            }
+            return false;
+        }
 
-		public float sameSource(CountEntry other) {
-			if(other.tl.equals(tl) && other.pos == pos && other.light==light && other.destination.equals(destination)) {
-				return value;
-			}
-			else {
-				return -1;
-			}
-		}
+        public float sameSource(CountEntry other) {
+            if (other.tl.equals(tl) && other.pos == pos && other.light == light && other.destination.equals(destination)) {
+                return value;
+            } else {
+                return -1;
+            }
+        }
 
-		// XMLSerializable implementation of PEntry
+        // XMLSerializable implementation of PEntry
+        @Override
+        public void load(XMLElement myElement, XMLLoader loader) throws XMLTreeException, IOException, XMLInvalidInputException {
+            pos = myElement.getAttribute("pos").getIntValue();
+            loadData.oldTlId = myElement.getAttribute("tl-id").getIntValue();
+            loadData.destNodeId = myElement.getAttribute("destination").getIntValue();
+            light = myElement.getAttribute("light").getBoolValue();
+            loadData.newTlId = myElement.getAttribute("newtl-id").getIntValue();
+            pos_new = myElement.getAttribute("new-pos").getIntValue();
+            value = myElement.getAttribute("value").getFloatValue();
+        }
 
-		public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
-		{	pos=myElement.getAttribute("pos").getIntValue();
-		   	loadData.oldTlId=myElement.getAttribute("tl-id").getIntValue();
-			loadData.destNodeId=myElement.getAttribute("destination").getIntValue();
-		   	light=myElement.getAttribute("light").getBoolValue();
-			loadData.newTlId=myElement.getAttribute("newtl-id").getIntValue();
-			pos_new=myElement.getAttribute("new-pos").getIntValue();
-			value=myElement.getAttribute("value").getFloatValue();
-		}
+        @Override
+        public XMLElement saveSelf() throws XMLCannotSaveException {
+            XMLElement result = new XMLElement("pval");
+            result.addAttribute(new XMLAttribute("tl-id", tl.getId()));
+            result.addAttribute(new XMLAttribute("pos", pos));
+            result.addAttribute(new XMLAttribute("destination", destination.getId()));
+            result.addAttribute(new XMLAttribute("light", light));
+            result.addAttribute(new XMLAttribute("newtl-id", tl_new.getId()));
+            result.addAttribute(new XMLAttribute("new-pos", pos_new));
+            result.addAttribute(new XMLAttribute("value", value));
+            return result;
+        }
 
-		public XMLElement saveSelf () throws XMLCannotSaveException
-		{ 	XMLElement result=new XMLElement("pval");
-			result.addAttribute(new XMLAttribute("tl-id",tl.getId()));
-			result.addAttribute(new XMLAttribute("pos",pos));
-			result.addAttribute(new	XMLAttribute("destination",destination.getId()));
-			result.addAttribute(new XMLAttribute("light",light));
-			result.addAttribute(new XMLAttribute("newtl-id",tl_new.getId()));
-			result.addAttribute(new XMLAttribute("new-pos",pos_new));
-			result.addAttribute(new XMLAttribute("value",value));
-	  		return result;
-		}
+        @Override
+        public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException, XMLCannotSaveException { 	// A PEntry has no child objects
+        }
 
-		public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
-		{ 	// A PEntry has no child objects
-		}
+        @Override
+        public void setParentName(String parentName) {
+            this.parentName = parentName;
+        }
 
-		public void setParentName (String parentName)
-		{	this.parentName=parentName;
-		}
+        @Override
+        public String getXMLName() {
+            return parentName + ".pval";
+        }
 
-		public String getXMLName ()
-		{ 	return parentName+".pval";
-		}
+        // TwoStageLoader implementation of PEntry
+        class TwoStageLoaderData {
 
-		// TwoStageLoader implementation of PEntry
+            int oldTlId, newTlId, destNodeId;
+        }
 
-		class TwoStageLoaderData
-		{ 	int oldTlId,newTlId,destNodeId;
-		}
+        @Override
+        public void loadSecondStage(Map maps) {
+            Map laneMap = (Map) (maps.get("lane")),
+                    nodeMap = (Map) (maps.get("node"));
+            tl = ((DriveLane) (laneMap.get(
+                    new Integer(loadData.oldTlId)))).getSign();
+            tl_new = ((DriveLane) (laneMap.get(
+                    new Integer(loadData.newTlId)))).getSign();
+            destination = (Node) (nodeMap.get(
+                    new Integer(loadData.destNodeId)));
+        }
 
-		public void loadSecondStage (Dictionary dictionaries)
-		{ 	Dictionary laneDictionary=(Dictionary)(dictionaries.get("lane")),
-           		     	nodeDictionary=(Dictionary)(dictionaries.get("node"));
-		  	tl=((DriveLane)(laneDictionary.get(
-		       		new Integer(loadData.oldTlId)))).getSign();
-		  	tl_new=((DriveLane)(laneDictionary.get(
-		        	new Integer(loadData.newTlId)))).getSign();
-		  	destination=(Node)(nodeDictionary.get(
-		        	new Integer(loadData.destNodeId)));
-		}
+    }
 
-	}
+    protected class Target implements XMLSerializable, TwoStageLoader {
 
-	protected class Target implements XMLSerializable , TwoStageLoader
-	{
-		Sign tl;
-		int pos;
-		TwoStageLoaderData loadData=new TwoStageLoaderData();
-		String parentName="model.tlc";
+        Sign tl;
+        int pos;
+        TwoStageLoaderData loadData = new TwoStageLoaderData();
+        String parentName = "model.tlc";
 
-		Target(Sign _tl, int _pos) {
-			tl = _tl;
-			pos = _pos;
-		}
+        Target(Sign _tl, int _pos) {
+            tl = _tl;
+            pos = _pos;
+        }
 
-		Target ()
-		{ // Empty constructor for loading
-		}
+        Target() { // Empty constructor for loading
+        }
 
-		public Sign getTL() {
-			return tl;
-		}
+        public Sign getTL() {
+            return tl;
+        }
 
-		public int getP() {
-			return pos;
-		}
+        public int getP() {
+            return pos;
+        }
 
-		public boolean equals(Object other) {
-			if(other != null && other instanceof Target)
-			{
-				Target qnew = (Target) other;
-				if(!qnew.tl.equals(tl)) return false;
-				if(qnew.pos!=pos) return false;
-				return true;
-			}
-			return false;
-		}
+        @Override
+        public boolean equals(Object other) {
+            if (other != null && other instanceof Target) {
+                Target qnew = (Target) other;
+                if (!qnew.tl.equals(tl)) {
+                    return false;
+                }
+                if (qnew.pos != pos) {
+                    return false;
+                }
+                return true;
+            }
+            return false;
+        }
 
-		// XMLSerializable implementation of Target
+        // XMLSerializable implementation of Target
+        @Override
+        public void load(XMLElement myElement, XMLLoader loader) throws XMLTreeException, IOException, XMLInvalidInputException {
+            pos = myElement.getAttribute("pos").getIntValue();
+            loadData.tlId = myElement.getAttribute("tl-id").getIntValue();
+        }
 
-		public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
-		{	pos=myElement.getAttribute("pos").getIntValue();
-		   loadData.tlId=myElement.getAttribute("tl-id").getIntValue();
-		}
+        @Override
+        public XMLElement saveSelf() throws XMLCannotSaveException {
+            XMLElement result = new XMLElement("target");
+            result.addAttribute(new XMLAttribute("tl-id", tl.getId()));
+            result.addAttribute(new XMLAttribute("pos", pos));
+            return result;
+        }
 
-		public XMLElement saveSelf () throws XMLCannotSaveException
-		{ 	XMLElement result=new XMLElement("target");
-			result.addAttribute(new XMLAttribute("tl-id",tl.getId()));
-			result.addAttribute(new XMLAttribute("pos",pos));
-	  		return result;
-		}
+        @Override
+        public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException, XMLCannotSaveException { 	// A Target has no child objects
+        }
 
-		public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
-		{ 	// A Target has no child objects
-		}
+        @Override
+        public String getXMLName() {
+            return parentName + ".target";
+        }
 
-		public String getXMLName ()
-		{ 	return parentName+".target";
-		}
+        @Override
+        public void setParentName(String parentName) {
+            this.parentName = parentName;
+        }
 
-		public void setParentName (String parentName)
-		{	this.parentName=parentName;
-		}
+        // TwoStageLoader implementation of Target
+        class TwoStageLoaderData {
 
-		// TwoStageLoader implementation of Target
+            int tlId;
+        }
 
-		class TwoStageLoaderData
-		{ 	int tlId;
-		}
+        @Override
+        public void loadSecondStage(Map maps) throws XMLInvalidInputException, XMLTreeException {
+            Map laneMap = (Map) (maps.get("lane"));
+            tl = ((DriveLane) (laneMap.get(
+                    new Integer(loadData.tlId)))).getSign();
+        }
 
-		public void loadSecondStage (Dictionary dictionaries) throws XMLInvalidInputException,XMLTreeException
-		{ 	Dictionary laneDictionary=(Dictionary)(dictionaries.get("lane"));
-		  	tl=((DriveLane)(laneDictionary.get(
-		                 new Integer(loadData.tlId)))).getSign();
-		}
+    }
 
-	}
+    @Override
+    public void showSettings(Controller c) {
+        String[] descs = {"Gamma (discount factor)", "Random decision chance"};
+        float[] floats = {gamma, random_chance};
+        TLCSettings settings = new TLCSettings(descs, null, floats);
 
-
-	public void showSettings(Controller c)
-	{
-		String[] descs = {"Gamma (discount factor)", "Random decision chance"};
-		float[] floats = {gamma, random_chance};
-		TLCSettings settings = new TLCSettings(descs, null, floats);
-
-		settings = doSettingsDialog(c, settings);
+        settings = doSettingsDialog(c, settings);
 //OBS		// Her burde laves et tjek p� om 0 < gamma < 1 og det samme med random chance
-		gamma = settings.floats[0];
-		random_chance = settings.floats[1];
-	}
+        gamma = settings.floats[0];
+        random_chance = settings.floats[1];
+    }
 
-	// XMLSerializable, SecondStageLoader and InstantiationAssistant implementation
+    // XMLSerializable, SecondStageLoader and InstantiationAssistant implementation
+    @Override
+    public void load(XMLElement myElement, XMLLoader loader) throws XMLTreeException, IOException, XMLInvalidInputException {
+        super.load(myElement, loader);
+        gamma = myElement.getAttribute("gamma").getFloatValue();
+        random_chance = myElement.getAttribute("random-chance").getFloatValue();
+        q_table = (float[][][][]) XMLArray.loadArray(this, loader);
+        //v_table=(float[][][])XMLArray.loadArray(this,loader);
+        count = (ArrayList) XMLArray.loadArray(this, loader, this);
+        //p_table=(ArrayList)XMLArray.loadArray(this,loader,this);
+    }
 
-	public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
-	{	super.load(myElement,loader);
-		gamma=myElement.getAttribute("gamma").getFloatValue();
-		random_chance=myElement.getAttribute("random-chance").getFloatValue();
-		q_table=(float[][][][])XMLArray.loadArray(this,loader);
-		//v_table=(float[][][])XMLArray.loadArray(this,loader);
-		count=(ArrayList)XMLArray.loadArray(this,loader,this);
-		//p_table=(ArrayList)XMLArray.loadArray(this,loader,this);
-	}
+    @Override
+    public XMLElement saveSelf() throws XMLCannotSaveException {
+        XMLElement result = super.saveSelf();
+        result.setName(shortXMLName);
+        result.addAttribute(new XMLAttribute("random-chance", random_chance));
+        result.addAttribute(new XMLAttribute("gamma", gamma));
+        return result;
+    }
 
-	public XMLElement saveSelf () throws XMLCannotSaveException
-	{ 	XMLElement result=super.saveSelf();
-		result.setName(shortXMLName);
-		result.addAttribute(new XMLAttribute ("random-chance",random_chance));
-		result.addAttribute(new XMLAttribute ("gamma",gamma));
-	  	return result;
-	}
+    @Override
+    public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException, XMLCannotSaveException {
+        super.saveChilds(saver);
+        XMLArray.saveArray(q_table, this, saver, "q-table");
+        //XMLArray.saveArray(v_table,this,saver,"v-table");
+        XMLArray.saveArray(count, this, saver, "counts");
+        //XMLArray.saveArray(p_table,this,saver,"p-table");
+    }
 
-	public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
-	{	super.saveChilds(saver);
-		XMLArray.saveArray(q_table,this,saver,"q-table");
-		//XMLArray.saveArray(v_table,this,saver,"v-table");
-		XMLArray.saveArray(count,this,saver,"counts");
-		//XMLArray.saveArray(p_table,this,saver,"p-table");
-	}
+    @Override
+    public String getXMLName() {
+        return "model." + shortXMLName;
+    }
 
-	public String getXMLName ()
-	{ 	return "model."+shortXMLName;
-	}
+    @Override
+    public void loadSecondStage(Map maps) throws XMLInvalidInputException, XMLTreeException {
+        XMLUtils.loadSecondStage(count, maps);
+        //XMLUtils.loadSecondStage(p_table.iterator(),maps);
+        System.out.println("SL2 second stage load finished.");
+    }
 
-	public void loadSecondStage (Dictionary dictionaries) throws XMLInvalidInputException,XMLTreeException
-	{ 	XMLUtils.loadSecondStage(count.iterator(),dictionaries);
-		//XMLUtils.loadSecondStage(p_table.iterator(),dictionaries);
-		System.out.println("SL2 second stage load finished.");
-	}
+    @Override
+    public boolean canCreateInstance(Class request) {
+        return CountEntry.class.equals(request)
+                || PEntry.class.equals(request);
+    }
 
-	public boolean canCreateInstance (Class request)
-	{ 	return CountEntry.class.equals(request) ||
-	        	PEntry.class.equals(request);
-	}
-
-	public Object createInstance (Class request) throws
-	      ClassNotFoundException,InstantiationException,IllegalAccessException
-	{ 	if (CountEntry.class.equals(request))
-		{ return new CountEntry();
-		}
-		else if ( PEntry.class.equals(request))
-		{ return new PEntry();
-		}
-		else
-		{ throw new ClassNotFoundException
-		  ("SL2 IntstantiationAssistant cannot make instances of "+
-		   request);
-		}
-	}
+    @Override
+    public Object createInstance(Class request) throws
+            ClassNotFoundException, InstantiationException, IllegalAccessException {
+        if (CountEntry.class.equals(request)) {
+            return new CountEntry();
+        } else if (PEntry.class.equals(request)) {
+            return new PEntry();
+        } else {
+            throw new ClassNotFoundException("SL2 IntstantiationAssistant cannot make instances of "
+                    + request);
+        }
+    }
 
 }

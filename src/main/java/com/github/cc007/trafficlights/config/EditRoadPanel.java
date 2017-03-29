@@ -140,6 +140,7 @@ public class EditRoadPanel extends ConfigPanel implements ActionListener, ItemLi
 		setRoad(r);
 	}
 	
+    @Override
 	public void paint(Graphics g) {
 		super.paint(g);
 		g.setColor(Color.black);
@@ -164,6 +165,7 @@ public class EditRoadPanel extends ConfigPanel implements ActionListener, ItemLi
 		}
 	}
 	
+    @Override
 	public void reset() {
 		DriveLane[] lanes = road.getAlphaLanes();
 		
@@ -172,8 +174,11 @@ public class EditRoadPanel extends ConfigPanel implements ActionListener, ItemLi
 		
 			for (int i=0; i < lanes.length; i++)
 				alphaList.add(lanes[i].getName());
-			if (lanes.length >= 4) addAlpha.setEnabled(false);
-			else addAlpha.setEnabled(true);
+			if (lanes.length >= 4) {
+                addAlpha.setEnabled(false);
+            } else {
+                addAlpha.setEnabled(true);
+            }
 
 			if (lanes.length > 0) {
 				alphaList.select(0);
@@ -188,8 +193,11 @@ public class EditRoadPanel extends ConfigPanel implements ActionListener, ItemLi
 
 			for (int i=0; i < lanes.length; i++)
 				betaList.add(lanes[i].getName());
-			if (lanes.length >= 4) addBeta.setEnabled(false);
-			else addBeta.setEnabled(true);
+			if (lanes.length >= 4) {
+                addBeta.setEnabled(false);
+            } else {
+                addBeta.setEnabled(true);
+            }
 
 			if (lanes.length > 0 && road.getNumAlphaLanes() <= 0) {
 				betaList.select(0);
@@ -197,8 +205,11 @@ public class EditRoadPanel extends ConfigPanel implements ActionListener, ItemLi
 			}
 		}
 
-		if (road.getNumAllLanes() > 1) delete.setEnabled(true);
-		else delete.setEnabled(false);
+		if (road.getNumAllLanes() > 1) {
+            delete.setEnabled(true);
+        } else {
+            delete.setEnabled(false);
+        }
 	}
 		
 	public void setRoad(Road r) {
@@ -212,8 +223,11 @@ public class EditRoadPanel extends ConfigPanel implements ActionListener, ItemLi
 		
 		for (int i=0; i < lanes.length; i++)
 			alphaList.add(lanes[i].getName());
-		if (lanes.length >= 4) addAlpha.setEnabled(false);
-		else addAlpha.setEnabled(true);
+		if (lanes.length >= 4) {
+            addAlpha.setEnabled(false);
+        } else {
+            addAlpha.setEnabled(true);
+        }
 
 		if (lanes.length > 0) {
 			alphaList.select(0);
@@ -224,16 +238,22 @@ public class EditRoadPanel extends ConfigPanel implements ActionListener, ItemLi
 
 		for (int i=0; i < lanes.length; i++)
 			betaList.add(lanes[i].getName());
-		if (lanes.length >= 4) addBeta.setEnabled(false);
-		else addBeta.setEnabled(true);
+		if (lanes.length >= 4) {
+            addBeta.setEnabled(false);
+        } else {
+            addBeta.setEnabled(true);
+        }
 
 		if (lanes.length > 0 && road.getNumAlphaLanes() <= 0) {
 			betaList.select(0);
 			setLane(lanes[0]);
 		}
 
-		if (road.getNumAllLanes() > 1) delete.setEnabled(true);
-		else delete.setEnabled(false);
+		if (road.getNumAllLanes() > 1) {
+            delete.setEnabled(true);
+        } else {
+            delete.setEnabled(false);
+        }
 
 		alphaLink.setText(road.getAlphaNode().getName());
 		betaLink.setText(road.getBetaNode().getName());
@@ -258,22 +278,25 @@ public class EditRoadPanel extends ConfigPanel implements ActionListener, ItemLi
 		delete.setLabel("Delete " + lane.getName());
 	}
 
+    @Override
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
-		if (source == alphaLink)
-			confd.selectObject(road.getAlphaNode());
-		else if (source == betaLink)
-			confd.selectObject(road.getBetaNode());
-		else if (source == laneLink)
-			confd.selectObject(lane);
-		else if (source == delete)
-			deleteLane();
-		else if (source == addAlpha)
-			addLane(road.getAlphaNode());
-		else if (source == addBeta)
-			addLane(road.getBetaNode());
+		if (source == alphaLink) {
+            confd.selectObject(road.getAlphaNode());
+        } else if (source == betaLink) {
+            confd.selectObject(road.getBetaNode());
+        } else if (source == laneLink) {
+            confd.selectObject(lane);
+        } else if (source == delete) {
+            deleteLane();
+        } else if (source == addAlpha) {
+            addLane(road.getAlphaNode());
+        } else if (source == addBeta) {
+            addLane(road.getBetaNode());
+        }
 	}
 	
+    @Override
 	public void itemStateChanged(ItemEvent e) {
 		ItemSelectable es = e.getItemSelectable();
 		EditModel em = (EditModel)confd.getController().getModel();
@@ -291,12 +314,13 @@ public class EditRoadPanel extends ConfigPanel implements ActionListener, ItemLi
 				int[] types = RoaduserFactory.getTypes();
 				em.setLaneType(lane, types[typeList.getSelectedIndex()]);
 			}
-			else if (es == left)
-				em.setLaneTarget(lane, 0, left.getState());
-			else if (es == ahead)
-				em.setLaneTarget(lane, 1, ahead.getState());
-			else if (es == right)
-				em.setLaneTarget(lane, 2, right.getState());
+			else if (es == left) {
+                em.setLaneTarget(lane, 0, left.getState());
+            } else if (es == ahead) {
+                em.setLaneTarget(lane, 1, ahead.getState());
+            } else if (es == right) {
+                em.setLaneTarget(lane, 2, right.getState());
+            }
 		}
 		catch (GLDException ex) {
 			Controller.reportError(ex);

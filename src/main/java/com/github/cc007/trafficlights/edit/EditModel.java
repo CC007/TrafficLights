@@ -18,8 +18,6 @@ package com.github.cc007.trafficlights.edit;
 
 import com.github.cc007.trafficlights.*;
 import com.github.cc007.trafficlights.infra.*;
-import com.github.cc007.trafficlights.edit.*;
-import com.github.cc007.trafficlights.sim.*;
 import com.github.cc007.trafficlights.utils.*;
 import com.github.cc007.trafficlights.xml.*;
 
@@ -61,22 +59,28 @@ public class EditModel extends Model
 	 *
 	 * @param list The list of objects to remove
 	 */
-	public void remObjects(LinkedList list) throws InfraException {
+	public void remObjects(List<Selectable> list) throws InfraException {
 		ListIterator it = list.listIterator();
 		Object o;
 		while (it.hasNext()) {
 			o = it.next();
-			if (o instanceof DriveLane) remLane((DriveLane)o);
+			if (o instanceof DriveLane) {
+                remLane((DriveLane)o);
+            }
 		}
 		it = list.listIterator();
 		while (it.hasNext()) {
 			o = it.next();
-			if (o instanceof Road) remRoad((Road)o);
+			if (o instanceof Road) {
+                remRoad((Road)o);
+            }
 		}
 		it = list.listIterator();
 		while (it.hasNext()) {
 			o = it.next();
-			if (o instanceof Node) remNode((Node)o);
+			if (o instanceof Node) {
+                remNode((Node)o);
+            }
 		}
 		setChanged();
 		notifyObservers();
@@ -98,7 +102,9 @@ public class EditModel extends Model
 			case 3: { n = new NonTLJunction(coords); break; }
 			case 4: { n= new NetTunnel(coords); break; }
 		}
-		if (n == null) throw new InfraException("No node with type " + type + " exists");
+		if (n == null) {
+            throw new InfraException("No node with type " + type + " exists");
+        }
 		infra.addNode(n);
 		setChanged();
 		notifyObservers();
@@ -117,10 +123,12 @@ public class EditModel extends Model
 	 */
 	public void addRoad(Road r, Node alpha, int posa, Node beta, int posb) throws InfraException
 	{
-		if (alpha != r.getAlphaNode() && alpha != r.getBetaNode())
-			throw new InfraException("Alpha node parameter is not connected to road");
-		if (beta != r.getAlphaNode() && beta != r.getBetaNode())
-			throw new InfraException("Beta node parameter is not connected to road");
+		if (alpha != r.getAlphaNode() && alpha != r.getBetaNode()) {
+            throw new InfraException("Alpha node parameter is not connected to road");
+        }
+		if (beta != r.getAlphaNode() && beta != r.getBetaNode()) {
+            throw new InfraException("Beta node parameter is not connected to road");
+        }
 
 		alpha.addRoad(r, posa);
 		beta.addRoad(r, posb);
@@ -173,12 +181,13 @@ public class EditModel extends Model
 	/** Calculates infra point where a road would connect to node at conpos */
 	private Point getConPos(Node node, int conpos)
 	{
-		if(conpos==0)
-		    return new Point(node.getCoord().x, node.getCoord().y - 5 * node.getWidth() - 20);
-		else if(conpos==1)
-		    return new Point(node.getCoord().x + 5 * node.getWidth() + 20, node.getCoord().y);
-		else if(conpos==2)
-	            return new Point(node.getCoord().x, node.getCoord().y + 5 * node.getWidth() + 20);
+		if(conpos==0) {
+            return new Point(node.getCoord().x, node.getCoord().y - 5 * node.getWidth() - 20);
+        } else if(conpos==1) {
+            return new Point(node.getCoord().x + 5 * node.getWidth() + 20, node.getCoord().y);
+        } else if(conpos==2) {
+            return new Point(node.getCoord().x, node.getCoord().y + 5 * node.getWidth() + 20);
+        }
 		return new Point(node.getCoord().x - 5 * node.getWidth() - 20, node.getCoord().y);
 	}
 	
@@ -194,9 +203,14 @@ public class EditModel extends Model
 		double dx = after.x - before.x;
 		double dy = after.y - before.y;
 		double angle = Math.PI * 0.5;
-		if (dx != 0) angle = Math.atan(dy / dx);
-		else if (dy > 0) angle = -angle;
-		if (dx < 0) angle = Math.PI + angle;
+		if (dx != 0) {
+            angle = Math.atan(dy / dx);
+        } else if (dy > 0) {
+            angle = -angle;
+        }
+		if (dx < 0) {
+            angle = Math.PI + angle;
+        }
 
 		angle = CurveUtils.normalize(-angle);
 		return new Turn(pos, angle);
@@ -222,14 +236,20 @@ public class EditModel extends Model
 	 */
 	public void addLane(DriveLane lane, Road r, Node to) throws InfraException
 	{
-		if (r.getNumInboundLanes(to) >= 4) throw new InfraException("Cannot add more than 4 lanes at one side to a road");
+		if (r.getNumInboundLanes(to) >= 4) {
+            throw new InfraException("Cannot add more than 4 lanes at one side to a road");
+        }
 		r.addLane(lane, to);
 		lane.setId(laneNumbers.get());
 		
 		updateSigns(to);
 		Node n = r.getOtherNode(to);
-		if (n instanceof Junction) ((Junction)n).calculateWidth();
-		if (to instanceof Junction) ((Junction)to).calculateWidth();
+		if (n instanceof Junction) {
+            ((Junction)n).calculateWidth();
+        }
+		if (to instanceof Junction) {
+            ((Junction)to).calculateWidth();
+        }
 		
 		setChanged();
 		notifyObservers();
@@ -287,8 +307,9 @@ public class EditModel extends Model
 	{
 		Road[] roads = node.getAllRoads();
 		for (int i=0; i < roads.length; i++)
-			if (roads[i] != null)
-				remRoad(roads[i]);
+			if (roads[i] != null) {
+                remRoad(roads[i]);
+        }
 		infra.remNode(node);
 	}
 	
@@ -323,8 +344,12 @@ public class EditModel extends Model
 		Node alpha = road.getAlphaNode();
 		Node beta = road.getBetaNode();
 		updateSigns(lane.getSign().getNode());
-		if (alpha instanceof Junction) ((Junction)alpha).calculateWidth();
-		if (beta instanceof Junction) ((Junction)beta).calculateWidth();
+		if (alpha instanceof Junction) {
+            ((Junction)alpha).calculateWidth();
+        }
+		if (beta instanceof Junction) {
+            ((Junction)beta).calculateWidth();
+        }
 
 		setChanged();
 		notifyObservers();
@@ -352,18 +377,21 @@ public class EditModel extends Model
 
 	// Specific XMLSerializable implementation
 	
+    @Override
 	public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
 	{ 	super.load(myElement,loader);
 		loader.load(this,laneNumbers);
 		loader.load(this,roadNumbers);
 	}
 	
+    @Override
 	public XMLElement saveSelf ()
 	{ 	XMLElement result=super.saveSelf();
 	  	result.addAttribute(new XMLAttribute("saved-by","editor"));
 	  	return result;
 	}
 	
+    @Override
 	public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
 	{ 	super.saveChilds(saver);
 		saver.saveObject(laneNumbers);

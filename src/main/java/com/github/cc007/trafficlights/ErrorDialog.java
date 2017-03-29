@@ -15,7 +15,6 @@
  *------------------------------------------------------------------------*/
 package com.github.cc007.trafficlights;
 
-import com.github.cc007.trafficlights.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -50,7 +49,7 @@ public class ErrorDialog extends Dialog implements ActionListener {
 
         this.add(new OkPanel(this), BorderLayout.SOUTH);
         this.add(new MessagePanel(msg), BorderLayout.CENTER);
-        this.show();
+        this.setVisible(true);
     }
 
     /*============================================*/
@@ -59,6 +58,7 @@ public class ErrorDialog extends Dialog implements ActionListener {
     /**
      * Invoked when 'Ok' is clicked.
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
         dispose();
     }
@@ -68,6 +68,7 @@ public class ErrorDialog extends Dialog implements ActionListener {
      */
     public class ErrorWindowListener extends WindowAdapter {
 
+        @Override
         public void windowClosing(WindowEvent e) {
             dispose();
         }

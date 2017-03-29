@@ -18,15 +18,12 @@
 package com.github.cc007.trafficlights.algo.tlc;
 
 import com.github.cc007.trafficlights.*;
-import com.github.cc007.trafficlights.sim.*;
 import com.github.cc007.trafficlights.algo.tlc.*;
 import com.github.cc007.trafficlights.infra.*;
-import com.github.cc007.trafficlights.utils.*;
 import com.github.cc007.trafficlights.xml.*;
 
 import java.io.IOException;
 import java.util.*;
-import java.awt.Point;
 
 /**
  *
@@ -67,6 +64,7 @@ public class TC1TLCDestless extends TCRL implements Colearning, InstantiationAss
 	{	super(infra);
 	}
 
+    @Override
 	public void setInfrastructure(Infrastructure infra) {
 		super.setInfrastructure(infra);
 		try{
@@ -124,6 +122,7 @@ public class TC1TLCDestless extends TCRL implements Colearning, InstantiationAss
 	* @param The TLDecision is a tuple consisting of a traffic light and a reward (Q) value, for it to be green
 	* @see gld.algo.tlc.TLDecision
 	*/
+    @Override
 	public TLDecision[][] decideTLs()
 	{
 		/* gain = 0
@@ -142,7 +141,9 @@ public class TC1TLCDestless extends TCRL implements Colearning, InstantiationAss
 
 		//Determine wheter it should be random or not
 		boolean randomrun = false;
-		if (random_number.nextFloat() < random_chance) randomrun = true;
+		if (random_number.nextFloat() < random_chance) {
+            randomrun = true;
+        }
 
 		// For all Nodes
 		for (int i=0;i<num_nodes;i++) {
@@ -176,22 +177,26 @@ public class TC1TLCDestless extends TCRL implements Colearning, InstantiationAss
 				}
 
 				// If this is a random run, set all gains randomly
-                if(randomrun)
-                	gain = random_number.nextFloat();
+                if(randomrun) {
+                    gain = random_number.nextFloat();
+                }
 
-                if(gain >1000.0 || gain < -1000.0f)
-                	System.out.println("Gain might be too high? : "+gain);
+                if(gain >1000.0 || gain < -1000.0f) {
+                    System.out.println("Gain might be too high? : "+gain);
+                }
 	    		tld[i][j].setGain(gain);
 	    	}
 	    }
 	    return tld;
 	}
 
+    @Override
 	public void updateRoaduserMove(Roaduser ru, DriveLane prevlane, Sign prevsign, int prevpos, DriveLane dlanenow, Sign signnow, int posnow, PosMov[] posMovs, DriveLane desired, int penalty)
 	{
 		// Roaduser has just left the building!
-		if(dlanenow == null || signnow == null)
-			return;
+		if(dlanenow == null || signnow == null) {
+            return;
+        }
 
 		//This ordening is important for the execution of the algorithm!
 		if(prevsign.getType()==Sign.TRAFFICLIGHT && (signnow.getType()==Sign.TRAFFICLIGHT || signnow.getType()==Sign.NO_SIGN)) {
@@ -240,9 +245,9 @@ public class TC1TLCDestless extends TCRL implements Colearning, InstantiationAss
 		PEntry thisChance = new PEntry(tlId,pos,desId,light,tlNewId,posNew);
 		int p_index = pTable[tlId][pos][desId].indexOf(thisChance);
 
-		if(p_index >= 0)
-			thisChance = (PEntry) pTable[tlId][pos][desId].get(p_index);
-		else {
+		if(p_index >= 0) {
+            thisChance = (PEntry) pTable[tlId][pos][desId].get(p_index);
+        } else {
 			pTable[tlId][pos][desId].add(thisChance);
 			p_index = pTable[tlId][pos][desId].indexOf(thisChance);
 		}
@@ -255,8 +260,9 @@ public class TC1TLCDestless extends TCRL implements Colearning, InstantiationAss
 		PEntry curP;
 		for(int i=0;i<num_p;i++) {
 			curP = (PEntry) pTable[tlId][pos][desId].get(i);
-			if(curP.sameStartSituation(thisSituation) && i!=p_index)
-				curP.addSameStartSituation();
+			if(curP.sameStartSituation(thisSituation) && i!=p_index) {
+                curP.addSameStartSituation();
+            }
 		}
 	}
 
@@ -316,10 +322,11 @@ public class TC1TLCDestless extends TCRL implements Colearning, InstantiationAss
 		int psize = pTable[tlId][pos][desId].size()-1;
 		for(; psize>=0; psize--) {
 			PEntry cur = (PEntry) pTable[tlId][pos][desId].get(psize);
-			if(cur.light==green)
-				countG += cur.getSameSituation();
-			else
-				countR += cur.getSameSituation();
+			if(cur.light==green) {
+                countG += cur.getSameSituation();
+            } else {
+                countR += cur.getSameSituation();
+            }
 		}
 		counters[green_index] = (float) (countG/(countG+countR));
 		counters[red_index] = (float)(countR/(countG+countR));
@@ -328,8 +335,9 @@ public class TC1TLCDestless extends TCRL implements Colearning, InstantiationAss
 
 
 	protected int rewardFunction(int tlId, int pos, int tlNewId, int posNew) {
-		if(tlId!=tlNewId || pos != posNew)
-			return 0;
+		if(tlId!=tlNewId || pos != posNew) {
+            return 0;
+        }
 		return 1;
 	}
 
@@ -338,6 +346,7 @@ public class TC1TLCDestless extends TCRL implements Colearning, InstantiationAss
 	}
 
 
+    @Override
 	public float getColearnValue(Sign now, Sign sign, Node des, int pos) {
 		return getVValue(sign,des,pos);
 	}
@@ -382,15 +391,28 @@ public class TC1TLCDestless extends TCRL implements Colearning, InstantiationAss
 			return value;
 		}
 
+        @Override
 		public boolean equals(Object other) {
 			if(other != null && other instanceof CountEntry)
 			{	CountEntry countnew = (CountEntry) other;
-				if(countnew.tlId!=tlId) return false;
-				if(countnew.pos!=pos) return false;
-				if(countnew.desId!=desId) return false;
-				if(countnew.light!=light) return false;
-				if(countnew.tlNewId!=tlNewId) return false;
-				if(countnew.posNew!=posNew) return false;
+				if(countnew.tlId!=tlId) {
+                    return false;
+            }
+				if(countnew.pos!=pos) {
+                    return false;
+            }
+				if(countnew.desId!=desId) {
+                    return false;
+            }
+				if(countnew.light!=light) {
+                    return false;
+            }
+				if(countnew.tlNewId!=tlNewId) {
+                    return false;
+            }
+				if(countnew.posNew!=posNew) {
+                    return false;
+            }
 				return true;
 			}
 			return false;
@@ -398,21 +420,24 @@ public class TC1TLCDestless extends TCRL implements Colearning, InstantiationAss
 
 		// Retuns the count-value if the situations match
 		public long sameSituation(CountEntry other) {
-			if(equals(other))
-				return value;
-			else
-				return 0;
+			if(equals(other)) {
+                return value;
+            } else {
+                return 0;
+            }
 		}
 
 		// Retuns the count-value if the startingsituations match
 		public long sameStartSituation(CountEntry other) {
-			if(other.tlId==tlId && other.pos==pos && other.desId==desId && other.light==light)
-				return value;
-			else
-				return 0;
+			if(other.tlId==tlId && other.pos==pos && other.desId==desId && other.light==light) {
+                return value;
+            } else {
+                return 0;
+            }
 		}
 
 		// XMLSerializable implementation of CountEntry
+        @Override
 		public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
 		{	pos=myElement.getAttribute("pos").getIntValue();
 			tlId=myElement.getAttribute("tl-id").getIntValue();
@@ -423,6 +448,7 @@ public class TC1TLCDestless extends TCRL implements Colearning, InstantiationAss
 			value=myElement.getAttribute("value").getLongValue();
 		}
 
+        @Override
 		public XMLElement saveSelf () throws XMLCannotSaveException
 		{ 	XMLElement result=new XMLElement("count");
 			result.addAttribute(new XMLAttribute("pos",pos));
@@ -435,14 +461,17 @@ public class TC1TLCDestless extends TCRL implements Colearning, InstantiationAss
 	  		return result;
 		}
 
+        @Override
 		public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
 		{ 	// A count entry has no child objects
 		}
 
+        @Override
 		public String getXMLName ()
 		{ 	return parentName+".count";
 		}
 
+        @Override
 		public void setParentName (String parentName)
 		{	this.parentName=parentName;
 		}
@@ -483,15 +512,28 @@ public class TC1TLCDestless extends TCRL implements Colearning, InstantiationAss
 
 		public double getChance() {	return getSameSituation()/getSameStartSituation();	}
 
+        @Override
 		public boolean equals(Object other) {
 			if(other != null && other instanceof PEntry) {
 				PEntry pnew = (PEntry) other;
-				if(pnew.tlId!=tlId) return false;
-				if(pnew.pos!=pos) return false;
-				if(pnew.desId!=desId) return false;
-				if(pnew.light!=light) return false;
-				if(pnew.tlNewId!=tlNewId) return false;
-				if(pnew.posNew!=posNew) return false;
+				if(pnew.tlId!=tlId) {
+                    return false;
+                }
+				if(pnew.pos!=pos) {
+                    return false;
+                }
+				if(pnew.desId!=desId) {
+                    return false;
+                }
+				if(pnew.light!=light) {
+                    return false;
+                }
+				if(pnew.tlNewId!=tlNewId) {
+                    return false;
+                }
+				if(pnew.posNew!=posNew) {
+                    return false;
+                }
 				return true;
 			}
 			return false;
@@ -502,13 +544,15 @@ public class TC1TLCDestless extends TCRL implements Colearning, InstantiationAss
 		}
 
 		public boolean sameStartSituation(CountEntry other) {
-			if(other.tlId==tlId && other.pos==pos && other.desId==desId && other.light==light)
-				return true;
-			else
-				return false;
+			if(other.tlId==tlId && other.pos==pos && other.desId==desId && other.light==light) {
+                return true;
+            } else {
+                return false;
+            }
 		}
 
 		// XMLSerializable implementation of PEntry
+        @Override
 		public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
 		{	pos=myElement.getAttribute("pos").getIntValue();
 			tlId=myElement.getAttribute("tl-id").getIntValue();
@@ -520,6 +564,7 @@ public class TC1TLCDestless extends TCRL implements Colearning, InstantiationAss
 			sameSituation=myElement.getAttribute("same-situation").getLongValue();
 		}
 
+        @Override
 		public XMLElement saveSelf () throws XMLCannotSaveException
 		{ 	XMLElement result=new XMLElement("pval");
 			result.addAttribute(new XMLAttribute("pos",pos));
@@ -533,19 +578,23 @@ public class TC1TLCDestless extends TCRL implements Colearning, InstantiationAss
 	  		return result;
 		}
 
+        @Override
 		public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
 		{ 	// A PEntry has no child objects
 		}
 
+        @Override
 		public void setParentName (String parentName)
 		{	this.parentName=parentName;
 		}
 
+        @Override
 		public String getXMLName ()
 		{ 	return parentName+".pval";
 		}
 	}
 
+    @Override
 	public void showSettings(Controller c)
 	{
 		String[] descs = {"Gamma (discount factor)", "Random decision chance"};
@@ -559,6 +608,7 @@ public class TC1TLCDestless extends TCRL implements Colearning, InstantiationAss
 
 	// XMLSerializable, SecondStageLoader and InstantiationAssistant implementation
 
+    @Override
 	public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
 	{	super.load(myElement,loader);
 		gamma=myElement.getAttribute("gamma").getFloatValue();
@@ -569,6 +619,7 @@ public class TC1TLCDestless extends TCRL implements Colearning, InstantiationAss
 		pTable=(ArrayList[][][])XMLArray.loadArray(this,loader,this);
 	}
 
+    @Override
 	public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
 	{	super.saveChilds(saver);
 		XMLArray.saveArray(qTable,this,saver,"q-table");
@@ -577,6 +628,7 @@ public class TC1TLCDestless extends TCRL implements Colearning, InstantiationAss
 		XMLArray.saveArray(pTable,this,saver,"p-table");
 	}
 
+    @Override
 	public XMLElement saveSelf () throws XMLCannotSaveException
 	{ 	XMLElement result=super.saveSelf();
 		result.setName(shortXMLName);
@@ -585,16 +637,19 @@ public class TC1TLCDestless extends TCRL implements Colearning, InstantiationAss
 	  	return result;
 	}
 
+    @Override
 	public String getXMLName ()
 	{ 	return "model."+shortXMLName;
 	}
 
+    @Override
 	public boolean canCreateInstance (Class request)
 	{ 	System.out.println("Called TC1TLC-opt instantiation assistant ??");
 		return CountEntry.class.equals(request) ||
 	        	PEntry.class.equals(request);
 	}
 
+    @Override
 	public Object createInstance (Class request) throws
 	      ClassNotFoundException,InstantiationException,IllegalAccessException
 	{ 	System.out.println("Called TC1TLC-opt instantiation assistant");

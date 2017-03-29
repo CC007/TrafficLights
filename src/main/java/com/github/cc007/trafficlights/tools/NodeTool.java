@@ -17,7 +17,6 @@
 package com.github.cc007.trafficlights.tools;
 
 import com.github.cc007.trafficlights.*;
-import com.github.cc007.trafficlights.infra.*;
 import com.github.cc007.trafficlights.edit.*;
 
 import java.awt.*;
@@ -41,17 +40,25 @@ public class NodeTool extends PopupMenuTool
 		typePanel = new NodeTypeChoice();
 	}
 
+    @Override
 	public void mousePressed(View view, Point p, Tool.Mask mask)
 	{
 		super.mousePressed(view, p, mask);
-		if (mask.isLeft()) na.doCreateNode(view, p, typePanel.getNodeType());
+		if (mask.isLeft()) {
+            na.doCreateNode(view, p, typePanel.getNodeType());
+        }
 	}
 	
+    @Override
 	public void mouseReleased(View view, Point p, Tool.Mask mask) { }
+    @Override
 	public void mouseMoved(View view, Point p, Tool.Mask mask) { }
+    @Override
 	public int overlayType() { return 0; }
+    @Override
 	public void paint(Graphics g) throws GLDException { }
 	
+    @Override
 	public Panel getPanel() { return typePanel; }
 
   public class NodeTypeChoice extends Panel implements ItemListener
@@ -78,6 +85,7 @@ public class NodeTool extends PopupMenuTool
   	public int getNodeType() { return nodeType; }
   	public void setNodeType(int type) { nodeType = type; }
 
+      @Override
 		public void itemStateChanged(ItemEvent e) {
 			setNodeType(((Choice) e.getSource()).getSelectedIndex() + 1);
 		}

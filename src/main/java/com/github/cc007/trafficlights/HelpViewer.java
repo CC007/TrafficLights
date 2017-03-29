@@ -21,7 +21,6 @@ import java.net.*;
 import java.io.File;
 import javax.swing.*;
 import javax.swing.event.*;
-import javax.swing.text.html.*;
 
 /**
  *
@@ -78,8 +77,9 @@ public class HelpViewer extends JFrame
 		// determine base URL
 		File file = new File("");
 		String base = "file:/" + file.getAbsolutePath();		
-		if(!base.endsWith("/gld"))
-			base += "/gld";
+		if(!base.endsWith("/gld")) {
+            base += "/gld";
+        }
 		base += "/docs/";
 		return base;
 	}
@@ -154,10 +154,12 @@ public class HelpViewer extends JFrame
 		* @param e The HyperlinkEvent to be checked
 		
 		*/
+        @Override
 		public void hyperlinkUpdate(HyperlinkEvent e)
 		{
-			if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
-				toURL(e.getURL());
+			if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                toURL(e.getURL());
+            }
 		}
 	}
 }

@@ -18,8 +18,6 @@ package com.github.cc007.trafficlights.config;
 
 import com.github.cc007.trafficlights.*;
 import com.github.cc007.trafficlights.infra.*;
-import com.github.cc007.trafficlights.tools.*;
-import com.github.cc007.trafficlights.utils.*;
 import com.github.cc007.trafficlights.sim.SimController;
 
 import java.awt.*;
@@ -97,10 +95,13 @@ public class ConfigDialog extends Frame implements Observer, WindowListener, Act
 	}
 
 
+    @Override
 	public void update(Observable o, Object arg) {
 		if (o instanceof Model) {
 			ConfigPanel cp = subPanel.getConfigPanel();
-			if (cp != null) cp.reset();
+			if (cp != null) {
+                cp.reset();
+            }
 			return;
 		}
 		Selection s = (Selection)o;
@@ -108,7 +109,9 @@ public class ConfigDialog extends Frame implements Observer, WindowListener, Act
 			ConfigPanel cp = subPanel.getConfigPanel();
 			cp.ok();
 			subPanel.setConfigPanel(cpf.createPanel(s));
-			if (AlwaysOnTop) toFront();
+			if (AlwaysOnTop) {
+                toFront();
+            }
 		}
 		catch (ConfigException e) {
 			Controller.reportError(e);
@@ -127,8 +130,10 @@ public class ConfigDialog extends Frame implements Observer, WindowListener, Act
 	public void setConfigPanel(ConfigPanel cp) { subPanel.setConfigPanel(cp); }
 
 	/** Returns the title of this dialog */
+    @Override
 	public String getTitle() { return title.getText(); }
 	/** Sets the title of this dialog */
+    @Override
 	public void setTitle(String newtitle) {
 		title.setText(newtitle);
 		super.setTitle(newtitle);
@@ -162,18 +167,29 @@ public class ConfigDialog extends Frame implements Observer, WindowListener, Act
 
 
 
+    @Override
 	public void setVisible(boolean b) {
-		if (b == false) subPanel.getConfigPanel().ok();
+		if (b == false) {
+            subPanel.getConfigPanel().ok();
+        }
 		super.setVisible(b);
 	}
 
+    @Override
 	public void actionPerformed(ActionEvent e) { setVisible(false); }
-	public void windowClosing(WindowEvent e) { hide(); }
+    @Override
+	public void windowClosing(WindowEvent e) { setVisible(false); }
+    @Override
 	public void windowActivated(WindowEvent e) { }
+    @Override
 	public void windowClosed(WindowEvent e) { }
+    @Override
 	public void windowDeactivated(WindowEvent e) { }
+    @Override
 	public void windowIconified(WindowEvent e) { }
+    @Override
 	public void windowDeiconified(WindowEvent e) { }
+    @Override
 	public void windowOpened(WindowEvent e) { }
 
 
@@ -190,7 +206,9 @@ public class ConfigDialog extends Frame implements Observer, WindowListener, Act
 		public void setConfigPanel(ConfigPanel cp)
 		{
 			if (cp != current && cp != null) {
-				if (current != null) remove(current);
+				if (current != null) {
+                    remove(current);
+                }
 				add(cp);
 				cp.setBounds(0, 0, getWidth(), getHeight());
 				current = cp;

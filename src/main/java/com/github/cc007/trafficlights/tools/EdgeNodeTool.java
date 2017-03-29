@@ -97,6 +97,7 @@ public class EdgeNodeTool implements Tool
 		view.repaint();
 	}
 
+    @Override
 	public void mousePressed(View view, Point p, Tool.Mask mask)
 	{
 		if (selected != null) { // EdgeNode selected
@@ -114,11 +115,14 @@ public class EdgeNodeTool implements Tool
 		}
 		if(mask.isRight()) {
 			Node node = findNode(p);
-			if(node!=null)   
-				((SimController)controller).getSimModel().getTLController().trackNode(node.getId()); 
+			if(node!=null) {
+                ((SimController)controller).getSimModel().getTLController().trackNode(node.getId());
+            } 
 
 		}
-		if (!mask.isLeft()) return;
+		if (!mask.isLeft()) {
+            return;
+        }
 		
 		selected = findEdgeNode(p); // select a new EdgeNode
 		view.repaint();			
@@ -160,6 +164,7 @@ public class EdgeNodeTool implements Tool
 	}
 
 	
+    @Override
 	public void mouseReleased(View view, Point p, Tool.Mask mask)
 	{
 		if (modify != null && modify == selected) // currently dragging
@@ -168,14 +173,19 @@ public class EdgeNodeTool implements Tool
 			float freqChange = (p.x - lastPoint.x) / (float)250.0;
 			float spawn = modify.getSpawnFrequency(curRuType);
 			spawn += freqChange;
-			if(spawn > 1) spawn = (float)1.0;
-			if(spawn < 0) spawn = (float)0.0;
+			if(spawn > 1) {
+                spawn = (float)1.0;
+            }
+			if(spawn < 0) {
+                spawn = (float)0.0;
+            }
 			sm.setSpawnFrequency(modify, curRuType, spawn);
 		}
 		modify = null; // no longer modifying a frequency
 		return;
 	}
 
+    @Override
 	public void mouseMoved(View view, Point p, Tool.Mask mask) 
 	{
 		if(modify != null) // currently dragging
@@ -186,16 +196,24 @@ public class EdgeNodeTool implements Tool
 			{
 				float spawn = modify.getSpawnFrequency(curRuType);
 				spawn += freqChange;
-				if(spawn > 1) spawn = (float)1.0;
-				if(spawn < 0) spawn = (float)0.0;
+				if(spawn > 1) {
+                    spawn = (float)1.0;
+                }
+				if(spawn < 0) {
+                    spawn = (float)0.0;
+                }
 				modify.setSpawnFrequency(curRuType, spawn);
 			}
 			else // modifying destination frequency
 			{
 				float dest = selected.getDestFrequency(modify.getId(), curRuType);
 				dest += freqChange;
-				if(dest > 1) dest = (float)1.0;
-				if(dest < 0) dest = (float)0.0;
+				if(dest > 1) {
+                    dest = (float)1.0;
+                }
+				if(dest < 0) {
+                    dest = (float)0.0;
+                }
 				selected.setDestFrequency(modify.getId(), curRuType, dest);
 			}
 			lastPoint = p;
@@ -203,10 +221,14 @@ public class EdgeNodeTool implements Tool
 		}
 	}
 	
+    @Override
 	public int overlayType() { return 1; }
 
+    @Override
 	public void paint(Graphics g) throws GLDException {
-		if(selected == null) return;
+		if(selected == null) {
+            return;
+        }
 		Rectangle r = selected.getBounds();
 		r.grow(3, 3);		
 		g.setPaintMode();
@@ -222,18 +244,23 @@ public class EdgeNodeTool implements Tool
 			if(curEdge != selected)
 			{
 				String dest = "" + selected.getDestFrequency(curEdge.getId(), curRuType);
-				if(dest.length() > 5) dest = dest.substring(0,5);
+				if(dest.length() > 5) {
+                    dest = dest.substring(0,5);
+                }
 				g.drawString(dest, r.x, r.y - 8);
 			}	
 			else 
 			{
 				String spawn = "" + selected.getSpawnFrequency(curRuType);
-				if(spawn.length() > 5) spawn = spawn.substring(0,5);
+				if(spawn.length() > 5) {
+                    spawn = spawn.substring(0,5);
+                }
 				g.drawString(spawn, r.x, r.y - 8);
 			}
 		}
 	}
 	
+    @Override
 	public Panel getPanel() { return roaduserPanel; }
 	
 	/** Panel containing a dropdown box for all concrete Roaduser types. */
@@ -268,6 +295,7 @@ public class EdgeNodeTool implements Tool
 	
 		protected class MyListener implements ItemListener
 		{
+            @Override
 			public void itemStateChanged(ItemEvent e)
 			{
 				String sel = ((Choice)e.getSource()).getSelectedItem();

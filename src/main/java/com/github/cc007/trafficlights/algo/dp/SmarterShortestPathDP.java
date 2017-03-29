@@ -22,7 +22,6 @@ import com.github.cc007.trafficlights.infra.*;
 import com.github.cc007.trafficlights.sim.*;
 import com.github.cc007.trafficlights.xml.*;
 import java.io.IOException;
-import java.util.Random;
 
 /**
  *
@@ -53,6 +52,7 @@ public class SmarterShortestPathDP extends DrivingPolicy
 	 * @param shortest All the lanes which are in a shortest path to the car's destination
 	 * @return The chosen lane.
 	 */
+    @Override
 	public DriveLane getDirectionLane(Roaduser r, DriveLane lane_now, DriveLane[] allOutgoing, DriveLane[] shortest)
 	{	//Create a subset from the 2 sets allOutgoing and shortest
 		DriveLane current;
@@ -64,11 +64,12 @@ public class SmarterShortestPathDP extends DrivingPolicy
 		for(int i=0; i<allOutgoing.length; i++) {
 		    current = allOutgoing[i];
 			for(int j=0; j<shortest.length; j++) {
-			    if(current.getId() == shortest[j].getId()) // Dirty equallity :( 
-				    if(current.getNumRoadusersWaiting()<best_waiting) {
-				        best_lane = shortest[j];
-					    best_waiting = current.getNumRoadusersWaiting();
-				    }	
+			    if(current.getId() == shortest[j].getId()) { // Dirty equallity :(
+                    if(current.getNumRoadusersWaiting()<best_waiting) {
+                        best_lane = shortest[j];
+                        best_waiting = current.getNumRoadusersWaiting();
+                    }
+                }	
 		    }
 	    }
 	    return best_lane;
@@ -76,14 +77,17 @@ public class SmarterShortestPathDP extends DrivingPolicy
 	
 	// Trivial XMLSerializable implementation
 	
+    @Override
 	public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
 	{ 	System.out.println("DP SSP loaded");
 	}
 	
+    @Override
 	public XMLElement saveSelf () throws XMLCannotSaveException
 	{ 	return new XMLElement(shortXMLName);
 	}
   
+    @Override
 	public String getXMLName ()
 	{ 	return "model."+shortXMLName;
 	}

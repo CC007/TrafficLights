@@ -15,7 +15,6 @@
  *------------------------------------------------------------------------*/
 package com.github.cc007.trafficlights.xml;
 
-import java.util.zip.GZIPInputStream;
 import java.io.*;
 
 /**

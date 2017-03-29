@@ -16,12 +16,7 @@
 
 package com.github.cc007.trafficlights.infra;
 
-import com.github.cc007.trafficlights.*;
-import com.github.cc007.trafficlights.xml.*;
-import java.awt.Graphics;
 import java.awt.Color;
-import java.io.IOException;
-import java.util.*;
 
 /**
  * PacCar, not standard...
@@ -43,9 +38,11 @@ public class PacCar extends Car
 	/** Empty constructor for loading */
 	public PacCar() { }
 	
+    @Override
 	public String getName() { return "PacCar"; }
 
   // Specific XMLSerializable implementation 
+    @Override
  	public String getXMLName ()
  	{ 	return parentName+".roaduser-paccar";
  	}

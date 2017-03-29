@@ -20,11 +20,10 @@ import java.util.*;
 
 import com.github.cc007.trafficlights.*;
 import com.github.cc007.trafficlights.infra.Node.NodeStatistics;
-import com.github.cc007.trafficlights.algo.dp.*;
-import com.github.cc007.trafficlights.algo.edit.*;
 import com.github.cc007.trafficlights.utils.*;
 import com.github.cc007.trafficlights.xml.*;
 import com.github.cc007.trafficlights.edit.Validation;
+import java.util.List;
 
 /**
  *
@@ -102,7 +101,7 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
     protected String parentName = "model";
 
     // This one is temporary (for debugging TC-3)
-    public static Hashtable laneDictionary;
+    public static HashMap laneMap;
 
     /**
      * Creates a new infrastructure object.
@@ -673,7 +672,6 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
      * DOAS 06: increment number of cars removed from network (used for
      * statistics purposes)
      */
-
     public void removedCarsIncrement() {
         removedCars++;
     }
@@ -758,12 +756,14 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
     /*============================================*/
  /* Selectable                                 */
  /*============================================*/
+    @Override
     public boolean hasChildren() {
         return getNumNodes() > 0;
     }
 
-    public Iterator getChildren() {
-        return new ArrayIterator(getAllNodes());
+    @Override
+    public List<Selectable> getChildren() {
+        return Arrays.asList(getAllNodes());
     }
 
 
@@ -864,6 +864,7 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
         size = calcSize();
     }
 
+    @Override
     public void load(XMLElement myElement, XMLLoader loader) throws
             XMLTreeException, IOException, XMLInvalidInputException { // Load parameters
         title = myElement.getAttribute("title").getValue();
@@ -881,17 +882,17 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
         copySpecialNodes();
         copyJunctions();
         // Internal second stage load of child objects
-        Dictionary mainDictionary;
+        Map mainMap;
         try {
-            mainDictionary = getMainDictionary();
+            mainMap = getMainMap();
         } catch (InfraException e) {
             throw new XMLInvalidInputException("Problem with internal 2nd stage load of infra :" + e);
         }
-        XMLUtils.loadSecondStage(allLanes.iterator(), mainDictionary);
-        XMLUtils.loadSecondStage(Arrays.asList(allNodes).iterator(),
-                mainDictionary);
+        XMLUtils.loadSecondStage(allLanes, mainMap);
+        XMLUtils.loadSecondStage(Arrays.asList(allNodes), mainMap);
     }
 
+    @Override
     public XMLElement saveSelf() {
         XMLElement result = new XMLElement("infrastructure");
         result.addAttribute(new XMLAttribute("title", title));
@@ -902,34 +903,37 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
         result.addAttribute(new XMLAttribute("file-version", version));
         result.addAttribute(new XMLAttribute("num-specialnodes",
                 specialNodes.length));
-        laneDictionary = (Hashtable) (getLaneSignDictionary());
+        laneMap = (HashMap) (getLaneSignMap());
         return result;
     }
 
+    @Override
     public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException,
             XMLCannotSaveException {
         XMLArray.saveArray(allLanes, this, saver, "lanes");
         XMLArray.saveArray(allNodes, this, saver, "nodes");
     }
 
+    @Override
     public String getXMLName() {
         return parentName + ".infrastructure";
     }
 
+    @Override
     public void setParentName(String parentName) {
         this.parentName = parentName;
     }
 
-    public Dictionary getMainDictionary() throws InfraException {
-        Dictionary result = new Hashtable();
-        result.put("lane", getLaneSignDictionary());
-        result.put("node", getNodeDictionary());
-        result.put("road", getRoadDictionary());
+    public Map getMainMap() throws InfraException {
+        Map result = new HashMap();
+        result.put("lane", getLaneSignMap());
+        result.put("node", getNodeMap());
+        result.put("road", getRoadMap());
         return result;
     }
 
-    protected Dictionary getLaneSignDictionary() {
-        Dictionary result = new Hashtable();
+    protected Map getLaneSignMap() {
+        Map result = new HashMap();
         Iterator lanes = allLanes.iterator();
         DriveLane tmp;
         while (lanes.hasNext()) {
@@ -939,8 +943,8 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
         return result;
     }
 
-    protected Dictionary getNodeDictionary() {
-        Dictionary result = new Hashtable();
+    protected Map getNodeMap() {
+        Map result = new HashMap();
         Iterator nodes = new ArrayIterator(allNodes);
         Node tmp;
         while (nodes.hasNext()) {
@@ -950,8 +954,8 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
         return result;
     }
 
-    protected Dictionary getRoadDictionary() throws InfraException {
-        Dictionary result = new Hashtable();
+    protected Map getRoadMap() throws InfraException {
+        Map result = new HashMap();
         Iterator nodes = new ArrayIterator(allNodes), roads;
         Node tmp;
         Road road;
@@ -986,13 +990,13 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
         }
     }
 
-    protected void addAlphaRoads(Dictionary d, SpecialNode n) {
+    protected void addAlphaRoads(Map d, SpecialNode n) {
         if (n.getAlpha()) {
             d.put(new Integer(n.getRoad().getId()), n.getRoad());
         }
     }
 
-    protected void addAlphaRoads(Dictionary d, Junction n) {
+    protected void addAlphaRoads(Map d, Junction n) {
         Iterator roads = new ArrayIterator(n.getAlphaRoads());
         while (roads.hasNext()) {
             Road road = (Road) (roads.next());

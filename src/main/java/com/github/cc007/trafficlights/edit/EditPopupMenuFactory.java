@@ -25,7 +25,6 @@ import java.awt.PopupMenu;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.lang.Exception;
 
 
 /**
@@ -50,9 +49,15 @@ public class EditPopupMenuFactory
 	 */
 	public PopupMenu getPopupMenuFor(Selectable obj) throws PopupException
 	{
-		if (obj instanceof Node) return getNodeMenu((Node)obj);
-		if (obj instanceof Road) return getRoadMenu((Road)obj);
-		if (obj instanceof DriveLane) return getDrivelaneMenu((DriveLane)obj);
+		if (obj instanceof Node) {
+            return getNodeMenu((Node)obj);
+        }
+		if (obj instanceof Road) {
+            return getRoadMenu((Road)obj);
+        }
+		if (obj instanceof DriveLane) {
+            return getDrivelaneMenu((DriveLane)obj);
+        }
 		throw new PopupException("Unknown object type");
 	}
 
@@ -93,11 +98,14 @@ public class EditPopupMenuFactory
 
 	protected class DefaultGUIObjectListener implements PopupMenuListener
 	{
+        @Override
 		public void actionPerformed(ActionEvent e) {
 			String s = e.getActionCommand();
-			if (s.equals("Delete")) controller.deleteSelection();
-			else if (s.equals("Properties..."))
-				controller.showConfigDialog();
+			if (s.equals("Delete")) {
+                controller.deleteSelection();
+            } else if (s.equals("Properties...")) {
+                controller.showConfigDialog();
+            }
 		}
 	}
 

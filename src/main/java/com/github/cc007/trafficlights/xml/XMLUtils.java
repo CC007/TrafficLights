@@ -13,175 +13,201 @@
  * See the GNU General Public License for more details.
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
-
 package com.github.cc007.trafficlights.xml;
 
 import com.github.cc007.trafficlights.utils.StringUtils;
-import java.util.Dictionary;
+import java.util.Map;
 import java.util.Iterator;
+import java.util.List;
 import java.util.StringTokenizer;
 
-/** This class contains a few static utility methods that are
-  * used by the various parts of the XML parser
+/**
+ * This class contains a few static utility methods that are used by the various
+ * parts of the XML parser
  */
+public class XMLUtils {
 
-public class XMLUtils
-{ 
-  /** Calculates the last name of a XML path name
-    * @param fullName The path name
-    * @return Its last name
-   */
-  public static String getLastName (String fullName)
-  { return fullName.substring(fullName.lastIndexOf('.')+1,fullName.length());
-  }
-  
-  /** Calculates the last name of a XMLSerializable object
-    * @param object The XMLSerializable object
-    * @return Its last name
-   */
-  public static String getLastName (XMLSerializable object)
-  { return getLastName(object.getXMLName());
-  }
-  
-  
-  /** Calculates the parent path name of a XML path name
-    * @param fullName The path name
-    * @return The path of its parent
-   */
-  public static String getParentName (String fullName)
-  { int lastDotPos=fullName.lastIndexOf('.');
-    if (lastDotPos==-1)
-    { return "";
+    /**
+     * Calculates the last name of a XML path name
+     *
+     * @param fullName The path name
+     * @return Its last name
+     */
+    public static String getLastName(String fullName) {
+        return fullName.substring(fullName.lastIndexOf('.') + 1, fullName.length());
     }
-    else
-    { return fullName.substring (0,lastDotPos);
-    }
-  }
-  
-  /** Calculates the parent path name of a XML path name
-    * @param object The XMLSerializable object
-    * @return The path of its parent
-   */
-  public static String getParentName (XMLSerializable object)
-  { return getParentName(object.getXMLName());
-  }
-  
-  
-  /** Calculates the level of a XML path name
-    * @param fullName The path name
-    * @return the level
-   */
-  public static int getLevel (String fullName)
-  { return (new StringTokenizer(fullName,".")).countTokens();
-  }
 
-/** Encodes characters which can confuse the XML parser. Every 
-    * non-alphanumeric string should be processed by this method before saving!
-    * @param s The string to encode
-    * @return The result
-   */
-  public static String toXMLString (String s)
-  { if (s==null)
-       return ("&null;");
-    String string=new String(s);
-    char[] from={'&',' ','"','<','>','/'};
-    String[] to={"&amp;","&#32;","&quot;","&lt;","&gt;","&#47;"};
-    return StringUtils.replaceList(string,from,to);
-  }
-  
-  /** Decodes a string which is encoded with toXMLString. 
-    * @param s The string to decode
-    * @return The result
-   */
-  public static String fromXMLString (String s)
-  { if (s.equals("&null;"))
-       return null;
-    String string=new String(s);
-    String[] from={"&#47;","&lt;","&gt;","&quot;","&#32;","&#amp"},
-             to={"/","<",">","\""," ","&"};
-    return StringUtils.replaceList(string,from,to);
-  } 
-  
-  /** Convert a full XML name to its generic name. This is done by checking
-    * if each part of the name is complex (if it consists of a generic name plus
-    * a specific name). If so, then the specific part is removed. Array elements
-    * are also removed from the name.
-    * Example of a complex name : model.infrastructure.node-edge.spdata
-    * Result of getGenericName  : model.infrastructure.node.spdata
-    * @param name The XML name
-    * @return The result
-   */
-  public static String getGenericName (String fullName)
-  { 	return getGenericName (fullName,true);
-  }
-  
-  /** Convert a full XML name to its generic name. This is done by checking
-    * if each part of the name is complex (if it consists of a generic name plus
-    * a specific name). If so, then the specific part is removed. 
-    * Example of a complex name : model.infrastructure.node-edge.spdata
-    * Result of getGenericName  : model.infrastructure.node.spdata
-    * @param name The XML name
-	 * @param removeArrays Wether array elements have to be removed from
-	 *        the name.
-    * @return The result
-   */
-  public static String getGenericName (String fullName,boolean removeArrays)
-  { StringTokenizer s=new StringTokenizer (fullName,".");
-    String result="",tmp;
-    int dashIndex;
-    while (s.hasMoreTokens())
-    { tmp=s.nextToken();
-      if ( removeArrays && (("array").equals(tmp) || ("element").equals(tmp)))
-         continue;
-      if (result.length()>0)
-         result+=".";
-      if ( (dashIndex=tmp.indexOf('-')) == -1)
-      { result+=tmp;
-      }
-      else
-      { result+=tmp.substring(0,dashIndex);
-      }
+    /**
+     * Calculates the last name of a XMLSerializable object
+     *
+     * @param object The XMLSerializable object
+     * @return Its last name
+     */
+    public static String getLastName(XMLSerializable object) {
+        return getLastName(object.getXMLName());
     }
-    return result;
-  }
-  
-  
-  /** Takes the last name of a full XML tag name. If it consists of a generic
-    * part and a specific part, then the generic part is removed.
-    * examples : "model.infrastructure.node-edge" becomes "edge"
-    *         :  "model.infrastructure' becomes "infrastructure"
-    * @param fullName The full XML tag name to convert
-    * @return The result
-   */
-  public static String getSpecificLastName (String fullName)
-  { int beginIndex=Math.max(Math.max(fullName.lastIndexOf('.'),
-                            fullName.lastIndexOf('-')),0)+1;
-    return fullName.substring(beginIndex,fullName.length());
-  }
-  
-	/** Load the second stage of an enumeration of objects that implement
-	  * TwoStageLoader
-	  * @param it The enumeration of TwoStageLoaders
-	  * @param dictionaries The main dictionary to load them with
-	  * @throws ClassCastException If one of the elements in the enumeration
-	  *         is not a TwoStageLoader
-	 */
-  	public static void loadSecondStage (Iterator it,Dictionary dictionaries) throws XMLInvalidInputException,XMLTreeException
-	{ while (it.hasNext())
-		((TwoStageLoader)(it.next())).loadSecondStage(dictionaries);
-	}
-		
-	/** Sets new parentNames for every element in an enumeration of
-	  * XMLSerializables.
-	  * @param it The enumeration of XMLSerializables
-	  * @param newParentName The new p
-	  * @throws ClassCastException If one of the elements in the enumeration
-	  *         is not XMLSerializable
-	 */
-  	public static void setParentName(Iterator it,String newParentName) throws XMLTreeException
-	{ while (it.hasNext())
-		((XMLSerializable)(it.next())).setParentName(newParentName);
-	}
-  
+
+    /**
+     * Calculates the parent path name of a XML path name
+     *
+     * @param fullName The path name
+     * @return The path of its parent
+     */
+    public static String getParentName(String fullName) {
+        int lastDotPos = fullName.lastIndexOf('.');
+        if (lastDotPos == -1) {
+            return "";
+        } else {
+            return fullName.substring(0, lastDotPos);
+        }
+    }
+
+    /**
+     * Calculates the parent path name of a XML path name
+     *
+     * @param object The XMLSerializable object
+     * @return The path of its parent
+     */
+    public static String getParentName(XMLSerializable object) {
+        return getParentName(object.getXMLName());
+    }
+
+    /**
+     * Calculates the level of a XML path name
+     *
+     * @param fullName The path name
+     * @return the level
+     */
+    public static int getLevel(String fullName) {
+        return (new StringTokenizer(fullName, ".")).countTokens();
+    }
+
+    /**
+     * Encodes characters which can confuse the XML parser. Every
+     * non-alphanumeric string should be processed by this method before saving!
+     *
+     * @param s The string to encode
+     * @return The result
+     */
+    public static String toXMLString(String s) {
+        if (s == null) {
+            return ("&null;");
+        }
+        String string = new String(s);
+        char[] from = {'&', ' ', '"', '<', '>', '/'};
+        String[] to = {"&amp;", "&#32;", "&quot;", "&lt;", "&gt;", "&#47;"};
+        return StringUtils.replaceList(string, from, to);
+    }
+
+    /**
+     * Decodes a string which is encoded with toXMLString.
+     *
+     * @param s The string to decode
+     * @return The result
+     */
+    public static String fromXMLString(String s) {
+        if (s.equals("&null;")) {
+            return null;
+        }
+        String string = new String(s);
+        String[] from = {"&#47;", "&lt;", "&gt;", "&quot;", "&#32;", "&#amp"},
+                to = {"/", "<", ">", "\"", " ", "&"};
+        return StringUtils.replaceList(string, from, to);
+    }
+
+    /**
+     * Convert a full XML name to its generic name. This is done by checking if
+     * each part of the name is complex (if it consists of a generic name plus a
+     * specific name). If so, then the specific part is removed. Array elements
+     * are also removed from the name. Example of a complex name :
+     * model.infrastructure.node-edge.spdata Result of getGenericName :
+     * model.infrastructure.node.spdata
+     *
+     * @param name The XML name
+     * @return The result
+     */
+    public static String getGenericName(String fullName) {
+        return getGenericName(fullName, true);
+    }
+
+    /**
+     * Convert a full XML name to its generic name. This is done by checking if
+     * each part of the name is complex (if it consists of a generic name plus a
+     * specific name). If so, then the specific part is removed. Example of a
+     * complex name : model.infrastructure.node-edge.spdata Result of
+     * getGenericName : model.infrastructure.node.spdata
+     *
+     * @param name The XML name
+     * @param removeArrays Wether array elements have to be removed from the
+     * name.
+     * @return The result
+     */
+    public static String getGenericName(String fullName, boolean removeArrays) {
+        StringTokenizer s = new StringTokenizer(fullName, ".");
+        String result = "", tmp;
+        int dashIndex;
+        while (s.hasMoreTokens()) {
+            tmp = s.nextToken();
+            if (removeArrays && (("array").equals(tmp) || ("element").equals(tmp))) {
+                continue;
+            }
+            if (result.length() > 0) {
+                result += ".";
+            }
+            if ((dashIndex = tmp.indexOf('-')) == -1) {
+                result += tmp;
+            } else {
+                result += tmp.substring(0, dashIndex);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Takes the last name of a full XML tag name. If it consists of a generic
+     * part and a specific part, then the generic part is removed. examples :
+     * "model.infrastructure.node-edge" becomes "edge" : "model.infrastructure'
+     * becomes "infrastructure"
+     *
+     * @param fullName The full XML tag name to convert
+     * @return The result
+     */
+    public static String getSpecificLastName(String fullName) {
+        int beginIndex = Math.max(Math.max(fullName.lastIndexOf('.'),
+                fullName.lastIndexOf('-')), 0) + 1;
+        return fullName.substring(beginIndex, fullName.length());
+    }
+
+    /**
+     * Load the second stage of an enumeration of objects that implement
+     * TwoStageLoader
+     *
+     * @param twoStageLoaders The enumeration of TwoStageLoaders
+     * @param maps The main map to load them with
+     * @throws com.github.cc007.trafficlights.xml.XMLInvalidInputException
+     * @throws com.github.cc007.trafficlights.xml.XMLTreeException
+     * @throws ClassCastException If one of the elements in the enumeration is
+     * not a TwoStageLoader
+     */
+    public static void loadSecondStage(List<? extends TwoStageLoader> twoStageLoaders, Map<String, Map<Integer, TwoStageLoader>> maps) throws XMLInvalidInputException, XMLTreeException {
+        for (TwoStageLoader twoStageLoader : twoStageLoaders) {
+            twoStageLoader.loadSecondStage(maps);
+        }
+    }
+
+    /**
+     * Sets new parentNames for every element in an enumeration of
+     * XMLSerializables.
+     *
+     * @param it The enumeration of XMLSerializables
+     * @param newParentName The new p
+     * @throws ClassCastException If one of the elements in the enumeration is
+     * not XMLSerializable
+     */
+    public static void setParentName(Iterator it, String newParentName) throws XMLTreeException {
+        while (it.hasNext()) {
+            ((XMLSerializable) (it.next())).setParentName(newParentName);
+        }
+    }
+
 }
-  

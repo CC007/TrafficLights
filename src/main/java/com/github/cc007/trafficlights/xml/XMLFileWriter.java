@@ -16,7 +16,6 @@
 
 package com.github.cc007.trafficlights.xml;
 
-import java.util.zip.GZIPOutputStream;
 import java.io.*;
 
 /** A XMLWriter which writes to files

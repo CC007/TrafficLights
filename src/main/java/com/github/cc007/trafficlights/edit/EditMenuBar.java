@@ -19,7 +19,6 @@ package com.github.cc007.trafficlights.edit;
 import com.github.cc007.trafficlights.*;
 
 import java.awt.*;
-import java.util.*;
 import java.awt.event.*;
 
 /**
@@ -87,39 +86,44 @@ public class EditMenuBar extends MenuBar
 
 	private class EditMenuListener implements ActionListener
 	{
+        @Override
 		public void actionPerformed(ActionEvent e)
 		{
 			String sel = ((MenuItem)e.getSource()).getLabel();
-			if(sel.equals("Delete"))
-				controller.deleteSelection();
-			else if(sel.equals("Select all"))
-				controller.selectAll();
-			else if(sel.equals("Deselect"))
-				controller.deselectAll();
+			if(sel.equals("Delete")) {
+                controller.deleteSelection();
+            } else if(sel.equals("Select all")) {
+                controller.selectAll();
+            } else if(sel.equals("Deselect")) {
+                controller.deselectAll();
+            }
 		}
 	}
 
 
 	private class OptionMenuListener implements ActionListener, ItemListener
 	{
+        @Override
 		public void actionPerformed(ActionEvent e) 
 		{
 			String sel = ((MenuItem) e.getSource()).getLabel();
 
-			if (sel == "Validate")
-				controller.validateInfra();
-			else if (sel == "Change size...")
-				controller.showChangeSizeDialog();
-			else if (sel == "Settings...");
+			if (sel == "Validate") {
+                controller.validateInfra();
+            } else if (sel == "Change size...") {
+                controller.showChangeSizeDialog();
+            } else if (sel == "Settings...");
 				controller.showSettings();
 		}
 		
+        @Override
 		public void itemStateChanged(ItemEvent e)
 		{
-			if (e.getStateChange() == ItemEvent.SELECTED)
-				controller.enableGrid();
-			else
-				controller.disableGrid();
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+                controller.enableGrid();
+            } else {
+                controller.disableGrid();
+            }
 		}
 	}
 }

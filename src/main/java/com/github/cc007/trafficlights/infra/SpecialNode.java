@@ -15,14 +15,11 @@
  *------------------------------------------------------------------------*/
 package com.github.cc007.trafficlights.infra;
 
-import com.github.cc007.trafficlights.*;
 import com.github.cc007.trafficlights.sim.SimModel;
 import com.github.cc007.trafficlights.utils.*;
 import com.github.cc007.trafficlights.xml.*;
 
 import java.awt.Point;
-import java.awt.Graphics;
-import java.awt.Color;
 import java.io.IOException;
 import java.util.*;
 
@@ -65,6 +62,7 @@ public abstract class SpecialNode extends Node implements XMLSerializable, TwoSt
     /*============================================*/
  /* LOAD and SAVE                              */
  /*============================================*/
+    @Override
     public void load(XMLElement myElement, XMLLoader loader) throws XMLTreeException, IOException, XMLInvalidInputException {
         super.load(myElement, loader);
         isAlpha = myElement.getAttribute("road-is-alpha").getBoolValue();
@@ -77,6 +75,7 @@ public abstract class SpecialNode extends Node implements XMLSerializable, TwoSt
         waitingQueue = (LinkedList) (XMLArray.loadArray(this, loader));
     }
 
+    @Override
     public XMLElement saveSelf() throws XMLCannotSaveException {
         XMLElement result = super.saveSelf();
         result.setName("node-special");
@@ -86,6 +85,7 @@ public abstract class SpecialNode extends Node implements XMLSerializable, TwoSt
         return result;
     }
 
+    @Override
     public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException, XMLCannotSaveException {
         super.saveChilds(saver);
         if (isAlpha) {
@@ -95,23 +95,25 @@ public abstract class SpecialNode extends Node implements XMLSerializable, TwoSt
         XMLArray.saveArray(waitingQueue, this, saver, "queue");
     }
 
+    @Override
     public String getXMLName() {
         return parentName + ".node-special";
     }
 
-    public void loadSecondStage(Dictionary dictionaries) throws XMLInvalidInputException, XMLTreeException {
-        super.loadSecondStage(dictionaries);
+    @Override
+    public void loadSecondStage(Map maps) throws XMLInvalidInputException, XMLTreeException {
+        super.loadSecondStage(maps);
         if (!isAlpha) {
-            Dictionary roadDictionary = (Dictionary) (dictionaries.get("road"));
-            road = (Road) (roadDictionary.get(new Integer(loadData.roadId)));
+            Map roadMap = (Map) (maps.get("road"));
+            road = (Road) (roadMap.get(new Integer(loadData.roadId)));
         }
-        road.loadSecondStage(dictionaries);
+        road.loadSecondStage(maps);
         try {
             updateLanes();
         } catch (InfraException e) {
             throw new XMLInvalidInputException("Cannot initialize lanes of node " + nodeId);
         }
-        XMLUtils.loadSecondStage(waitingQueue.iterator(), dictionaries);
+        XMLUtils.loadSecondStage(waitingQueue, maps);
     }
 
     class TwoStageLoaderData {
@@ -169,6 +171,7 @@ public abstract class SpecialNode extends Node implements XMLSerializable, TwoSt
     /**
      * Returns all roads connected to this node
      */
+    @Override
     public Road[] getAllRoads() {
         Road[] r = {road};
         return r;
@@ -177,6 +180,7 @@ public abstract class SpecialNode extends Node implements XMLSerializable, TwoSt
     /**
      * Returns the alpha roads connected to this node
      */
+    @Override
     public Road[] getAlphaRoads() {
         if (isAlpha) {
             return getAllRoads();
@@ -184,6 +188,7 @@ public abstract class SpecialNode extends Node implements XMLSerializable, TwoSt
         return new Road[0];
     }
 
+    @Override
     public int getWidth() {
         if (road != null) {
             int w = road.getWidth();
@@ -254,6 +259,7 @@ public abstract class SpecialNode extends Node implements XMLSerializable, TwoSt
     /*============================================*/
  /* STATISTICS                                 */
  /*============================================*/
+    @Override
     protected int calcDelay(Roaduser ru, int stop, int distance) {
         // first, add the delay for the drivelane leading to this EdgeNode
         int start = ru.getDrivelaneStartTime();
@@ -266,6 +272,7 @@ public abstract class SpecialNode extends Node implements XMLSerializable, TwoSt
     /*============================================*/
  /* MODIFYING DATA                             */
  /*============================================*/
+    @Override
     public void reset() {
         super.reset();
         if (isAlpha) {
@@ -274,6 +281,7 @@ public abstract class SpecialNode extends Node implements XMLSerializable, TwoSt
         waitingQueue = new LinkedList();
     }
 
+    @Override
     public void addRoad(Road r, int pos) throws InfraException {
         if (r == null) {
             throw new InfraException("Parameter r is null");
@@ -296,6 +304,7 @@ public abstract class SpecialNode extends Node implements XMLSerializable, TwoSt
         updateLanes();
     }
 
+    @Override
     public void setAlphaRoad(int pos) throws InfraException {
         if (pos > 3 || pos < 0) {
             throw new InfraException("Position out of range");
@@ -307,6 +316,7 @@ public abstract class SpecialNode extends Node implements XMLSerializable, TwoSt
         updateLanes();
     }
 
+    @Override
     public void remRoad(int pos) throws InfraException {
         if (pos > 3 || pos < 0) {
             throw new InfraException("Position out of range");
@@ -319,6 +329,7 @@ public abstract class SpecialNode extends Node implements XMLSerializable, TwoSt
         updateLanes();
     }
 
+    @Override
     public void remRoad(Road r) throws InfraException {
         if (r == null) {
             throw new InfraException("Parameter r is null");
@@ -334,15 +345,18 @@ public abstract class SpecialNode extends Node implements XMLSerializable, TwoSt
         updateLanes();
     }
 
+    @Override
     public void remAllRoads() throws InfraException {
         road = null;
         isAlpha = false;
         updateLanes();
     }
 
+    @Override
     public void setSigns(Sign[] s) throws InfraException {
     }
 
+    @Override
     public int getDesiredSignType() throws InfraException {
         return Sign.NO_SIGN;
     }
@@ -350,6 +364,7 @@ public abstract class SpecialNode extends Node implements XMLSerializable, TwoSt
     /*============================================*/
  /* COMPLEX GET                                */
  /*============================================*/
+    @Override
     public boolean isAlphaRoad(Road r) throws InfraException {
         if (r == null) {
             throw new InfraException("Parameter r is null");
@@ -357,6 +372,7 @@ public abstract class SpecialNode extends Node implements XMLSerializable, TwoSt
         return r == road && isAlpha;
     }
 
+    @Override
     public boolean isConnected(Road r) throws InfraException {
         if (r == null) {
             throw new InfraException("Parameter r is null");
@@ -364,6 +380,7 @@ public abstract class SpecialNode extends Node implements XMLSerializable, TwoSt
         return r == road;
     }
 
+    @Override
     public int isConnectedAt(Road r) throws InfraException {
         if (r == null) {
             throw new InfraException("Parameter r is null");
@@ -374,6 +391,7 @@ public abstract class SpecialNode extends Node implements XMLSerializable, TwoSt
         return roadPos;
     }
 
+    @Override
     public boolean isConnectionPosFree(int pos) throws InfraException {
         if (pos > 3 || pos < 0) {
             throw new InfraException("Position out of range");
@@ -381,50 +399,62 @@ public abstract class SpecialNode extends Node implements XMLSerializable, TwoSt
         return (road == null);
     }
 
+    @Override
     public int getNumRoads() {
         return road != null ? 1 : 0;
     }
 
+    @Override
     public int getNumAlphaRoads() {
         return road != null && isAlpha ? 1 : 0;
     }
 
+    @Override
     public int getNumInboundLanes() throws InfraException {
         return road.getNumInboundLanes(this);
     }
 
+    @Override
     public int getNumOutboundLanes() throws InfraException {
         return road.getNumOutboundLanes(this);
     }
 
+    @Override
     public int getNumAllLanes() {
         return road.getNumAllLanes();
     }
 
+    @Override
     public int getNumSigns() {
         return 0;
     }
 
+    @Override
     public int getNumRealSigns() {
         return 0;
     }
 
+    @Override
     public DriveLane[] getLanesLeadingTo(DriveLane lane, int ruType) throws InfraException {
         return new DriveLane[0];
     }
 
+    @Override
     public DriveLane[] getLanesLeadingFrom(DriveLane lane, int ruType) throws InfraException {
         return new DriveLane[0];
     }
 
+    @Override
     public DriveLane[] getOutboundLanes() throws InfraException {
         return road != null ? road.getOutboundLanes(this) : new DriveLane[0];
     }
 
+    @Override
     public DriveLane[] getInboundLanes() throws InfraException {
         return road != null ? road.getInboundLanes(this) : new DriveLane[0];
     }
 
+    @Override
     public DriveLane[] getAllLanes() throws InfraException {
         return (DriveLane[]) Arrayutils.addArray(getInboundLanes(), getOutboundLanes());
     }

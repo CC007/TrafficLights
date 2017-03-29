@@ -7,7 +7,6 @@ package com.github.cc007.trafficlights.algo.tlc;
 */
 
 
-import com.github.cc007.trafficlights.algo.tlc.*;
 import com.github.cc007.trafficlights.*;
 
 

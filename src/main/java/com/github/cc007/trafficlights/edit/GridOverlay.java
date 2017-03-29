@@ -40,9 +40,11 @@ public class GridOverlay implements Overlay
 		gridSize = size;
 	}
 	
+    @Override
 	public int overlayType() { return 2; }
 	
 	/** Paints the grid. */
+    @Override
 	public void paint(Graphics g)
 	{
 		g.setPaintMode();

@@ -16,7 +16,6 @@
 
 package com.github.cc007.trafficlights.config;
 
-import java.util.*;
 
 import com.github.cc007.trafficlights.*;
 import com.github.cc007.trafficlights.infra.*;
@@ -55,10 +54,16 @@ public class PanelFactory
 	public ConfigPanel createPanel(Selection s) throws ConfigException
 	{
 		if (!s.isEmpty()) {
-			Object firstObject = s.getSelectedObjects().getFirst();
-			if (firstObject instanceof Node) return getNodePanel((Node)firstObject);
-			if (firstObject instanceof Road) return getRoadPanel((Road)firstObject);
-			if (firstObject instanceof DriveLane) return getDrivelanePanel((DriveLane)firstObject);
+			Selectable firstObject = s.getSelectedObjects().get(0);
+			if (firstObject instanceof Node) {
+                return getNodePanel((Node)firstObject);
+            }
+			if (firstObject instanceof Road) {
+                return getRoadPanel((Road)firstObject);
+            }
+			if (firstObject instanceof DriveLane) {
+                return getDrivelanePanel((DriveLane)firstObject);
+            }
 			throw new ConfigException("Unknown object type");
 		}
 		if (gp == null) {
@@ -75,9 +80,15 @@ public class PanelFactory
 	private ConfigPanel getNodePanel(Node n) throws ConfigException
 	{
 		
-		if (n instanceof EdgeNode) return getEdgeNodePanel((EdgeNode)n);
-		if (n instanceof Junction) return getJunctionPanel((Junction)n);
-		if (n instanceof NetTunnel) return getNetTunnelPanel((NetTunnel)n);
+		if (n instanceof EdgeNode) {
+            return getEdgeNodePanel((EdgeNode)n);
+        }
+		if (n instanceof Junction) {
+            return getJunctionPanel((Junction)n);
+        }
+		if (n instanceof NetTunnel) {
+            return getNetTunnelPanel((NetTunnel)n);
+        }
 		throw new ConfigException("Unknown object type");
 	}
 
@@ -87,29 +98,45 @@ public class PanelFactory
 
 	private ConfigPanel getRoadPanel(Road r) throws ConfigException
 	{
-		if (TYPE == TYPE_SIM) return createSRP(r);
-		if (TYPE == TYPE_EDIT) return createERP(r);
+		if (TYPE == TYPE_SIM) {
+            return createSRP(r);
+        }
+		if (TYPE == TYPE_EDIT) {
+            return createERP(r);
+        }
 		throw new ConfigException("Unknown object type");
 	}
 	
 	private ConfigPanel getDrivelanePanel(DriveLane l) throws ConfigException
 	{
-		if (TYPE == TYPE_SIM) return createSDP(l);
-		if (TYPE == TYPE_EDIT) return createEDP(l);
+		if (TYPE == TYPE_SIM) {
+            return createSDP(l);
+        }
+		if (TYPE == TYPE_EDIT) {
+            return createEDP(l);
+        }
 		throw new ConfigException("Unknown object type");
 	}
 	
 	private ConfigPanel getEdgeNodePanel(EdgeNode e) throws ConfigException
 	{
-		if (TYPE == TYPE_SIM) return createSEP(e);
-		if (TYPE == TYPE_EDIT) return createEEP(e);
+		if (TYPE == TYPE_SIM) {
+            return createSEP(e);
+        }
+		if (TYPE == TYPE_EDIT) {
+            return createEEP(e);
+        }
 		throw new ConfigException("Unknown object type");
 	}
 	
 	private ConfigPanel getJunctionPanel(Junction j) throws ConfigException
 	{
-		if (TYPE == TYPE_SIM) return createSJP(j);
-		if (TYPE == TYPE_EDIT) return createEJP(j);
+		if (TYPE == TYPE_SIM) {
+            return createSJP(j);
+        }
+		if (TYPE == TYPE_EDIT) {
+            return createEJP(j);
+        }
 		throw new ConfigException("Unknown object type");
 	}
 	
@@ -132,53 +159,80 @@ public class PanelFactory
 
 
 	private ConfigPanel createSRP(Road r) { 
-		if (srp == null) srp = new SimRoadPanel(confd, r);
-		else srp.setRoad(r);
+		if (srp == null) {
+            srp = new SimRoadPanel(confd, r);
+        } else {
+            srp.setRoad(r);
+        }
 		return srp;
 	}
 	private ConfigPanel createERP(Road r) {
-		if (erp == null) erp = new EditRoadPanel(confd, r);
-		else erp.setRoad(r);
+		if (erp == null) {
+            erp = new EditRoadPanel(confd, r);
+        } else {
+            erp.setRoad(r);
+        }
 		return erp;
 	}
 
 	private ConfigPanel createSDP(DriveLane l) {
-		if (sdp == null) sdp = new SimDrivelanePanel(confd, l);
-		else sdp.setLane(l);
+		if (sdp == null) {
+            sdp = new SimDrivelanePanel(confd, l);
+        } else {
+            sdp.setLane(l);
+        }
 		return sdp;
 	}
 	private ConfigPanel createEDP(DriveLane l) {
-		if (edp == null) edp = new EditDrivelanePanel(confd, l);
-		else edp.setLane(l);
+		if (edp == null) {
+            edp = new EditDrivelanePanel(confd, l);
+        } else {
+            edp.setLane(l);
+        }
 		return edp;
 	}
 
 	private ConfigPanel createSEP(EdgeNode e) {
-		if (sep == null) sep = new SimEdgeNodePanel(confd, e);
-		else sep.setEdgeNode(e);
+		if (sep == null) {
+            sep = new SimEdgeNodePanel(confd, e);
+        } else {
+            sep.setEdgeNode(e);
+        }
 		return sep;
 	}
 	private ConfigPanel createEEP(EdgeNode e) {
-		if (eep == null) eep = new EditEdgeNodePanel(confd, e);
-		else eep.setEdgeNode(e);
+		if (eep == null) {
+            eep = new EditEdgeNodePanel(confd, e);
+        } else {
+            eep.setEdgeNode(e);
+        }
 		return eep;
 	}
 
 	private ConfigPanel createSJP(Junction j) {
-		if (sjp == null) sjp = new SimJunctionPanel(confd, j);
-		else sjp.setJunction(j);
+		if (sjp == null) {
+            sjp = new SimJunctionPanel(confd, j);
+        } else {
+            sjp.setJunction(j);
+        }
 		return sjp;
 	}
 	
 	private ConfigPanel createEJP(Junction j) {
-		if (ejp == null) ejp = new EditJunctionPanel(confd, j);
-		else ejp.setJunction(j);
+		if (ejp == null) {
+            ejp = new EditJunctionPanel(confd, j);
+        } else {
+            ejp.setJunction(j);
+        }
 		return ejp;
 	}
 	
 	private ConfigPanel createNTP(NetTunnel n)
-	{	if (ntp == null) ntp = new NetTunnelPanel(confd, n);
-		else ntp.setNetTunnel(n);
+	{	if (ntp == null) {
+        ntp = new NetTunnelPanel(confd, n);
+    } else {
+        ntp.setNetTunnel(n);
+    }
 		return ntp;
 	}
 }

@@ -16,12 +16,8 @@
 
 package com.github.cc007.trafficlights.sim.stats;
 
-import com.github.cc007.trafficlights.infra.*;
-import com.github.cc007.trafficlights.sim.SimModel;
 
 import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
 
 /**
 *
@@ -38,9 +34,11 @@ public class StatsBarView extends StatisticsView
 		super(parent, stats);
 	}
 	
+    @Override
 	protected void paintStats(Graphics g)
 	{
 	}
 
+    @Override
 	protected void paintAreaChanged() {}
 }

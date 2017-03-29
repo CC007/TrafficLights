@@ -16,7 +16,6 @@
 
 package com.github.cc007.trafficlights.infra;
 
-import com.github.cc007.trafficlights.infra.*;
 import com.github.cc007.trafficlights.xml.*;
 import java.io.IOException;
 
@@ -49,10 +48,12 @@ public class DestFrequency implements XMLSerializable
 	
 	// XML Serializable implementation
 	
+    @Override
 	public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
 	{ 	ruType=myElement.getAttribute("ru-type").getIntValue();
 	  	freq=myElement.getAttribute("freq").getFloatValue();
 	}
+    @Override
 	public XMLElement saveSelf () throws XMLCannotSaveException
 	{ 	XMLElement result=new XMLElement("destfreq");
 	  	result.addAttribute(new XMLAttribute("ru-type",ruType));
@@ -60,14 +61,17 @@ public class DestFrequency implements XMLSerializable
 	 	return result;
 	}
  
+    @Override
 	public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
 	{ 	// A destfrequency has no child objects
 	}
  
+    @Override
 	public String getXMLName ()
 	{ 	return parentName+".destfreq";
 	}
 	
+    @Override
 	public void setParentName (String newParentName)
 	{	this.parentName=parentName; 
 	}

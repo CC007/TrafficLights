@@ -17,13 +17,9 @@
 package com.github.cc007.trafficlights;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.*;
 
 import com.github.cc007.trafficlights.infra.*;
-import com.github.cc007.trafficlights.tools.Tool;
-import com.github.cc007.trafficlights.xml.*;
 
 /**
  *
@@ -57,6 +53,7 @@ public class MainView extends View
 
 
 	/** Draw a buffer for the current infrastructure*/
+    @Override
 	public void fillBuffer(Graphics2D g) {
 		Node[] nodes = infra.getAllNodes();
 		Road[] roads;

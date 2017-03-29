@@ -17,11 +17,7 @@
 package com.github.cc007.trafficlights.infra;
 
 import java.awt.*;
-import java.util.*;
 import java.io.*;
-import java.applet.*;
-
-import com.github.cc007.trafficlights.*;
 import com.github.cc007.trafficlights.xml.*;
 
 /**
@@ -50,6 +46,7 @@ public class CustomRoaduser extends Roaduser
 	/** Returns the ID of the vehicle. */	
 	public int getVehicle() { return vehicle; }
 	/** Returns the name of thevehicle. */
+  @Override
 	public String getVehicleName() { return CustomFactory.getVehicleName(vehicle); }
 	/** Sets the ID of the vehicle. */
 	public void setVehicle(int v) { vehicle = v; }
@@ -57,36 +54,47 @@ public class CustomRoaduser extends Roaduser
 	/** Returns the ID of the driver. */
 	public int getDriver() { return driver; }
 	/** Returns the name of the driver. */
+  @Override
 	public String getDriverName() { return CustomFactory.getPersonName(driver); }
 	/** Sets the ID of the driver. */
 	public void setDriver(int d) { driver = d; }
 
 	/** Returns an array of passenger IDs. */
 	public int[] getPassengers() { return passengers; }
+  @Override
 	public int getNumPassengers() { return passengers.length; }
 	/** Sets the list of passengers. */
 	public void setPassengers(int[] p) { passengers = p; }
 
 	/** Returns the speed of this custom. */
+  @Override
 	public int getSpeed() { return CustomFactory.getSpeed(this); }
 	/** Returns the length of this custom. */
+  @Override
 	public int getLength() { return CustomFactory.getLength(this); }
 	/** Returns the roaduser type of this custom. */
+  @Override
 	public int getType() { return CustomFactory.getType(this); }
 	/** Returns the name of this custom. */
+  @Override
 	public String getName() { return CustomFactory.getName(this); }
 	/** Returns the description of this custom. */
+  @Override
 	public String getDescription() { return CustomFactory.getDescription(this); }
 	/** Returns the picture of this custom. */
+  @Override
 	public String getPicture() { return CustomFactory.getPicture(this); }
 	/** Returns the sound of this custom. */
+  @Override
 	public String getSound() { return CustomFactory.getSound(this); }
 
 	
+  @Override
 	public void paint(Graphics g, int x, int y, float zf) {
 		paint(g,x,y,zf,(double)0.0);
 	}
 
+  @Override
 	public void paint(Graphics g, int x, int y, float zf, double dlangle)
 	{
     	g.setColor(CustomFactory.getColor(this));
@@ -113,9 +121,11 @@ public class CustomRoaduser extends Roaduser
 
 	
 	// Specific XMLSerializable implementation 
+  @Override
  	public String getXMLName() {
  		return parentName+".roaduser-custom";
  	}
+  @Override
  	public void load (XMLElement myElement, XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
  	{
  		super.load(myElement, loader);
@@ -124,6 +134,7 @@ public class CustomRoaduser extends Roaduser
 		passengers = (int[])XMLArray.loadArray(this, loader);
 	}
 
+  @Override
  	public XMLElement saveSelf () throws XMLCannotSaveException
  	{
  		XMLElement result = super.saveSelf();
@@ -132,6 +143,7 @@ public class CustomRoaduser extends Roaduser
  		return result;
  	}
 
+  @Override
  	public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
  	{
  		super.saveChilds(saver);

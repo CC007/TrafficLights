@@ -23,6 +23,7 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 
 /**
  *
@@ -93,6 +94,7 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
     /*============================================*/
  /* LOAD and SAVE                              */
  /*============================================*/
+    @Override
     public void load(XMLElement myElement, XMLLoader loader) throws XMLTreeException, IOException, XMLInvalidInputException {
         loadData.alphaNodeId = myElement.getAttribute("alpha-node").getIntValue();
         loadData.betaNodeId = myElement.getAttribute("beta-node").getIntValue();
@@ -104,6 +106,7 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
         loadData.betaLaneIds = (int[]) XMLArray.loadArray(this, loader);
     }
 
+    @Override
     public XMLElement saveSelf() throws XMLCannotSaveException {
         XMLElement result = new XMLElement("road");
         result.addAttribute(new XMLAttribute("alpha-node", alphaNode.getId()));
@@ -114,6 +117,7 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
         return result;
     }
 
+    @Override
     public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException, XMLCannotSaveException {
         XMLArray.saveArray(turns, this, saver, "turns");
         XMLArray.saveArray(getDrivelaneIdList(alphaLanes), this, saver,
@@ -122,10 +126,12 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
                 "beta-lanes");
     }
 
+    @Override
     public String getXMLName() {
         return parentName + ".road";
     }
 
+    @Override
     public void setParentName(String parentName) {
         this.parentName = parentName;
     }
@@ -148,10 +154,11 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
         int[] alphaLaneIds, betaLaneIds;
     }
 
-    public void loadSecondStage(Dictionary dictionaries) throws XMLInvalidInputException, XMLTreeException { 	// Load nodes
-        Dictionary nodeDictionary = (Dictionary) (dictionaries.get("node"));
-        alphaNode = (Node) (nodeDictionary.get(new Integer(loadData.alphaNodeId)));
-        betaNode = (Node) (nodeDictionary.get(new Integer(loadData.betaNodeId)));
+    @Override
+    public void loadSecondStage(Map maps) throws XMLInvalidInputException, XMLTreeException { 	// Load nodes
+        Map nodeMap = (Map) (maps.get("node"));
+        alphaNode = (Node) (nodeMap.get(new Integer(loadData.alphaNodeId)));
+        betaNode = (Node) (nodeMap.get(new Integer(loadData.betaNodeId)));
         /*   		System.out.println("Road:"+roadId+" alpaNodeId");
    		System.out.println(loadData.alphaNodeId+" ==> "+alphaNode);
    		System.out.println(alphaNode+" == alphaNode");
@@ -160,14 +167,14 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
    		System.out.println(betaNode+" == betaNode");
          */
         // Load lanes
-        Dictionary laneDictionary = (Dictionary) (dictionaries.get("lane"));
+        Map laneMap = (Map) (maps.get("lane"));
         alphaLanes = new DriveLane[loadData.alphaLaneIds.length];
         betaLanes = new DriveLane[loadData.betaLaneIds.length];
         for (int t = 0; t < alphaLanes.length; t++) {
-            alphaLanes[t] = (DriveLane) (laneDictionary.get(new Integer(loadData.alphaLaneIds[t])));
+            alphaLanes[t] = (DriveLane) (laneMap.get(new Integer(loadData.alphaLaneIds[t])));
         }
         for (int t = 0; t < betaLanes.length; t++) {
-            betaLanes[t] = (DriveLane) (laneDictionary.get(new Integer(loadData.betaLaneIds[t])));
+            betaLanes[t] = (DriveLane) (laneMap.get(new Integer(loadData.betaLaneIds[t])));
         }
     }
 
@@ -283,10 +290,12 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
     /*============================================*/
  /* Selectable                                 */
  /*============================================*/
+    @Override
     public Rectangle getBounds() {
         return getComplexBounds().getBounds();
     }
 
+    @Override
     public Shape getComplexBounds() {
         Area a = new Area();
         for (int i = 0; i < alphaLanes.length; i++) {
@@ -298,33 +307,42 @@ public class Road implements Selectable, XMLSerializable, TwoStageLoader {
         return a;
     }
 
+    @Override
     public int getDistance(Point p) {
         return (int) getCenterPoint().distance(p);
     }
 
+    @Override
     public Point getSelectionPoint() {
         return getCenterPoint();
     }
 
+    @Override
     public Point[] getSelectionPoints() {
         return null;
     }
 
+    @Override
     public Point getCenterPoint() {
         Rectangle r = getBounds();
         return new Point(r.x + r.width / 2, r.y + r.height / 2);
     }
 
+    @Override
     public boolean hasChildren() {
         return true;
     }
 
+    @Override
     public boolean isSelectable() {
         return true;
     }
 
-    public Iterator getChildren() {
-        return new ArrayIterator(alphaLanes, betaLanes);
+    @Override
+    public List<Selectable> getChildren() {
+        List<Selectable> children = Arrays.asList(alphaLanes);
+        children.addAll(Arrays.asList(betaLanes));
+        return children;
     }
 
     /*============================================*/

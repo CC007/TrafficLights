@@ -42,6 +42,7 @@ public class MoveAction implements ToolAction
 		model = em;
 	}
 
+    @Override
 	public boolean beingUsed() { return node != null; }
 	
 	public boolean startMove(View view, Point p) {
@@ -51,7 +52,7 @@ public class MoveAction implements ToolAction
 		
 		if (!s.isEmpty())
 		{
-			node = (Node)s.getSelectedObjects().getFirst();
+			node = (Node)s.getSelectedObjects().get(0);
 			view.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
 			startPoint = p;
 			xOffset = node.getCoord().x - p.x;
@@ -71,7 +72,9 @@ public class MoveAction implements ToolAction
 	}
 
 	public void endMove(View view, Point p) {
-		if (node == null) return;
+		if (node == null) {
+            return;
+        }
 		
 		p.x += xOffset;
 		p.y += yOffset;

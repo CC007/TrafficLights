@@ -16,8 +16,6 @@
 
 package com.github.cc007.trafficlights.xml;
 
-import java.io.EOFException;
-import java.io.InputStream;
 import java.io.IOException;
 import java.net.Socket;
 
@@ -34,6 +32,7 @@ class XMLNetReader extends XMLReader
   		this.socket=socket;
   }
   
+@Override
   public void close () throws IOException
   	{	socket.close();
 		super.close();

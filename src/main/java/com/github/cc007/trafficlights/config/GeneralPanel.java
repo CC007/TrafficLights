@@ -18,9 +18,6 @@ package com.github.cc007.trafficlights.config;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
-
-import com.github.cc007.trafficlights.*;
 import com.github.cc007.trafficlights.infra.*;
 import com.github.cc007.trafficlights.sim.*;
 import com.github.cc007.trafficlights.sim.stats.*;
@@ -107,6 +104,7 @@ public class GeneralPanel extends ConfigPanel implements ActionListener
 		reset();
 	}
 
+    @Override
 	public void reset() {
 		confd.setTitle("General configuration");
 
@@ -120,6 +118,7 @@ public class GeneralPanel extends ConfigPanel implements ActionListener
                 setAccRate();
 	}
 
+    @Override
 	public void ok() {
 		ConfigDialog.AlwaysOnTop = alwaysOnTop.getState();
 		SignController.CrossNodesSafely = safeNodeCrossing.getState();
@@ -196,10 +195,12 @@ public class GeneralPanel extends ConfigPanel implements ActionListener
 		sepChar.setText(newtext);
 	}
 
+    @Override
 	public void actionPerformed(ActionEvent e) {
-                if (e.getSource() == setSepChar)
-                   getSepChar();
-                else
-                   getMaxWait();
+                if (e.getSource() == setSepChar) {
+                    getSepChar();
+                } else {
+                    getMaxWait();
+                }
 	}
 }

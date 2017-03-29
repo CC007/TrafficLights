@@ -16,7 +16,6 @@
 
 package com.github.cc007.trafficlights.algo.tlc;
 
-import com.github.cc007.trafficlights.*;
 import com.github.cc007.trafficlights.algo.tlc.*;
 import com.github.cc007.trafficlights.infra.*;
 import com.github.cc007.trafficlights.xml.*;
@@ -88,8 +87,9 @@ public class SignController implements XMLSerializable
 		TLDecision[][] decisions = tlcontroller.decideTLs();
 		Node node = null;
 		Node[] nodes = infra.getAllNodes();
-		if (num_nodes>decisions.length)
-			System.out.println("SignController switchSigns WARNING : "+"Less decisions than nodes !!!");
+		if (num_nodes>decisions.length) {
+            System.out.println("SignController switchSigns WARNING : "+"Less decisions than nodes !!!");
+        }
 		for (int i=0; i < num_nodes; i++) {
 			node = nodes[i];
 			if (node.getType() == Node.JUNCTION) {
@@ -280,16 +280,19 @@ public class SignController implements XMLSerializable
 		return outp;
 	}
 
+    @Override
 	public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
 	{	currentSC=(Sign[][])XMLArray.loadArray(this,loader);
 	}
 
+    @Override
 	public XMLElement saveSelf () throws XMLCannotSaveException
 	{ 	XMLElement result=new XMLElement(shortXMLName);
 		result.setName(shortXMLName);
 	  	return result;
 	}
 
+    @Override
 	public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
 	{ 	for ( int x=0; x< currentSC.length ; x++)
 		{	for ( int y=0;y < currentSC[x].length ; y++ )
@@ -299,10 +302,12 @@ public class SignController implements XMLSerializable
 		XMLArray.saveArray(currentSC,this,saver,"current-sc");
 	}
 
+    @Override
 	public String getXMLName ()
 	{ 	return "model."+shortXMLName;
 	}
 
+    @Override
 	public void setParentName (String parentName) throws XMLTreeException
 	{	throw new XMLTreeException
 		("Attempt to change fixed parentName of a SignController class.");

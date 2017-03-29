@@ -17,12 +17,14 @@ package com.github.cc007.trafficlights.infra;
 
 import com.github.cc007.trafficlights.*;
 import com.github.cc007.trafficlights.xml.*;
+import java.awt.Color;
 
 import java.io.IOException;
 import java.util.*;
 import java.awt.Graphics;
-import java.awt.*;
-import java.applet.*;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Shape;
 
 /**
  *
@@ -137,6 +139,7 @@ abstract public class Roaduser implements Selectable, XMLSerializable, TwoStageL
         delay = 0;
     }
 
+    @Override
     public Object clone() {
         try {
             return super.clone();
@@ -396,39 +399,48 @@ abstract public class Roaduser implements Selectable, XMLSerializable, TwoStageL
     /*============================================*/
  /* Selectable                                 */
  /*============================================*/
+    @Override
     public Rectangle getBounds() {
         return new Rectangle(0, 0, 0, 0);
     }
 
+    @Override
     public Shape getComplexBounds() {
         return getBounds();
     }
 
+    @Override
     public int getDistance(Point p) {
         return 0;
     }
 
+    @Override
     public Point getSelectionPoint() {
         return new Point(0, 0);
     }
 
+    @Override
     public Point[] getSelectionPoints() {
         return new Point[0];
     }
 
+    @Override
     public Point getCenterPoint() {
         return new Point(0, 0);
     }
 
+    @Override
     public boolean isSelectable() {
         return false;
     }
 
+    @Override
     public boolean hasChildren() {
         return false;
     }
 
-    public Iterator getChildren() {
+    @Override
+    public List<Selectable> getChildren() {
         return null;
     }
 
@@ -447,6 +459,7 @@ abstract public class Roaduser implements Selectable, XMLSerializable, TwoStageL
     /*============================================*/
  /* Load/save                                  */
  /*============================================*/
+    @Override
     public void load(XMLElement myElement, XMLLoader loader) throws XMLTreeException, IOException, XMLInvalidInputException {
         loadData.startNodeId = myElement.getAttribute("start-node-id").getIntValue();
         loadData.destNodeId = myElement.getAttribute("dest-node-id").getIntValue();
@@ -461,6 +474,7 @@ abstract public class Roaduser implements Selectable, XMLSerializable, TwoStageL
                 myElement.getAttribute("color-blue").getIntValue());
     }
 
+    @Override
     public XMLElement saveSelf() throws XMLCannotSaveException {
         XMLElement result = new XMLElement(XMLUtils.getLastName(getXMLName()));
         result.addAttribute(new XMLAttribute("start-node-id", startNode.getId()));
@@ -478,9 +492,11 @@ abstract public class Roaduser implements Selectable, XMLSerializable, TwoStageL
         return result;
     }
 
+    @Override
     public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException, XMLCannotSaveException { 	// Roadusers don't have child objects
     }
 
+    @Override
     public void setParentName(String parentName) {
         this.parentName = parentName;
     }
@@ -490,10 +506,11 @@ abstract public class Roaduser implements Selectable, XMLSerializable, TwoStageL
         int startNodeId, destNodeId;
     }
 
-    public void loadSecondStage(Dictionary dictionaries) throws XMLInvalidInputException, XMLTreeException {
-        Dictionary nodeDictionary = (Dictionary) (dictionaries.get("node"));
-        startNode = (Node) (nodeDictionary.get(new Integer(loadData.startNodeId)));
-        destNode = (Node) (nodeDictionary.get(new Integer(loadData.destNodeId)));
+    @Override
+    public void loadSecondStage(Map maps) throws XMLInvalidInputException, XMLTreeException {
+        Map nodeMap = (Map) (maps.get("node"));
+        startNode = (Node) (nodeMap.get(new Integer(loadData.startNodeId)));
+        destNode = (Node) (nodeMap.get(new Integer(loadData.destNodeId)));
     }
 
 }

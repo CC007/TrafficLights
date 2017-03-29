@@ -21,16 +21,12 @@ import com.github.cc007.trafficlights.infra.*;
 import com.github.cc007.trafficlights.edit.*;
 import com.github.cc007.trafficlights.sim.stats.*;
 import com.github.cc007.trafficlights.algo.dp.*;
-import com.github.cc007.trafficlights.algo.heuristic.*;
 import com.github.cc007.trafficlights.config.*;
 
 import com.github.cc007.trafficlights.algo.tlc.*;
-import com.github.cc007.trafficlights.tools.*;
 import com.github.cc007.trafficlights.xml.*;
-import com.github.cc007.trafficlights.utils.Arrayutils;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 
@@ -79,8 +75,9 @@ public class SimController extends Controller implements Observer
 
 		speedChoice=new Choice();
 		Iterator it=Arrays.asList(speedTexts).iterator();
-		while (it.hasNext())
-			speedChoice.add((String)(it.next()));
+		while (it.hasNext()) {
+            speedChoice.add((String)(it.next()));
+        }
 
 		setSpeed((int)(speedTexts.length / 2));
 		setCycleCounterEnabled(true);
@@ -113,9 +110,9 @@ public class SimController extends Controller implements Observer
 
 	/** Enables or disables the cycle counter. */
 	public void setCycleCounterEnabled(boolean b)
-	{	if(b)
-			getSimModel().addObserver(this);
-		else {
+	{	if(b) {
+        getSimModel().addObserver(this);
+    } else {
 
 			setStatus("Cycle counter disabled at cycle " + getSimModel().getCurCycle() + ".");
 			getSimModel().deleteObserver(this);
@@ -231,6 +228,7 @@ public class SimController extends Controller implements Observer
 	/*============================================*/
 
 
+    @Override
 	public void load(XMLElement myElement,XMLLoader loader)
 		throws XMLTreeException, IOException, XMLInvalidInputException
 	{	super.load(myElement,loader);
@@ -242,6 +240,7 @@ public class SimController extends Controller implements Observer
 		}
 	}
 
+    @Override
 	public XMLElement saveSelf() throws XMLCannotSaveException
 	{	XMLElement result = super.saveSelf();
 		/* This code is buggy
@@ -258,13 +257,16 @@ public class SimController extends Controller implements Observer
 		return result;
 	}
 
+    @Override
 	public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
 	{ 	saver.saveObject(statsOverlay);
 	}
 
+    @Override
 	public void doSave(String filename) throws InvalidFilenameException, Exception
-	{	if(!filename.endsWith(".sim") )
-			throw new InvalidFilenameException("Filename must have .sim extension.");
+	{	if(!filename.endsWith(".sim") ) {
+        throw new InvalidFilenameException("Filename must have .sim extension.");
+    }
 		setStatus("Saving simulation to " + filename);
 		XMLSaver saver=new XMLSaver(new File(filename));
 		saveAll(saver,getSimModel());
@@ -272,9 +274,11 @@ public class SimController extends Controller implements Observer
 		setStatus("Saved simulation to " + filename);
 	}
 
+    @Override
 	public void doLoad(String filename) throws InvalidFilenameException, Exception
-	{	if(!filename.endsWith(".infra") && !filename.endsWith(".sim"))
-			throw new InvalidFilenameException("You can only load .infra and .sim files.");
+	{	if(!filename.endsWith(".infra") && !filename.endsWith(".sim")) {
+        throw new InvalidFilenameException("You can only load .infra and .sim files.");
+    }
 		stop();
 		TrackerFactory.purgeTrackers();
 		XMLLoader loader=new XMLLoader(new File(filename));
@@ -299,6 +303,7 @@ public class SimController extends Controller implements Observer
 	/*============================================*/
 
 	/** Called by observable SimModel (if view enabled). */
+    @Override
 	public void update(Observable o, Object arg)
         {
                 SimModel model = (SimModel)o;
@@ -312,20 +317,24 @@ public class SimController extends Controller implements Observer
                               ") seed:" +
                               GLDSim.seriesSeed[GLDSim.seriesSeedIndex];
                     // DOAS 06: Series information in status bar added
-                    if (curSeries > 0)
-                      status = "Series: " + curSeries + " of " + model.getNumSeries() + ", " + status;
+                    if (curSeries > 0) {
+                        status = "Series: " + curSeries + " of " + model.getNumSeries() + ", " + status;
+                    }
                     setStatus(status);
                 }
 	}
 
 	/** Returns the name of this controller extension. */
+    @Override
 	protected String appName() { return "simulator"; }
 
+    @Override
 	protected MenuBar createMenuBar() {
 		menuBar = new SimMenuBar(this, speedTexts);
 		return menuBar;
 	}
 
+    @Override
 	protected GLDToolBar createToolBar() {
 		return new SimToolBar(this);
 	}
@@ -401,6 +410,7 @@ public class SimController extends Controller implements Observer
 	}
 
 	/** Shows the file properties dialog */
+    @Override
 	public void showFilePropertiesDialog()
 	{
 		String simName = getSimModel().getSimName();
@@ -409,7 +419,7 @@ public class SimController extends Controller implements Observer
 
 		SimPropDialog propDialog = new SimPropDialog(this, simName, comments);
 
-		propDialog.show();
+		propDialog.setVisible(true);
 		if(propDialog.ok())	{
 			getSimModel().setSimName(propDialog.getSimName());
 			infra.setComments(propDialog.getComments());
@@ -418,6 +428,7 @@ public class SimController extends Controller implements Observer
 	}
 
 	/** Creates a right-click popup-menu for the given object */
+    @Override
 	public PopupMenu getPopupMenuFor(Selectable obj) throws PopupException {
 		SimPopupMenuFactory pmf = new SimPopupMenuFactory(this);
 		return pmf.getPopupMenuFor(obj);
@@ -453,8 +464,9 @@ public class SimController extends Controller implements Observer
 	/** Stops the simulation and resets the infrastructure */
 	public void stop() {
 		int cycle=getSimModel().getCurCycle() ;
-		if (cycle!=0)
-			setStatus("Stopped at cycle " + ".");
+		if (cycle!=0) {
+            setStatus("Stopped at cycle " + ".");
+        }
 		try {
 			getSimModel().pause();
 			getSimModel().reset();
@@ -507,8 +519,12 @@ public class SimController extends Controller implements Observer
                         Date   date    = new Date();
                         File   logDir  = new File(logPath);
 
-                        if (logDir.isFile())  logPath = "";   // log dir cannot be a file
-                        if (!logDir.exists()) logDir.mkdir(); // create log dir if doesn't exist
+                        if (logDir.isFile()) {
+                            logPath = "";   // log dir cannot be a file
+            }
+                        if (!logDir.exists()) {
+                            logDir.mkdir(); // create log dir if doesn't exist
+            }
 
 			for(int i=0;i<tca.length;i++) {
 				TrackingView tv = tca[i].getTrackingView();
@@ -549,8 +565,10 @@ public class SimController extends Controller implements Observer
 
 	/** Opens the editor */
 	public void openEditor() {
-		if (editController == null) editController = new EditController(new EditModel(), false);
-		editController.show();
+		if (editController == null) {
+            editController = new EditController(new EditModel(), false);
+        }
+		editController.setVisible(true);
 		editController.requestFocus();
 	}
 
@@ -566,8 +584,9 @@ public class SimController extends Controller implements Observer
 		}
 		try
 		{	ArrayList errors=(new Validation(infra)).validate();
-			if(!errors.isEmpty())
-				showError(errors.toString());
+			if(!errors.isEmpty()) {
+                showError(errors.toString());
+        }
 		}
 		catch (InfraException e)
 		{	reportError(e);

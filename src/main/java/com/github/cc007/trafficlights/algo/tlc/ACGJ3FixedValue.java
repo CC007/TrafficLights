@@ -17,16 +17,11 @@
 package com.github.cc007.trafficlights.algo.tlc;
 
 import com.github.cc007.trafficlights.*;
-import com.github.cc007.trafficlights.sim.*;
-import com.github.cc007.trafficlights.algo.tlc.*;
 import com.github.cc007.trafficlights.infra.*;
-import com.github.cc007.trafficlights.utils.*;
 import com.github.cc007.trafficlights.xml.*;
 
 import java.io.IOException;
 import java.util.Random;
-import java.util.*;
-import java.awt.Point;
 
 /** Now with extra improved but still sometimes not too great performance! */
 
@@ -74,6 +69,7 @@ public class ACGJ3FixedValue extends TLController implements InstantiationAssist
 	 *
 	 * @param i The new infrastructure for which the algorithm has to be set up
 	 */
+    @Override
 	public void setInfrastructure(Infrastructure _i)
 	{	super.setInfrastructure(_i);
 		infra = _i;
@@ -88,18 +84,20 @@ public class ACGJ3FixedValue extends TLController implements InstantiationAssist
 	 * @return Returns a double array of TLDecision's. These are tuples of a TrafficLight and the gain-value of when it's set to green.
 	 * @see gld.algo.tlc.TLDecision
 	 */
+    @Override
 	public TLDecision[][] decideTLs()
 	{
 		for(int i=0;i<num_nodes;i++) {
 			int num_tl = tld[i].length;
 			for(int j=0;j<num_tl;j++) {
 				float q = ind.getQValue(i,j);
-	    		if(trackNode!=-1)
-				if(i==trackNode) {
-					DriveLane currentlane = tld[i][j].getTL().getLane();
-					boolean[] targets = currentlane.getTargets();
-					System.out.println("node: "+i+" light: "+j+" gain: "+q+" "+targets[0]+" "+targets[1]+" "+targets[2]+" "+currentlane.getNumRoadusersWaiting());
-				}
+	    		if(trackNode!=-1) {
+                    if(i==trackNode) {
+                        DriveLane currentlane = tld[i][j].getTL().getLane();
+                        boolean[] targets = currentlane.getTargets();
+                        System.out.println("node: "+i+" light: "+j+" gain: "+q+" "+targets[0]+" "+targets[1]+" "+targets[2]+" "+currentlane.getNumRoadusersWaiting());
+                    }
+                }
 				tld[i][j].setGain(q);
 			}
 		}
@@ -107,6 +105,7 @@ public class ACGJ3FixedValue extends TLController implements InstantiationAssist
 	}
 
 	/** Resets the algorithm */
+    @Override
 	public void reset() {
 		ind.reset();
 	}
@@ -125,6 +124,7 @@ public class ACGJ3FixedValue extends TLController implements InstantiationAssist
 	 * @param _possiblelanes
 	 * @param _ranges
 	 */
+    @Override
 	public void updateRoaduserMove(Roaduser _ru, DriveLane _prevlane, Sign _prevsign, int _prevpos, DriveLane _dlanenow, Sign _signnow, int _posnow, PosMov[] posMovs, DriveLane _desired)
 	{
 		if(_prevsign == _signnow && _prevpos == _posnow) {
@@ -213,10 +213,11 @@ public class ACGJ3FixedValue extends TLController implements InstantiationAssist
 				newQ += ruW*dec;
 				dec *= dFS;
 			}
-			if((oldQ+newQ)>=100000)
-				me[node][tl][BUCK] = 10000;
-			else
-				me[node][tl][BUCK] = oldQ + newQ;
+			if((oldQ+newQ)>=100000) {
+                me[node][tl][BUCK] = 10000;
+            } else {
+                me[node][tl][BUCK] = oldQ + newQ;
+            }
 
 			return newQ + oldQ;
 		}
@@ -274,23 +275,26 @@ public class ACGJ3FixedValue extends TLController implements InstantiationAssist
 			TLDecision[] heretlds = tld[hereNodeId];
 			int num_heretlds = heretlds.length;
 			for(int i=0;i<num_heretlds;i++) {
-				if(heretlds[i].getTL()==here)
-					hereRelId = i;
+				if(heretlds[i].getTL()==here) {
+                    hereRelId = i;
+                }
 			}
 
 			TLDecision[] theretlds = tld[thereNodeId];
 			int num_theretlds = theretlds.length;
 			for(int j=0;j<num_theretlds;j++) {
 				//System.out.println("Checking: "+there+"=="+tld[thereNodeId][j].getTL());
-				if(theretlds[j].getTL()==there)
-					thereRelId = j;
+				if(theretlds[j].getTL()==there) {
+                    thereRelId = j;
+                }
 			}
 
 			float buck = me[hereNodeId][hereRelId][BUCK];
 			float curWait = me[hereNodeId][hereRelId][WAIT];
 			if(curWait>0) {
-				if(me[thereNodeId][thereRelId][BUCK] < 100000)
-					me[thereNodeId][thereRelId][BUCK] += buck/curWait;			 // Aka: make sure that lane gets mmmmooving!
+				if(me[thereNodeId][thereRelId][BUCK] < 100000) {
+                    me[thereNodeId][thereRelId][BUCK] += buck/curWait;			 // Aka: make sure that lane gets mmmmooving!
+                }
 			}
 			else {
 				//System.out.println("Something weird.");
@@ -301,28 +305,34 @@ public class ACGJ3FixedValue extends TLController implements InstantiationAssist
 
 		// XMLSerializable implementation of ACGJ3Individual
 
+        @Override
 		public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
 		{	me=(float[][][])XMLArray.loadArray(this,loader);
 		}
 
+        @Override
 		public XMLElement saveSelf () throws XMLCannotSaveException
 		{ 	XMLElement result=new XMLElement("individual");
 			return result;
 		}
 
+        @Override
 		public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
 		{	XMLArray.saveArray(me,this,saver,"me");
 		}
 
+        @Override
 		public String getXMLName ()
 		{ 	return myParentName+".individual";
 		}
 
+        @Override
 		public void setParentName (String parentName) throws XMLTreeException
 		{ 	myParentName=parentName;
 		}
 	}
 
+    @Override
 	public void showSettings(Controller c)
 	{
 		String[] descs = {"Standard weight per waiting Roaduser", "In/decrease factor for multiple waiters"};
@@ -338,6 +348,7 @@ public class ACGJ3FixedValue extends TLController implements InstantiationAssist
 	}
 	// XMLSerializable implementation
 
+    @Override
 	public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
 	{	super.load(myElement,loader);
 		num_nodes=tld.length;
@@ -346,6 +357,7 @@ public class ACGJ3FixedValue extends TLController implements InstantiationAssist
 		loader.load(this,ind=new ACGJ3FixedValueIndividual(infra));
 	}
 
+    @Override
 	public XMLElement saveSelf () throws XMLCannotSaveException
 	{ 	XMLElement result=super.saveSelf();
 		result.setName(shortXMLName);
@@ -354,17 +366,20 @@ public class ACGJ3FixedValue extends TLController implements InstantiationAssist
 	  	return result;
 	}
 
+    @Override
 	public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
 	{ 	super.saveChilds(saver);
 		saver.saveObject(ind);
 	}
 
+    @Override
 	public String getXMLName ()
 	{ 	return "model."+shortXMLName;
 	}
 
 	// InstantiationAssistant implementation
 
+    @Override
 	public Object createInstance (Class request) throws
 	      ClassNotFoundException,InstantiationException,IllegalAccessException
 	{ 	if (ACGJ3FixedValueIndividual.class.equals(request))
@@ -377,6 +392,7 @@ public class ACGJ3FixedValue extends TLController implements InstantiationAssist
 		}
 	}
 
+    @Override
 	public boolean canCreateInstance (Class request)
 	{ 	return ACGJ3FixedValueIndividual.class.equals(request);
 	}

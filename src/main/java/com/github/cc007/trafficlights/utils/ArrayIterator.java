@@ -60,7 +60,9 @@ public class ArrayIterator implements Iterator
 
     @Override
 	public Object next() throws NoSuchElementException {
-		if (!hasNext()) throw new NoSuchElementException();
+		if (!hasNext()) {
+            throw new NoSuchElementException();
+        }
 		Object o = ar[i][j++];
 		if (j >= ar[i].length) {
 			i++;

@@ -38,6 +38,7 @@ public class NodeAction implements ToolAction
 		model = m;
 	}
 	
+    @Override
 	public boolean beingUsed() { return false; }
 	
 	public void doCreateNode(View view, Point p, int type)
@@ -48,7 +49,9 @@ public class NodeAction implements ToolAction
 		int growsize = Infrastructure.blockLength * 2 + Infrastructure.blockWidth * 8 + 2;
 		r.grow(growsize, growsize);
 		s.newSelection(r);
-		if (s.getNumSelectedObjects() > 0) return;
+		if (s.getNumSelectedObjects() > 0) {
+            return;
+        }
 			
 		try {
 			model.addNode(p, type);

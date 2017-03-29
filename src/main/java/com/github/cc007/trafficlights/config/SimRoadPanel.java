@@ -19,7 +19,6 @@ package com.github.cc007.trafficlights.config;
 import java.awt.*;
 import java.awt.event.*;
 
-import com.github.cc007.trafficlights.*;
 import com.github.cc007.trafficlights.infra.*;
 import com.github.cc007.trafficlights.utils.*;
 
@@ -82,6 +81,7 @@ public class SimRoadPanel extends ConfigPanel implements ActionListener, ItemLis
 	}
 
 
+    @Override
 	public void reset() { }
 		
 	public void setRoad(Road r) {
@@ -107,20 +107,24 @@ public class SimRoadPanel extends ConfigPanel implements ActionListener, ItemLis
 		length.setText("Road is " + road.getLength() + " units long");
 	}
 
+    @Override
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
-		if (source == alphaLink)
-			confd.selectObject(road.getAlphaNode());
-		else if (source == betaLink)
-			confd.selectObject(road.getBetaNode());
+		if (source == alphaLink) {
+            confd.selectObject(road.getAlphaNode());
+        } else if (source == betaLink) {
+            confd.selectObject(road.getBetaNode());
+        }
 	}
 	
+    @Override
 	public void itemStateChanged(ItemEvent e) {
 		ItemSelectable es = e.getItemSelectable();
 		
-		if (es == alphaList)
-			confd.selectObject(road.getAlphaLanes()[alphaList.getSelectedIndex()]);
-		else if (es == betaList)
-			confd.selectObject(road.getBetaLanes()[betaList.getSelectedIndex()]);
+		if (es == alphaList) {
+            confd.selectObject(road.getAlphaLanes()[alphaList.getSelectedIndex()]);
+        } else if (es == betaList) {
+            confd.selectObject(road.getBetaLanes()[betaList.getSelectedIndex()]);
+        }
 	}
 }

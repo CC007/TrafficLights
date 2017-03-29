@@ -69,10 +69,13 @@ public class CheckMenu extends Menu implements ItemSelectable
 	}
 	
 	/** Adds given item listener */
+    @Override
 	public void addItemListener(ItemListener il) { listeners.add(il); }
 	/** Removes given item listener */
+    @Override
 	public void removeItemListener(ItemListener il) { listeners.remove(il); }
 	/** Returns an array of the objects currently selected */
+    @Override
 	public Object[] getSelectedObjects() { return selectedItems.toArray(new CheckboxMenuItem[1]); }
 	/** Returns an array of all CheckboxMenuItems in this Checkmenu */
 	public CheckboxMenuItem[] getItems() {
@@ -125,7 +128,9 @@ public class CheckMenu extends Menu implements ItemSelectable
 	 */
 	public int getIndex(CheckboxMenuItem cmi) {
 		int nritems = getItemCount();
-		for (int i=0; i < nritems; i++) if (getItem(i) == cmi) return i;
+		for (int i=0; i < nritems; i++) if (getItem(i) == cmi) {
+            return i;
+        }
 		return -1;
 	}
 
@@ -151,6 +156,7 @@ public class CheckMenu extends Menu implements ItemSelectable
 	{
 		private CheckMenu menu;
 		public Listener(CheckMenu cm) { menu = cm; }
+        @Override
 		public void itemStateChanged(ItemEvent e) {
 			boolean sendmsg = true;
 			CheckboxMenuItem cmi = (CheckboxMenuItem)e.getItemSelectable();
@@ -160,12 +166,16 @@ public class CheckMenu extends Menu implements ItemSelectable
 					deselectAll();
 					selectedIndex = getIndex(cmi);
 				}
-				if (!selectedItems.contains(cmi)) selectedItems.add(cmi);
+				if (!selectedItems.contains(cmi)) {
+                    selectedItems.add(cmi);
+                }
 			}
 			else {
 				if (!allowMultipleSelections) {
 					sendmsg = false;
-					if (selectedItems.contains(cmi)) select(cmi);
+					if (selectedItems.contains(cmi)) {
+                        select(cmi);
+                    }
 				}
 				else {
 					selectedItems.remove(cmi);

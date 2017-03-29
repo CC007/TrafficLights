@@ -22,7 +22,6 @@ import com.github.cc007.trafficlights.infra.*;
 import com.github.cc007.trafficlights.sim.*;
 import com.github.cc007.trafficlights.xml.*;
 import java.io.IOException;
-import java.util.Random;
 
 /**
  *
@@ -53,6 +52,7 @@ public class AggressiveDP extends DrivingPolicy
 	 * @param shortest All the lanes which are in a shortest path to the car's destination
 	 * @return The chosen lane.
 	 */
+    @Override
 	public DriveLane getDirectionLane(Roaduser r, DriveLane lane_now, DriveLane[] allOutgoing, DriveLane[] shortest) {
 		//Create a subset from the 2 sets allOutgoing and shortest
 		DriveLane current;
@@ -64,11 +64,12 @@ public class AggressiveDP extends DrivingPolicy
 		for(int i=0; i<allOutgoing.length; i++) {
 			current = allOutgoing[i];
 			for(int j=0; j<shortest.length; j++) {
-				if(current.getId() == shortest[j].getId())
-				    if(current.getNumRoadusersWaiting()<best_waiting) {
-					    best_lane = shortest[j];
-					    best_waiting = current.getNumRoadusersWaiting();
-				    }
+				if(current.getId() == shortest[j].getId()) {
+                    if(current.getNumRoadusersWaiting()<best_waiting) {
+                        best_lane = shortest[j];
+                        best_waiting = current.getNumRoadusersWaiting();
+                    }
+                }
 		    }
 	    }
 	    return best_lane;
@@ -90,48 +91,75 @@ public class AggressiveDP extends DrivingPolicy
 				DriveLane [] dls = r.getInboundLanes(n);
 				for (int l=0; l<dls.length; l++)
 				{
-					if (dls[l]==fromLane) fromIndex = k;
+					if (dls[l]==fromLane) {
+                        fromIndex = k;
+                    }
 				}
 				dls = r.getOutboundLanes(n);
 				for (int l=0; l<dls.length; l++)
 				{
-					if (dls[l]==toLane) toIndex = k;
+					if (dls[l]==toLane) {
+                        toIndex = k;
+                    }
 				}				
 			}
 		}
 		
-		if (fromIndex == -1) System.out.println("No fromLane");
-		if (toIndex == -1) System.out.println("No toLane");
+		if (fromIndex == -1) {
+            System.out.println("No fromLane");
+        }
+		if (toIndex == -1) {
+            System.out.println("No toLane");
+        }
 		
 		int dir = toIndex -fromIndex -1;
-		while (dir<0) dir+=4;
+		while (dir<0) {
+            dir+=4;
+        }
 		return dir;
 	}
 	
 	private boolean checkDrivelane(DriveLane testLane, DriveLane origLane, Roaduser ru, DriveLane[] shortest) throws InfraException
 	{
-		if (testLane==null) return false;
+		if (testLane==null) {
+            return false;
+        }
 
 		// Test if the drivelane has the same or more targets as the original dl.
 		boolean found = true;
 		DriveLane nextDL = getDirectionLane(ru, origLane, origLane.getSign().getNode().getOutboundLanes(), shortest);
 		int direction = determineDirection(testLane, nextDL);
-		if (origLane.getTarget(direction) && !testLane.getTarget(direction)) found = false;
+		if (origLane.getTarget(direction) && !testLane.getTarget(direction)) {
+            found = false;
+        }
 		
-		for (int i=0; i<shortest.length; i++) if (shortest[i]==testLane) found = true;
-		if (!found) return false;
+		for (int i=0; i<shortest.length; i++) if (shortest[i]==testLane) {
+            found = true;
+        }
+		if (!found) {
+            return false;
+        }
 		
 		
 		// Check wheter this roaduser may enter that road, i.e. the types should be correct.
-		if ((testLane. getType() & ru.getType())==0) return false;
+		if ((testLane. getType() & ru.getType())==0) {
+            return false;
+        }
 
 		// Is the position free?
-		if (!testLane.isPosFree(ru.getPosition(),ru.getLength())) return false;
+		if (!testLane.isPosFree(ru.getPosition(),ru.getLength())) {
+            return false;
+        }
 		
 		// Is the next position free?, otherwise it is useless...
-		if (ru.getPosition()==0) return false;
-		if (testLane.getNumRoadusersWaiting()>0)
-		  if (!testLane.isPosFree(ru.getPosition()-1,1)) return false;
+		if (ru.getPosition()==0) {
+            return false;
+        }
+		if (testLane.getNumRoadusersWaiting()>0) {
+            if (!testLane.isPosFree(ru.getPosition()-1,1)) {
+                return false;
+            }
+        }
 		
 		return true;		
 	}
@@ -153,17 +181,25 @@ public class AggressiveDP extends DrivingPolicy
 		
 		// search for this lane
 		int index=-1;
-		for (int i=0; i<lanes.length; i++) if (lanes[i]==lane) index = i;
+		for (int i=0; i<lanes.length; i++) if (lanes[i]==lane) {
+            index = i;
+        }
 		if (index==-1) 
 		{
 			lanes = r.getBetaLanes();
-			for (int i=0; i<lanes.length; i++) if (lanes[i]==lane) index=i;
+			for (int i=0; i<lanes.length; i++) if (lanes[i]==lane) {
+                index=i;
+            }
 		}
 		
 		DriveLane leftDL = null, rightDL = null;
 		
-		if (index>0) leftDL = lanes[index-1];
-		if (index<lanes.length-1) rightDL= lanes[index+1];
+		if (index>0) {
+            leftDL = lanes[index-1];
+        }
+		if (index<lanes.length-1) {
+            rightDL= lanes[index+1];
+        }
 		
 					
 		if (checkDrivelane(leftDL, lane, ru, shortest))
@@ -204,14 +240,17 @@ public class AggressiveDP extends DrivingPolicy
 	
 	// Trivial XMLSerializable implementation
 	
+    @Override
 	public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
 	{ 	System.out.println("DP AGR loaded");
 	}
 	
+    @Override
 	public XMLElement saveSelf () throws XMLCannotSaveException
 	{ 	return new XMLElement(shortXMLName);
 	}
   
+    @Override
 	public String getXMLName ()
 	{ 	return "model."+shortXMLName;
 	}

@@ -20,7 +20,6 @@ package com.github.cc007.trafficlights.config;
 import java.awt.*;
 import java.awt.event.*;
 
-import com.github.cc007.trafficlights.*;
 import com.github.cc007.trafficlights.infra.*;
 import com.github.cc007.trafficlights.utils.*;
 
@@ -120,6 +119,7 @@ public class RoaduserPanel extends ConfigPanel implements ActionListener
 
 
 
+    @Override
 	public void reset() {
 		delay.setText("" + ru.getDelay());
 	}
@@ -144,19 +144,27 @@ public class RoaduserPanel extends ConfigPanel implements ActionListener
   		Toolkit tk = Toolkit.getDefaultToolkit();
   		picture = tk.getImage(s);
 		}
-		else picture = null;
+		else {
+            picture = null;
+        }
 	}
 	
+    @Override
 	public void paint(Graphics g) {
 		super.paint(g);
-		if (picture != null)
-			g.drawImage(picture, 200, 0, this);
-		else
-			g.drawString("No picture available", 200, 20);
+		if (picture != null) {
+            g.drawImage(picture, 200, 0, this);
+        } else {
+            g.drawString("No picture available", 200, 20);
+        }
 	}
 	
+    @Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == start) confd.selectObject(ru.getStartNode());
-		else confd.selectObject(ru.getDestNode());
+		if (e.getSource() == start) {
+            confd.selectObject(ru.getStartNode());
+        } else {
+            confd.selectObject(ru.getDestNode());
+        }
 	}
 }

@@ -16,7 +16,6 @@ package com.github.cc007.trafficlights.sim;
 
 import com.github.cc007.trafficlights.GLDSim;
 import com.github.cc007.trafficlights.Model;
-import com.github.cc007.trafficlights.GLDException;
 
 import com.github.cc007.trafficlights.algo.dp.*;
 import com.github.cc007.trafficlights.algo.tlc.*;
@@ -26,8 +25,6 @@ import com.github.cc007.trafficlights.utils.Arrayutils;
 import com.github.cc007.trafficlights.utils.NumberDispenser;
 import com.github.cc007.trafficlights.xml.*;
 
-import java.awt.Point;
-import java.awt.Color;
 import java.io.IOException;
 import java.util.*;
 
@@ -115,6 +112,7 @@ public class SimModel extends Model implements XMLSerializable {
         controller = sc;
     }
 
+    @Override
     public void setInfrastructure(Infrastructure i) {
         pause();
 
@@ -1004,6 +1002,7 @@ public class SimModel extends Model implements XMLSerializable {
         /**
          * Invokes Model.doStep() and sleeps for sleepTime milliseconds
          */
+        @Override
         public void run() {
             while (alive) {
                 try {
@@ -1025,21 +1024,22 @@ public class SimModel extends Model implements XMLSerializable {
     }
 
     // Some XMLSerializable stuff
+    @Override
     public void load(XMLElement myElement, XMLLoader loader) throws
             XMLTreeException, IOException, XMLInvalidInputException {
         super.load(myElement, loader);
         setInfrastructure(infra);
-        Dictionary loadDictionary;
+        Map loadMap;
         try {
-            loadDictionary = infra.getMainDictionary();
+            loadMap = infra.getMainMap();
         } catch (InfraException ohNo) {
             throw new XMLInvalidInputException(
-                    "This is weird. The infra can't make a dictionary for the second "
+                    "This is weird. The infra can't make a map for the second "
                     + "stage loader of the algorithms. Like : " + ohNo);
         }
-        Dictionary infraDictionary = new Hashtable();
-        infraDictionary.put("infra", infra);
-        loadDictionary.put("infra", infraDictionary);
+        Map infraMap = new HashMap();
+        infraMap.put("infra", infra);
+        loadMap.put("infra", infraMap);
         boolean savedBySim = ("simulator").equals(myElement.getAttribute(
                 "saved-by").getValue());
         if (savedBySim) {
@@ -1058,7 +1058,7 @@ public class SimModel extends Model implements XMLSerializable {
                         "Problem while TLC algorithm was processing infrastructure :"
                         + e2);
             }
-            tlc.loadSecondStage(loadDictionary);
+            tlc.loadSecondStage(loadMap);
             DPFactory dpFactory = new DPFactory(this, tlc);
             try {
                 dp = dpFactory.getInstance(dpFactory.getNumberByXMLTagName(loader.getNextElementName()));
@@ -1068,7 +1068,7 @@ public class SimModel extends Model implements XMLSerializable {
                 throw new XMLInvalidInputException("Problem with creating DP in SimModel."
                         + "Could not generate instance of DP type :" + e);
             }
-            dp.loadSecondStage(loadDictionary);
+            dp.loadSecondStage(loadMap);
             loader.load(this, sgnctrl);
             sgnctrl.setTLC(tlc);
         } else {
@@ -1079,6 +1079,7 @@ public class SimModel extends Model implements XMLSerializable {
         }
     }
 
+    @Override
     public XMLElement saveSelf() {
         XMLElement result = super.saveSelf();
         result.addAttribute(new XMLAttribute("sim-name", simName));
@@ -1088,6 +1089,7 @@ public class SimModel extends Model implements XMLSerializable {
         return result;
     }
 
+    @Override
     public void saveChilds(XMLSaver saver) throws IOException, XMLTreeException,
             XMLCannotSaveException {
         super.saveChilds(saver);

@@ -39,11 +39,15 @@ public class ZoomAction implements ToolAction
 		controller = con;
 	}
 	
+    @Override
 	public boolean beingUsed() { return false; }
 	
 	public void doZoom(View view, Point p, int type)
 	{
-		if (type == IN) controller.zoomIn(p);
-		else controller.zoomOut(p);
+		if (type == IN) {
+            controller.zoomIn(p);
+        } else {
+            controller.zoomOut(p);
+        }
 	}
 }

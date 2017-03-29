@@ -68,7 +68,7 @@ public class Validation
 
     public ArrayList validate() throws InfraException
     {
-        ArrayList errors = new ArrayList();
+        ArrayList<String> errors = new ArrayList<>();
 
         SpecialNode[] specialNodes = infra.getSpecialNodes();
         Node[] nodes = infra.getAllNodes();
@@ -92,7 +92,7 @@ public class Validation
         }
 
         // Add ID's etc.
-        ArrayList addErrors = addIDs();
+        ArrayList<String> addErrors = addIDs();
         errors.addAll(addErrors);
 
         // ** Describe the infrastructure for descriptive-purposes:
@@ -177,14 +177,14 @@ public class Validation
         // Check the infrastructure:
         //  numspecialNodesodes >=2
         //  nodes should have at least 1 road connected to it
-        ArrayList chInfErrors = checkInfra();
+        ArrayList<String> chInfErrors = checkInfra();
         if (chInfErrors.size() > 0)
         {
             errors.add("ERROR(S) found in infrastructure-checking:");
             errors.addAll(chInfErrors);
         }
 
-        ArrayList spFreqErrors = checkSpawnFreqs();
+        ArrayList<String> spFreqErrors = checkSpawnFreqs();
 
         if (spFreqErrors.size() > 0)
         {
@@ -192,7 +192,7 @@ public class Validation
             errors.addAll(spFreqErrors);
         }
 
-        ArrayList turnJustErrors = turnJustification();
+        ArrayList<String> turnJustErrors = turnJustification();
         if (turnJustErrors.size() > 0)
         {
             errors.add("ERROR(S) found in turn Justification:");
@@ -282,9 +282,9 @@ public class Validation
         return errs;
     }
 
-    private ArrayList addIDs() throws InfraException
+    private ArrayList<String> addIDs() throws InfraException
     {
-        ArrayList errors = new ArrayList();
+        ArrayList<String> errors = new ArrayList<>();
 
         int nodeIDCount = 0;
         int roadID = 0;
@@ -340,9 +340,9 @@ public class Validation
 
 
     // Check for each type wheter the turns are correct or not
-    private ArrayList turnJustification() throws InfraException
+    private ArrayList<String> turnJustification() throws InfraException
     {
-        ArrayList errors = new ArrayList();
+        ArrayList<String> errors = new ArrayList<>();
         Node[] nodes = infra.getAllNodes();
         int num_nodes = nodes.length;
 
@@ -375,10 +375,10 @@ public class Validation
 
                     boolean[] targets = dlanes[k].getTargets();
                     boolean[] dtargets = new boolean[3];
-                    dtargets[0] = targets[0] ? true : false;
-                    dtargets[1] = targets[1] ? true : false;
-                    dtargets[2] = targets[2] ? true : false;
-                    int check_index = -1;
+                    dtargets[0] = targets[0];
+                    dtargets[1] = targets[1];
+                    dtargets[2] = targets[2];
+                    int check_index;
                     int num_turns = 0;
 
                     if (danode instanceof Junction)
@@ -533,9 +533,9 @@ public class Validation
         return errors;
     }
 
-    private ArrayList checkInfra() throws InfraException
+    private ArrayList<String> checkInfra() throws InfraException
     {
-        ArrayList errors = new ArrayList();
+        ArrayList<String> errors = new ArrayList<>();
         if (infra.getNumSpecialNodes() < 2)
         {
             errors.add(
@@ -595,9 +595,9 @@ public class Validation
                                            {new SpawnFrequency(0, 0.0f),
                                            new SpawnFrequency(1, 0.0f)};
 
-    private ArrayList checkSpawnFreqs() throws InfraException
+    private ArrayList<String> checkSpawnFreqs() throws InfraException
     {
-        ArrayList errors = new ArrayList();
+        ArrayList<String> errors = new ArrayList<>();
 
         EdgeNode[] edgnds = infra.getEdgeNodes_();
         for (int i = 0; i < edgnds.length; i++)

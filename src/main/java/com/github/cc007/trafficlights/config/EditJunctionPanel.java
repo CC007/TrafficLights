@@ -19,7 +19,6 @@ package com.github.cc007.trafficlights.config;
 import java.awt.*;
 import java.awt.event.*;
 
-import com.github.cc007.trafficlights.*;
 import com.github.cc007.trafficlights.infra.*;
 import com.github.cc007.trafficlights.utils.*;
 
@@ -66,6 +65,7 @@ public class EditJunctionPanel extends ConfigPanel implements ActionListener
 		setJunction(j);
 	}
 	
+    @Override
 	public void reset() {
 		Road[] roads = junction.getAllRoads();
 		
@@ -90,9 +90,12 @@ public class EditJunctionPanel extends ConfigPanel implements ActionListener
 		reset();
 	}
 	
+    @Override
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
 		for (int i=0; i < 4; i++)
-			if (source == roadLinks[i]) confd.selectObject(junction.getAllRoads()[i]);
+			if (source == roadLinks[i]) {
+                confd.selectObject(junction.getAllRoads()[i]);
+        }
 	}
 }

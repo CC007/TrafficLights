@@ -77,19 +77,22 @@ public class TrackerFactory
 		}
 
 		ExtendedTrackingView view = null;
-		if(type == TOTAL_JUNCTION)
-			view = new AllJunctionsTrackingView(model.getCurCycle(), model);
-		else if(type == TOTAL_WAIT)
-			view = new TotalWaitTrackingView(model.getCurCycle(), model);
-		else if(type == TOTAL_ROADUSERS)
-			view = new TotalRoadusersTrackingView(model.getCurCycle(), model);
-		else if(type == ACCIDENTS_COUNT)
-			view = new AccidentsCountTrackingView(model.getCurCycle(), model);
-		else if(type == REMOVEDCARS_COUNT)
-			view = new RemovedCarsTrackingView(model.getCurCycle(), model);
+		if(type == TOTAL_JUNCTION) {
+            view = new AllJunctionsTrackingView(model.getCurCycle(), model);
+        } else if(type == TOTAL_WAIT) {
+            view = new TotalWaitTrackingView(model.getCurCycle(), model);
+        } else if(type == TOTAL_ROADUSERS) {
+            view = new TotalRoadusersTrackingView(model.getCurCycle(), model);
+        } else if(type == ACCIDENTS_COUNT) {
+            view = new AccidentsCountTrackingView(model.getCurCycle(), model);
+        } else if(type == REMOVEDCARS_COUNT) {
+            view = new RemovedCarsTrackingView(model.getCurCycle(), model);
+        }
 
 
-		if(view == null) throw new GLDException("Invalid tracker type!");
+		if(view == null) {
+            throw new GLDException("Invalid tracker type!");
+        }
 		return genExtTracker(model, controller, view);
 	}
 
@@ -107,12 +110,15 @@ public class TrackerFactory
 			return genTracker(model, controller, view);
 		}
 		ExtendedTrackingView view = null;
-		if(type == SPECIAL_WAIT)
-			view = new SpecialNodeWaitTrackingView(model.getCurCycle(), node);
-		else if(type == SPECIAL_ROADUSERS)
-			view = new NodeRoadusersTrackingView(model.getCurCycle(), node);
+		if(type == SPECIAL_WAIT) {
+            view = new SpecialNodeWaitTrackingView(model.getCurCycle(), node);
+    } else if(type == SPECIAL_ROADUSERS) {
+        view = new NodeRoadusersTrackingView(model.getCurCycle(), node);
+    }
 
-		if(view == null) throw new GLDException("Invalid tracker type!");
+		if(view == null) {
+            throw new GLDException("Invalid tracker type!");
+    }
 		return genExtTracker(model, controller, view);
 	}
 
@@ -122,12 +128,15 @@ public class TrackerFactory
  	public static TrackingController showTracker(SimModel model, SimController controller, Junction junction, int type) throws GLDException
 	{
 		ExtendedTrackingView view = null;
-		if(type == JUNCTION_WAIT)
-			view = new JunctionWaitTrackingView(model.getCurCycle(), junction);
-		else if(type == JUNCTION_ROADUSERS)
-			view = new NodeRoadusersTrackingView(model.getCurCycle(), junction);
+		if(type == JUNCTION_WAIT) {
+            view = new JunctionWaitTrackingView(model.getCurCycle(), junction);
+        } else if(type == JUNCTION_ROADUSERS) {
+            view = new NodeRoadusersTrackingView(model.getCurCycle(), junction);
+        }
 
-		if(view == null) throw new GLDException("Invalid tracker type!");
+		if(view == null) {
+            throw new GLDException("Invalid tracker type!");
+        }
 		return genExtTracker(model, controller, view);
 	}
 
@@ -149,22 +158,25 @@ public class TrackerFactory
 	public static void purgeTrackers()
 	{
 		Iterator it = trackingControllers.iterator();
-		while(it.hasNext())
-			((TrackingController)it.next()).closeWindow();
+		while(it.hasNext()) {
+            ((TrackingController)it.next()).closeWindow();
+        }
 	}
 
 	public static void disableTrackerViews()
 	{
 		Iterator it = trackingControllers.iterator();
-		while(it.hasNext())
-			((TrackingController)it.next()).setViewEnabled(false);
+		while(it.hasNext()) {
+            ((TrackingController)it.next()).setViewEnabled(false);
+        }
 	}
 
 	public static void resetTrackers()
 	{
 		Iterator it = trackingControllers.iterator();
-		while(it.hasNext())
-			((TrackingController)it.next()).reset();
+		while(it.hasNext()) {
+            ((TrackingController)it.next()).reset();
+        }
 	}
 
 	public static TrackingController[] getTrackingControllers()

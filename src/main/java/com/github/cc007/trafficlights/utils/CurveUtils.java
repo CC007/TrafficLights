@@ -46,9 +46,9 @@ public class CurveUtils
    		Point p12 = new Point((int)(p1.x + 1000 * Math.cos(ar1)),(int)(p1.y - 1000 * Math.sin(ar1)));
    		Point p22 = new Point((int)(p2.x + 1000 * Math.cos(ar2)),(int)(p2.y - 1000 * Math.sin(ar2)));
    		double m1,m2,b1,b2,px,py;
-   		if(p1.x == p12.x && p2.x == p22.x)
-			return new Point((int)((p1.x + p2.x) / 2) + 2,(int)((p1.y + p2.y) / 2) + 2);
-   		else if(p1.x == p12.x)
+   		if(p1.x == p12.x && p2.x == p22.x) {
+            return new Point((int)((p1.x + p2.x) / 2) + 2,(int)((p1.y + p2.y) / 2) + 2);
+           } else if(p1.x == p12.x)
 	   	{
 			m2 = (double)(p22.y - p2.y) / (p22.x - p2.x);
 			b2 = (double)p2.y - (m2 * p2.x);
@@ -66,8 +66,9 @@ public class CurveUtils
 		{
 			m1 = (double)(p12.y - p1.y) / (p12.x - p1.x);
 			m2 = (double)(p22.y - p2.y) / (p22.x - p2.x);
-			if(m1==m2)
-				return new Point((int)((p1.x + p2.x) / 2),(int)((p1.y + p2.y) / 2));
+			if(m1==m2) {
+                return new Point((int)((p1.x + p2.x) / 2),(int)((p1.y + p2.y) / 2));
+               }
 			b1 = (double)p1.y - (m1 * p1.x);
 			b2 = (double)p2.y - (m2 * p2.x);
 			px = (b2 - b1) / (m1 - m2);
@@ -81,8 +82,9 @@ public class CurveUtils
 	{
 		Point tp = new Point((int)(p1.x + p1.distance(p2) * Math.cos(a1)),(int)(p1.y - p1.distance(p2) * Math.sin(a1)));
 		Rectangle r = new Rectangle(p2.x - 10, p2.y - 10, 20, 20);
-		if(r.contains(tp))
-			return new TurnCurve(p1,p2);
+		if(r.contains(tp)) {
+            return new TurnCurve(p1,p2);
+        }
 		Point ip = calcIntersect(p1,p2,a1,a2);
 		return new TurnCurve(p1,ip,p2);
 	}
@@ -144,8 +146,9 @@ public class CurveUtils
 		c.rewind();
 		Point p;
 		points.add(c.getFirst());
-		while((p = c.next()) != null)
-			points.add(p);
+		while((p = c.next()) != null) {
+            points.add(p);
+        }
 		double d = 0.0;
 		for(int i = 1; i < points.size(); i++)
 		{
@@ -164,13 +167,15 @@ public class CurveUtils
 	 */
 	public static int calcPathSteps(TurnCurve c)
 	{
-		if(c.isStraight())
-			return (int)(c.getFirst().distance(c.getLast()));
+		if(c.isStraight()) {
+            return (int)(c.getFirst().distance(c.getLast()));
+        }
 		c.rewind();
 		int n = 0;
 		Point p;
-		while((p = c.next()) != null)
-			n++;
+		while((p = c.next()) != null) {
+            n++;
+        }
 		return n;
 	}
 	
@@ -191,10 +196,12 @@ public class CurveUtils
 			double dy = (double)(c.getLast().y - c.getFirst().y) / (double)((double)c.getFirst().distance(c.getLast()) / (double)step);
 			Point p = new Point((int)((double)c.getFirst().x + dx * (double)index),
 				  	            (int)((double)c.getFirst().y + dy * (double)index));
-			if(c.getFirst().distance(p) > c.getFirst().distance(c.getLast()))
-				return c.getLast();
-			if(c.getLast().distance(p) > c.getLast().distance(c.getFirst()))
-				return c.getFirst();			
+			if(c.getFirst().distance(p) > c.getFirst().distance(c.getLast())) {
+                return c.getLast();
+            }
+			if(c.getLast().distance(p) > c.getLast().distance(c.getFirst())) {
+                return c.getFirst();
+            }			
 			return p;
 		}
 		Point p;
@@ -203,8 +210,9 @@ public class CurveUtils
 		while((p = c.next()) != null)
 		{
 			pos += p.distance(q);
-			if(pos >= index * step)
-				return p;
+			if(pos >= index * step) {
+                return p;
+            }
 			q = p;
 		}
 		return c.getLast();
@@ -241,10 +249,11 @@ public class CurveUtils
 		}
 		if(p2.y - p1.y == 0)
 		{
-			if(p1.x > p2.x)
-				return (double)(-Math.PI * 0.5);
-			else
-				return (double)(Math.PI * 0.5);
+			if(p1.x > p2.x) {
+                return (double)(-Math.PI * 0.5);
+            } else {
+                return (double)(Math.PI * 0.5);
+            }
 		}
 		double a = Math.atan((double)(p2.x - p1.x) / (double)(p2.y - p1.y));
 		return a;
@@ -276,10 +285,11 @@ public class CurveUtils
 		}
 		if(p2.y - p1.y == 0)
 		{
-			if(p1.x > p2.x)
-				return (double)(-Math.PI * 0.5);
-			else
-				return (double)(Math.PI * 0.5);
+			if(p1.x > p2.x) {
+                return (double)(-Math.PI * 0.5);
+            } else {
+                return (double)(Math.PI * 0.5);
+            }
 		}
 		return Math.atan((double)(p2.x - p1.x) / (double)(p2.y - p1.y));
 	}

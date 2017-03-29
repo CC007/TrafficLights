@@ -17,15 +17,12 @@
 package com.github.cc007.trafficlights.algo.tlc;
 
 import com.github.cc007.trafficlights.*;
-import com.github.cc007.trafficlights.sim.*;
 import com.github.cc007.trafficlights.algo.tlc.*;
 import com.github.cc007.trafficlights.infra.*;
-import com.github.cc007.trafficlights.utils.*;
 import com.github.cc007.trafficlights.xml.*;
 
 import java.io.IOException;
 import java.util.*;
-import java.awt.Point;
 
 /* This algorithm should optimize waitingtimes considerably. Right now we are aware of some possible issues.
  * Gains do rise too high, but only under certain specific very busy situations. If you lower the spawning-rates
@@ -75,6 +72,7 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
         super(infra);
     }
 
+    @Override
     public void setInfrastructure(Infrastructure infra) {
         super.setInfrastructure(infra);
 
@@ -153,6 +151,7 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
      * reward (Q) value, for it to be green
      * @see gld.algo.tlc.TLDecision
      */
+    @Override
     public TLDecision[][] decideTLs() {
         int num_dec, currenttlID, waitingsize, pos, destID;
         float gain = 0, passenger_factor;
@@ -203,6 +202,7 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
         return tld;
     }
 
+    @Override
     public void updateRoaduserMove(Roaduser ru, DriveLane prevlane, Sign prevsign, int prevpos, DriveLane dlanenow, Sign signnow, int posnow, PosMov[] posMovs, DriveLane desired, int penalty) {
         // Roaduser has just left the building
         if (dlanenow == null || signnow == null) {
@@ -491,6 +491,7 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
         }
     }
 
+    @Override
     public float getColearnValue(Sign sign_new, Sign sign, Node destination, int pos) {
         int Ktl = sign.getLane().getNumRoadusersWaiting();
         int tlId = sign.getId();
@@ -558,6 +559,7 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
             return value;
         }
 
+        @Override
         public boolean equals(Object other) {
             if (other != null && other instanceof CountEntry) {
                 CountEntry countnew = (CountEntry) other;
@@ -612,6 +614,7 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
         }
 
         // XMLSerializable implementation of CountEntry
+        @Override
         public void load(XMLElement myElement, XMLLoader loader) throws XMLTreeException, IOException, XMLInvalidInputException {
             pos = myElement.getAttribute("pos").getIntValue();
             loadData.oldTlId = myElement.getAttribute("tl-id").getIntValue();
@@ -623,6 +626,7 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
             value = myElement.getAttribute("value").getIntValue();
         }
 
+        @Override
         public XMLElement saveSelf() throws XMLCannotSaveException {
             XMLElement result = new XMLElement("count");
             result.addAttribute(new XMLAttribute("tl-id", tl.getId()));
@@ -633,20 +637,23 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
             result.addAttribute(new XMLAttribute("new-pos", pos_new));
             result.addAttribute(new XMLAttribute("ktl", Ktl));
             result.addAttribute(new XMLAttribute("value", value));
-            if (!infrastructure.laneDictionary.containsKey(new Integer(tl.getId()))) {
+            if (!infrastructure.laneMap.containsKey(new Integer(tl.getId()))) {
                 System.out.println("WARNING : Unknown Trafficlight ID " + tl.getId()
                         + " in TC3$CountEntry. Loading will go wrong");
             }
             return result;
         }
 
+        @Override
         public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException, XMLCannotSaveException { 	// A count entry has no child objects
         }
 
+        @Override
         public String getXMLName() {
             return parentName + ".count";
         }
 
+        @Override
         public void setParentName(String parentName) {
             this.parentName = parentName;
         }
@@ -657,19 +664,20 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
             int oldTlId, newTlId, destNodeId;
         }
 
-        public void loadSecondStage(Dictionary dictionaries) throws XMLInvalidInputException {
-            Dictionary laneDictionary = (Dictionary) (dictionaries.get("lane")),
-                    nodeDictionary = (Dictionary) (dictionaries.get("node"));
-            DriveLane lane = (DriveLane) (laneDictionary.get(new Integer(loadData.oldTlId)));
-            if (!((Hashtable) (laneDictionary)).containsKey(new Integer(loadData.oldTlId))) {
+        @Override
+        public void loadSecondStage(Map maps) throws XMLInvalidInputException {
+            Map laneMap = (Map) (maps.get("lane")),
+                    nodeMap = (Map) (maps.get("node"));
+            DriveLane lane = (DriveLane) (laneMap.get(new Integer(loadData.oldTlId)));
+            if (!((HashMap) (laneMap)).containsKey(new Integer(loadData.oldTlId))) {
                 throw new XMLInvalidInputException("Trying to load non-existant TL with id "
                         + loadData.oldTlId);
             }
-            tl = ((DriveLane) (laneDictionary.get(
+            tl = ((DriveLane) (laneMap.get(
                     new Integer(loadData.oldTlId)))).getSign();
-            tl_new = ((DriveLane) (laneDictionary.get(
+            tl_new = ((DriveLane) (laneMap.get(
                     new Integer(loadData.newTlId)))).getSign();
-            destination = (Node) (nodeDictionary.get(
+            destination = (Node) (nodeMap.get(
                     new Integer(loadData.destNodeId)));
         }
 
@@ -708,6 +716,7 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
             return value;
         }
 
+        @Override
         public boolean equals(Object other) {
             if (other != null && other instanceof PEntry) {
                 PEntry pnew = (PEntry) other;
@@ -743,6 +752,7 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
         }
 
         // XMLSerializable implementation of PEntry
+        @Override
         public void load(XMLElement myElement, XMLLoader loader) throws XMLTreeException, IOException, XMLInvalidInputException {
             pos = myElement.getAttribute("pos").getIntValue();
             loadData.oldTlId = myElement.getAttribute("tl-id").getIntValue();
@@ -753,6 +763,7 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
             value = myElement.getAttribute("value").getFloatValue();
         }
 
+        @Override
         public XMLElement saveSelf() throws XMLCannotSaveException {
             XMLElement result = new XMLElement("pval");
             result.addAttribute(new XMLAttribute("tl-id", tl.getId()));
@@ -765,13 +776,16 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
             return result;
         }
 
+        @Override
         public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException, XMLCannotSaveException { 	// A P-entry has no child objects
         }
 
+        @Override
         public String getXMLName() {
             return parentName + ".pval";
         }
 
+        @Override
         public void setParentName(String parentName) {
             this.parentName = parentName;
         }
@@ -782,14 +796,15 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
             int oldTlId, newTlId, destNodeId;
         }
 
-        public void loadSecondStage(Dictionary dictionaries) {
-            Dictionary laneDictionary = (Dictionary) (dictionaries.get("lane")),
-                    nodeDictionary = (Dictionary) (dictionaries.get("node"));
-            tl = ((DriveLane) (laneDictionary.get(
+        @Override
+        public void loadSecondStage(Map maps) {
+            Map laneMap = (Map) (maps.get("lane")),
+                    nodeMap = (Map) (maps.get("node"));
+            tl = ((DriveLane) (laneMap.get(
                     new Integer(loadData.oldTlId)))).getSign();
-            tl_new = ((DriveLane) (laneDictionary.get(
+            tl_new = ((DriveLane) (laneMap.get(
                     new Integer(loadData.newTlId)))).getSign();
-            destination = (Node) (nodeDictionary.get(
+            destination = (Node) (nodeMap.get(
                     new Integer(loadData.destNodeId)));
         }
     }
@@ -829,6 +844,7 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
             return value;
         }
 
+        @Override
         public boolean equals(Object other) {
             if (other != null && other instanceof PKtlEntry) {
                 PKtlEntry pnew = (PKtlEntry) other;
@@ -875,6 +891,7 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
         }
 
         // XMLSerializable implementation of PKtlEntry
+        @Override
         public void load(XMLElement myElement, XMLLoader loader) throws XMLTreeException, IOException, XMLInvalidInputException {
             pos = myElement.getAttribute("pos").getIntValue();
             loadData.oldTlId = myElement.getAttribute("tl-id").getIntValue();
@@ -886,6 +903,7 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
             value = myElement.getAttribute("value").getFloatValue();
         }
 
+        @Override
         public XMLElement saveSelf() throws XMLCannotSaveException {
             XMLElement result = new XMLElement("pktlval");
             result.addAttribute(new XMLAttribute("tl-id", tl.getId()));
@@ -899,13 +917,16 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
             return result;
         }
 
+        @Override
         public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException, XMLCannotSaveException { 	// A Pktl-entry has no child objects
         }
 
+        @Override
         public String getXMLName() {
             return parentName + ".pktlval";
         }
 
+        @Override
         public void setParentName(String parentName) {
             this.parentName = parentName;
         }
@@ -916,14 +937,15 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
             int oldTlId, newTlId, destNodeId;
         }
 
-        public void loadSecondStage(Dictionary dictionaries) throws XMLInvalidInputException, XMLTreeException {
-            Dictionary laneDictionary = (Dictionary) (dictionaries.get("lane")),
-                    nodeDictionary = (Dictionary) (dictionaries.get("node"));
-            tl = ((DriveLane) (laneDictionary.get(
+        @Override
+        public void loadSecondStage(Map maps) throws XMLInvalidInputException, XMLTreeException {
+            Map laneMap = (Map) (maps.get("lane")),
+                    nodeMap = (Map) (maps.get("node"));
+            tl = ((DriveLane) (laneMap.get(
                     new Integer(loadData.oldTlId)))).getSign();
-            tl_new = ((DriveLane) (laneDictionary.get(
+            tl_new = ((DriveLane) (laneMap.get(
                     new Integer(loadData.newTlId)))).getSign();
-            destination = (Node) (nodeDictionary.get(
+            destination = (Node) (nodeMap.get(
                     new Integer(loadData.destNodeId)));
         }
 
@@ -949,6 +971,7 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
             return pos;
         }
 
+        @Override
         public boolean equals(Object other) {
             if (other != null && other instanceof Target) {
                 Target qnew = (Target) other;
@@ -964,11 +987,13 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
         }
 
         // XMLSerializable implementation of Target
+        @Override
         public void load(XMLElement myElement, XMLLoader loader) throws XMLTreeException, IOException, XMLInvalidInputException {
             pos = myElement.getAttribute("pos").getIntValue();
             loadData.tlId = myElement.getAttribute("tl-id").getIntValue();
         }
 
+        @Override
         public XMLElement saveSelf() throws XMLCannotSaveException {
             XMLElement result = new XMLElement("target");
             result.addAttribute(new XMLAttribute("tl-id", tl.getId()));
@@ -976,13 +1001,16 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
             return result;
         }
 
+        @Override
         public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException, XMLCannotSaveException { 	// A Target has no child objects
         }
 
+        @Override
         public String getXMLName() {
             return parentName + ".target";
         }
 
+        @Override
         public void setParentName(String parentName) {
             this.parentName = parentName;
         }
@@ -993,14 +1021,16 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
             int tlId;
         }
 
-        public void loadSecondStage(Dictionary dictionaries) {
-            Dictionary laneDictionary = (Dictionary) (dictionaries.get("lane"));
-            tl = ((DriveLane) (laneDictionary.get(
+        @Override
+        public void loadSecondStage(Map maps) {
+            Map laneMap = (Map) (maps.get("lane"));
+            tl = ((DriveLane) (laneMap.get(
                     new Integer(loadData.tlId)))).getSign();
         }
 
     }
 
+    @Override
     public void load(XMLElement myElement, XMLLoader loader) throws XMLTreeException, IOException, XMLInvalidInputException {
         super.load(myElement, loader);
         gamma = myElement.getAttribute("gamma").getFloatValue();
@@ -1014,6 +1044,7 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
         pKtl_table = (ArrayList[][][]) XMLArray.loadArray(this, loader, this);
     }
 
+    @Override
     public XMLElement saveSelf() throws XMLCannotSaveException {
         XMLElement result = super.saveSelf();
         result.setName(shortXMLName);
@@ -1022,6 +1053,7 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
         return result;
     }
 
+    @Override
     public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException, XMLCannotSaveException {
         super.saveChilds(saver);
         XMLArray.saveArray(q_table, this, saver, "q-table");
@@ -1033,42 +1065,46 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
         XMLArray.saveArray(pKtl_table, this, saver, "pKtl_table");
     }
 
+    @Override
     public String getXMLName() {
         return "model." + shortXMLName;
     }
 
-    public void loadSecondStage(Dictionary dictionaries) throws XMLInvalidInputException, XMLTreeException {
-        super.loadSecondStage(dictionaries);
+    @Override
+    public void loadSecondStage(Map maps) throws XMLInvalidInputException, XMLTreeException {
+        super.loadSecondStage(maps);
         for (int i = 0; i < count.length; i++) {
             for (int j = 0; j < count[i].length; j++) {
                 for (int k = 0; k < count[i][j].length; k++) {
-                    XMLUtils.loadSecondStage(count[i][j][k].iterator(), dictionaries);
+                    XMLUtils.loadSecondStage(count[i][j][k], maps);
                 }
             }
         }
         for (int i = 0; i < p_table.length; i++) {
             for (int j = 0; j < p_table[i].length; j++) {
                 for (int k = 0; k < p_table[i][j].length; k++) {
-                    XMLUtils.loadSecondStage(p_table[i][j][k].iterator(), dictionaries);
+                    XMLUtils.loadSecondStage(p_table[i][j][k], maps);
                 }
             }
         }
         for (int i = 0; i < pKtl_table.length; i++) {
             for (int j = 0; j < pKtl_table[i].length; j++) {
                 for (int k = 0; k < pKtl_table[i][j].length; k++) {
-                    XMLUtils.loadSecondStage(pKtl_table[i][j][k].iterator(), dictionaries);
+                    XMLUtils.loadSecondStage(pKtl_table[i][j][k], maps);
                 }
             }
         }
         System.out.println("TC3 second stage load finished.");
     }
 
+    @Override
     public boolean canCreateInstance(Class request) {
         return CountEntry.class.equals(request)
                 || PEntry.class.equals(request)
                 || PKtlEntry.class.equals(request);
     }
 
+    @Override
     public Object createInstance(Class request) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         if (CountEntry.class.equals(request)) {
             return new CountEntry();
@@ -1083,6 +1119,7 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
     }
 
     // Config dingetje
+    @Override
     public void showSettings(Controller c) {
         String[] descs = {"Gamma (discount factor)", "Random decision chance"};
         float[] floats = {gamma, random_chance};

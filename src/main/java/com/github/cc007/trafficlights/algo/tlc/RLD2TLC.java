@@ -17,15 +17,9 @@
 package com.github.cc007.trafficlights.algo.tlc;
 
 
-import com.github.cc007.trafficlights.*;
-import com.github.cc007.trafficlights.sim.*;
 import com.github.cc007.trafficlights.algo.tlc.*;
 import com.github.cc007.trafficlights.infra.*;
-import com.github.cc007.trafficlights.utils.*;
 import com.github.cc007.trafficlights.xml.*;
-import java.io.IOException;
-import java.util.* ;
-import java.awt.Point;
 
 /**
  * Red Light District 2 TLC...
@@ -51,6 +45,7 @@ public class RLD2TLC extends TLController
 		num_nodes = tld.length;
 	}
 	
+    @Override
 	public void setInfrastructure(Infrastructure i) 
 	{ 	super.setInfrastructure(i); 
 		num_nodes = tld.length;
@@ -61,6 +56,7 @@ public class RLD2TLC extends TLController
 	 * of the waiting queue. The longer the queue, the higher the Q-value.
 	 */	
 
+    @Override
 	public TLDecision[][] decideTLs()
 	{
 		for (int i=0; i < tld.length; i++) {
@@ -71,17 +67,20 @@ public class RLD2TLC extends TLController
 		return tld;
 	}
 
+    @Override
 	public void updateRoaduserMove(Roaduser _ru, DriveLane _prevlane, Sign _prevsign, int _prevpos, DriveLane _dlanenow, Sign _signnow, int _posnow, PosMov[] posMovs, DriveLane desired)
 	{   // No needed
 	}
 	
 	// XMLSerializable implementation
+    @Override
 	public XMLElement saveSelf () throws XMLCannotSaveException
 	{	XMLElement result=super.saveSelf();
 		result.setName(shortXMLName);
 		return result;
 	}
 
+    @Override
  	public String getXMLName ()
 	{ 	return "model."+shortXMLName;
 	}

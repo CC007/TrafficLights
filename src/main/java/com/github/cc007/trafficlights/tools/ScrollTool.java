@@ -36,20 +36,32 @@ public class ScrollTool extends PopupMenuTool
 		sa = new ScrollAction(c.getViewScroller());
 	}
 
+    @Override
 	public void mousePressed(View view, Point p, Tool.Mask mask)
 	{
 		super.mousePressed(view, p, mask);
-		if (mask.isLeft()) sa.startScroll(view, p);
+		if (mask.isLeft()) {
+            sa.startScroll(view, p);
+        }
 	}
 
+    @Override
 	public void mouseMoved(View view, Point p, Tool.Mask mask) {
-		if (mask.isLeft()) sa.doScroll(view, p);
+		if (mask.isLeft()) {
+            sa.doScroll(view, p);
+        }
 	}
+    @Override
 	public void mouseReleased(View view, Point p, Tool.Mask mask) {
-		if (mask.isLeft()) sa.endScroll(view, p);
+		if (mask.isLeft()) {
+            sa.endScroll(view, p);
+        }
 	}
+    @Override
 	public int overlayType() { return 0; }
+    @Override
 	public void paint(Graphics g) throws GLDException { }
 
+    @Override
 	public Panel getPanel() { return new Panel(null); }
 }

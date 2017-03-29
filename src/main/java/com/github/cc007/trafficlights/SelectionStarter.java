@@ -27,8 +27,8 @@ import java.util.*;
 
 public interface SelectionStarter
 {
-	/** Returns true if this Selectable has any children */
+	/** @return true if this Selectable has any children */
 	public boolean hasChildren();
-	/** Returns all Selectables held by this Selectable */
-	public Iterator getChildren();
+	/** @return all Selectables held by this Selectable */
+	public List<Selectable> getChildren();
 }

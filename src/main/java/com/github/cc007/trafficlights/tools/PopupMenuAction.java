@@ -13,13 +13,12 @@
  * See the GNU General Public License for more details.
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
-
 package com.github.cc007.trafficlights.tools;
 
 import com.github.cc007.trafficlights.*;
-
-import java.awt.*;
-import java.util.LinkedList;
+import java.awt.Point;
+import java.awt.PopupMenu;
+import java.util.List;
 
 /**
  * This implements the PopupMenu user action
@@ -27,39 +26,38 @@ import java.util.LinkedList;
  * @author Group GUI
  * @version 1.0
  */
+public class PopupMenuAction implements ToolAction {
 
+    Controller controller;
 
-public class PopupMenuAction implements ToolAction
-{
-	Controller controller;
-	
-	public PopupMenuAction(Controller con) {
-		controller = con;
-	}
-	
-	public boolean beingUsed() { return false; }
-	
-	public void doPopupMenu(View view, Point p)
-	{
-		Selection cs = controller.getCurrentSelection();
-		Selection s = new Selection(cs);
-			
-		s.newSelection(p);
-		if (s.getNumSelectedObjects() > 0) {
-			cs.setSelectedObjects(s.getSelectedObjects());
-		}
-		LinkedList list = cs.getSelectedObjects();
-		if (list.size() > 0) {
-			try {
-				Selectable o = (Selectable)list.getFirst();
-				PopupMenu menu = controller.getPopupMenuFor(o);
-				view.add(menu);
-				Point p2 = view.toView(p);
-				menu.show(view, p2.x, p2.y);
-			}
-			catch (PopupException e) {
-				Controller.reportError(e);
-			}
-		}
-	}
+    public PopupMenuAction(Controller con) {
+        controller = con;
+    }
+
+    @Override
+    public boolean beingUsed() {
+        return false;
+    }
+
+    public void doPopupMenu(View view, Point p) {
+        Selection cs = controller.getCurrentSelection();
+        Selection s = new Selection(cs);
+
+        s.newSelection(p);
+        if (s.getNumSelectedObjects() > 0) {
+            cs.setSelectedObjects(s.getSelectedObjects());
+        }
+        List<Selectable> list = cs.getSelectedObjects();
+        if (list.size() > 0) {
+            try {
+                Selectable o = (Selectable) list.get(0);
+                PopupMenu menu = controller.getPopupMenuFor(o);
+                view.add(menu);
+                Point p2 = view.toView(p);
+                menu.show(view, p2.x, p2.y);
+            } catch (PopupException e) {
+                Controller.reportError(e);
+            }
+        }
+    }
 }

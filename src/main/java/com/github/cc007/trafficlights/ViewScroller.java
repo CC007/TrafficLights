@@ -16,10 +16,8 @@
 
 package com.github.cc007.trafficlights;
 
-import com.github.cc007.trafficlights.infra.*;
 
 import java.awt.*;
-import java.util.*;
 import java.awt.event.*;
 
 /**
@@ -148,15 +146,20 @@ public class ViewScroller extends ScrollPane implements AdjustmentListener, Comp
 
 
 
+    @Override
 	public void adjustmentValueChanged(AdjustmentEvent e) {
 		view.scrollViewport(getScrollPosition());
 	}
 	
+    @Override
 	public void componentHidden(ComponentEvent e) { }
+    @Override
 	public void componentMoved(ComponentEvent e) { }
+    @Override
 	public void componentResized(ComponentEvent e) {
 		view.resizeViewport(getViewportSize());
 		doLayout();
 	}
+    @Override
 	public void componentShown(ComponentEvent e) { }
 }

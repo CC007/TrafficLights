@@ -16,12 +16,10 @@
 
 package com.github.cc007.trafficlights.algo.tlc;
 
-import com.github.cc007.trafficlights.*;
-import com.github.cc007.trafficlights.algo.tlc.*;
 import com.github.cc007.trafficlights.infra.*;
 import com.github.cc007.trafficlights.xml.*;
 import java.io.IOException;
-import java.util.Dictionary;
+import java.util.Map;
 
 /**
  *
@@ -75,11 +73,13 @@ public class TLDecision implements XMLSerializable,TwoStageLoader
 		gain = _g;
 	}
 	
+@Override
 	public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException 
 	{	gain=myElement.getAttribute("q").getFloatValue();
 		loadData.tlId=myElement.getAttribute("tl-id").getIntValue();
 	}
 		      
+@Override
 	public XMLElement saveSelf () throws XMLCannotSaveException { 	
 		XMLElement result=new XMLElement("decision");		
 		result.addAttribute(new XMLAttribute("q",gain));
@@ -87,14 +87,17 @@ public class TLDecision implements XMLSerializable,TwoStageLoader
 	  	return result;
 	}
   
+@Override
 	public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException 
 	{	// A TLDecision has no child objects
 	}
 
+@Override
 	public String getXMLName () {
 		return parentName+".decision";
 	}
 	
+@Override
 	public void setParentName (String parentName)
 	{	this.parentName=parentName;
 	}
@@ -103,8 +106,9 @@ public class TLDecision implements XMLSerializable,TwoStageLoader
 	{	int tlId;
 	}
 		
-	public void loadSecondStage (Dictionary dictionaries) throws XMLInvalidInputException,XMLTreeException {
-		trafficLight=(TrafficLight)((Dictionary)(dictionaries.get("sign"))).get
+@Override
+	public void loadSecondStage (Map maps) throws XMLInvalidInputException,XMLTreeException {
+		trafficLight=(TrafficLight)((Map)(maps.get("sign"))).get
 						(new Integer(loadData.tlId));		
 	}
 }

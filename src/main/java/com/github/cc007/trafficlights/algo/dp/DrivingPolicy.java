@@ -17,13 +17,12 @@
 package com.github.cc007.trafficlights.algo.dp;
 
 import com.github.cc007.trafficlights.GLDSim;
-import com.github.cc007.trafficlights.algo.dp.*;
 import com.github.cc007.trafficlights.algo.tlc.*;
 import com.github.cc007.trafficlights.infra.*;
 import com.github.cc007.trafficlights.sim.*;
 import com.github.cc007.trafficlights.xml.*;
 import java.io.IOException;
-import java.util.Dictionary;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -116,15 +115,18 @@ public abstract class DrivingPolicy implements XMLSerializable,TwoStageLoader
 
 	// Generic XMLSerializable implementation
 	/**Empty for Drivingpolicy*/
+    @Override
 	public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
 	{ 	// Empty
 	}
 	/**Empty for Drivingpolicy*/
+    @Override
 	public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
 	{ 	// Empty
 	}
 
 
+    @Override
 	public void setParentName (String parentName) throws XMLTreeException
 	{	throw new XMLTreeException
 		("Attempt to change fixed parentName of a DP class.");
@@ -132,6 +134,7 @@ public abstract class DrivingPolicy implements XMLSerializable,TwoStageLoader
 
 	// Empty TwoStageLoader (standard)
 
-	public void loadSecondStage (Dictionary dictionaries) throws XMLInvalidInputException,XMLTreeException
+    @Override
+	public void loadSecondStage (Map maps) throws XMLInvalidInputException,XMLTreeException
 	{}
 }

@@ -16,7 +16,6 @@
 
 package com.github.cc007.trafficlights.infra;
 
-import com.github.cc007.trafficlights.infra.*;
 import com.github.cc007.trafficlights.xml.*;
 import java.io.IOException;
 
@@ -50,11 +49,13 @@ public class SpawnFrequency implements XMLSerializable
 	
 	// XML Serializable implementation
 	
+    @Override
 	public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException {
 		ruType = myElement.getAttribute("ru-type").getIntValue();
 		freq   = myElement.getAttribute("freq").getFloatValue();
 	}
 	
+    @Override
 	public XMLElement saveSelf () throws XMLCannotSaveException
 	{ XMLElement result=new XMLElement("spawnfreq");
 	  result.addAttribute(new XMLAttribute("ru-type",ruType));
@@ -62,14 +63,17 @@ public class SpawnFrequency implements XMLSerializable
 	  return result;
 	}
  
+    @Override
 	public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
 	{ // A spawnfrequency has no child objects
 	}
 
+    @Override
 	public String getXMLName ()
 	{ return parentName+".spawnfreq";
 	}
 
+    @Override
 	public void setParentName (String newParentName)
 	{	this.parentName=parentName; 
 	}

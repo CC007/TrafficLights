@@ -25,13 +25,9 @@ import com.github.cc007.trafficlights.sim.*;
 import com.github.cc007.trafficlights.sim.stats.*;
 import com.github.cc007.trafficlights.config.*;
 import com.github.cc007.trafficlights.utils.ResourceUtils;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.io.FileUtils;
 
 /**
  * This class manages the general settings
@@ -85,6 +81,7 @@ public class GeneralSettings implements Settings {
         return currentSettings;
     }
 
+    @Override
     public void doLoad() throws IOException, XMLTreeException, XMLInvalidInputException {
         File file = null;
         try {
@@ -108,6 +105,7 @@ public class GeneralSettings implements Settings {
         }
     }
 
+    @Override
     public void doSave() throws IOException, XMLTreeException, XMLCannotSaveException {
         String jarFolder = null;
         try {
@@ -121,11 +119,13 @@ public class GeneralSettings implements Settings {
         saver.close();
     }
 
+    @Override
     public boolean isPredefined() {
         return true;
     }
 
     // Set methods
+    @Override
     public void setProperty(String name, String value) throws NoSuchElementException {
         if ("browser-name".equals(name)) {
             browserName = value;
@@ -138,6 +138,7 @@ public class GeneralSettings implements Settings {
         }
     }
 
+    @Override
     public void setProperty(String name, int value) throws NoSuchElementException {
         if ("compression".equals(name)) {
             compressionMethod = value;
@@ -146,6 +147,7 @@ public class GeneralSettings implements Settings {
         }
     }
 
+    @Override
     public void setProperty(String name, boolean value) throws NoSuchElementException {
         if ("use-jbrowser".equals(name)) {
             useInternalHelpBrowser = value;
@@ -161,6 +163,7 @@ public class GeneralSettings implements Settings {
     }
 
     // Get methods
+    @Override
     public String getPropertyStringValue(String name) throws NoSuchElementException {
         if ("browser-name".equals(name)) {
             return browserName;
@@ -173,6 +176,7 @@ public class GeneralSettings implements Settings {
         }
     }
 
+    @Override
     public boolean getPropertyBooleanValue(String name) throws NoSuchElementException {
         if ("use-jbrowser".equals(name)) {
             return useInternalHelpBrowser;
@@ -183,6 +187,7 @@ public class GeneralSettings implements Settings {
         }
     }
 
+    @Override
     public int getPropertyIntValue(String name) throws NoSuchElementException {
         if ("compression".equals(name)) {
             return compressionMethod;
@@ -191,11 +196,13 @@ public class GeneralSettings implements Settings {
         }
     }
 
+    @Override
     public float getPropertyFloatValue(String name) throws NoSuchElementException {
         throw new NoSuchElementException("GeneralSettings has no float property named " + name);
     }
 
     // XMLSerializable implementation
+    @Override
     public void load(XMLElement myElement, XMLLoader loader) throws XMLTreeException, IOException, XMLInvalidInputException {
         useInternalHelpBrowser = myElement.getAttribute("use-jbrowser").getBoolValue();
         sound = myElement.getAttribute("sound").getBoolValue();
@@ -214,6 +221,7 @@ public class GeneralSettings implements Settings {
         StatisticsModel.SEP = TrackingView.SEP;
     }
 
+    @Override
     public XMLElement saveSelf() throws XMLCannotSaveException {
         XMLElement result = new XMLElement(getXMLName());
         result.addAttribute(new XMLAttribute("use-jbrowser", useInternalHelpBrowser));
@@ -233,14 +241,17 @@ public class GeneralSettings implements Settings {
         return result;
     }
 
+    @Override
     public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException, XMLCannotSaveException { 	// GeneralSettings has no child objects. childSettings are saved to
         // other settings files
     }
 
+    @Override
     public String getXMLName() {
         return "settings";
     }
 
+    @Override
     public void setParentName(String parentName) throws XMLTreeException {
         throw new XMLTreeException("GeneralSettings does not support setParentName(String)");
     }

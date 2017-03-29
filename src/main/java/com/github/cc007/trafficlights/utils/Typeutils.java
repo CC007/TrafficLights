@@ -34,7 +34,9 @@ public class Typeutils
 	 */
 	public static int[] getTypes(int type) {
 		//System.out.println("To Type: "+type);
-		if (type == 0) return new int[0];
+		if (type == 0) {
+            return new int[0];
+        }
 		int log = (int)Math.floor(Math.log(type) / Math.log(2));
 		//System.out.println("Log: "+log);
 		int checktype = (int)Math.pow(2, log);
@@ -43,7 +45,9 @@ public class Typeutils
 	
 		for (; type > 0; checktype /= 2) {
 			//System.out.println("Checktype = "+checktype);
-			if (checktype > type) continue;
+			if (checktype > type) {
+                continue;
+            }
 			types[c] = checktype;
 			type -= checktype;
 			c++;

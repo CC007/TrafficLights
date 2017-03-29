@@ -16,15 +16,9 @@
 
 package com.github.cc007.trafficlights.algo.tlc;
 
-import com.github.cc007.trafficlights.*;
-import com.github.cc007.trafficlights.sim.*;
 import com.github.cc007.trafficlights.algo.tlc.*;
 import com.github.cc007.trafficlights.infra.*;
-import com.github.cc007.trafficlights.utils.*;
 import com.github.cc007.trafficlights.xml.*;
-import java.io.IOException;
-import java.util.* ;
-import java.awt.Point;
 
 /**
  * Red Light District TLC...
@@ -48,6 +42,7 @@ public class RLDTLC extends TLController
 		super(i);
 	}
 	
+@Override
 	public void setInfrastructure(Infrastructure i) 
 	{ 	super.setInfrastructure(i); 
 		num_nodes = tld.length;
@@ -57,6 +52,7 @@ public class RLDTLC extends TLController
 	 * This implementation sets the Q-values according to the length
 	 * of the waiting queue. The longer the queue, the higher the Q-value.
 	 */	
+@Override
 	public TLDecision[][] decideTLs()
 	{
 		int minLength, num_lanes, minId, temp_len, ru_pos;
@@ -74,24 +70,28 @@ public class RLDTLC extends TLController
 				}
 				tld[i][j].setGain(0);
 			}
-			if(minId!=-1)
-				tld[i][minId].setGain(1);
-			//System.out.println("Node:"+i+" LongestQueue at Sign:"+minId+" with length "+minLength);
+			if(minId!=-1) {
+                tld[i][minId].setGain(1);
+                //System.out.println("Node:"+i+" LongestQueue at Sign:"+minId+" with length "+minLength);
+            }
 		}
 		return tld;
 	}
 
+@Override
 	public void updateRoaduserMove(Roaduser _ru, DriveLane _prevlane, Sign _prevsign, int _prevpos, DriveLane _dlanenow, Sign _signnow, int _posnow, PosMov[] posMovs, DriveLane desired)
 	{    // No needed
 	}
 	
 	// XMLSerializable implementation
+@Override
 	public XMLElement saveSelf () throws XMLCannotSaveException
 	{ 	XMLElement result=super.saveSelf();
 		result.setName(shortXMLName);
 		return result;	
 	}
   
+@Override
  	public String getXMLName ()
 	{ 	return "model."+shortXMLName;
 	}

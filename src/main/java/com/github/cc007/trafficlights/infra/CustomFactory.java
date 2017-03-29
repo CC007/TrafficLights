@@ -17,11 +17,6 @@ package com.github.cc007.trafficlights.infra;
 
 import java.awt.*;
 import java.util.*;
-import java.io.*;
-import java.applet.*;
-
-import com.github.cc007.trafficlights.*;
-import com.github.cc007.trafficlights.xml.*;
 import com.github.cc007.trafficlights.GLDSim;
 
 /**

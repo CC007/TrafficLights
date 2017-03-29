@@ -17,8 +17,6 @@
 package com.github.cc007.trafficlights.infra;
 
 import com.github.cc007.trafficlights.xml.*;
-import java.io.IOException;
-import java.util.*;
 
 /**
  *
@@ -40,16 +38,20 @@ public class TrafficLight extends Sign
 	public TrafficLight () { }
 
 	/** Returns the type of this Sign */
+    @Override
 	public int getType() { return type; }
 	
+    @Override
 	public boolean needsExternalAlgorithm() { return true; }
 	
 	// Specific XMLSerializable implementation 
 
+    @Override
 	public String getXMLName ()
 	{ 	return parentName+".sign-tl";
 	}
 	
+    @Override
 	public XMLElement saveSelf () throws XMLCannotSaveException
 	{ 	XMLElement result=super.saveSelf();
 		result.setName("sign-tl");

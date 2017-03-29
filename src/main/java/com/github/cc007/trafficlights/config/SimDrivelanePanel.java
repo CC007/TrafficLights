@@ -20,13 +20,10 @@ package com.github.cc007.trafficlights.config;
 import java.awt.*;
 import java.util.ListIterator;
 import java.util.ConcurrentModificationException;
-import java.util.ArrayList;
 import java.awt.event.*;
 
-import com.github.cc007.trafficlights.*;
 import com.github.cc007.trafficlights.infra.*;
 import com.github.cc007.trafficlights.utils.*;
-import com.github.cc007.trafficlights.edit.*;
 
 
 /**
@@ -142,59 +139,61 @@ public class SimDrivelanePanel extends ConfigPanel implements ActionListener, It
 			int resetTryCount = 10;
 			boolean done = false;
 			
-			while (resetTryCount>0 && !done) try
-			{
-				boolean sf = queueType.getState();
-				ListIterator li = lane.getQueue().listIterator();
-				int pos = 0;
-				Roaduser ru;
-				counter = 0;
-
-				while (li.hasNext())
-				{
-					ru = (Roaduser)li.next();
-					if (sf) {
-						while (ru.getPosition() > pos) {
-							addString(pos + ": Free block");
-							pos++;
-						} // while
-					} // if
-					addLink(ru.getPosition() + ": " + ru.getName(), ru);
-					pos += ru.getLength();
-					if (sf) {
-						for (int i=1; i < ru.getLength(); i++)
-							addString(pos + ": -");
-					} // if
-				} // while
-				
-				if (pos < lane.getCompleteLength() && sf) {
-					while (pos < lane.getCompleteLength()) {
-						addString(pos + ": Free block");
-						pos++;
-					} // while
-				} // if
-
-				for (int i=counter; i < labels.length; i++) {
-					labels[i].setVisible(false);
-					labels[i].repaint();
-					links[i].setEnabled(false);
-					links[i].setVisible(false);
-					links[i].repaint();
-				} // for
-				done = true;
-			} // try
-			
-			// SimModel thread changed the queue while we were updating, try again.
-			catch (ConcurrentModificationException e) {
-				done = false;
-				resetTryCount--;
-				reset();
-			}
-			catch (NullPointerException e) {
-				done = false;
-				resetTryCount--;
-				reset();
-			}
+			while (resetTryCount>0 && !done) {
+                try
+                {
+                    boolean sf = queueType.getState();
+                    ListIterator li = lane.getQueue().listIterator();
+                    int pos = 0;
+                    Roaduser ru;
+                    counter = 0;
+                    
+                    while (li.hasNext())
+                    {
+                        ru = (Roaduser)li.next();
+                        if (sf) {
+                            while (ru.getPosition() > pos) {
+                                addString(pos + ": Free block");
+                                pos++;
+                            } // while
+                        } // if
+                        addLink(ru.getPosition() + ": " + ru.getName(), ru);
+                        pos += ru.getLength();
+                        if (sf) {
+                            for (int i=1; i < ru.getLength(); i++)
+                                addString(pos + ": -");
+                        } // if
+                    } // while
+                    
+                    if (pos < lane.getCompleteLength() && sf) {
+                        while (pos < lane.getCompleteLength()) {
+                            addString(pos + ": Free block");
+                            pos++;
+                        } // while
+                    } // if
+                    
+                    for (int i=counter; i < labels.length; i++) {
+                        labels[i].setVisible(false);
+                        labels[i].repaint();
+                        links[i].setEnabled(false);
+                        links[i].setVisible(false);
+                        links[i].repaint();
+                    } // for
+                    done = true;
+                } // try
+                
+                // SimModel thread changed the queue while we were updating, try again.
+                catch (ConcurrentModificationException e) {
+                    done = false;
+                    resetTryCount--;
+                    reset();
+                }
+                catch (NullPointerException e) {
+                    done = false;
+                    resetTryCount--;
+                    reset();
+                }
+            }
 			doLayout();
 		}
 		
@@ -203,7 +202,9 @@ public class SimDrivelanePanel extends ConfigPanel implements ActionListener, It
 			lab.setVisible(true);
 			links[counter].setVisible(false);
 			links[counter].setEnabled(false);
-			if (!lab.getText().equals(text)) lab.setText(text);
+			if (!lab.getText().equals(text)) {
+                lab.setText(text);
+            }
 			counter++;
 		}
 		
@@ -213,7 +214,9 @@ public class SimDrivelanePanel extends ConfigPanel implements ActionListener, It
 			link.setEnabled(true);
 			labels[counter].setVisible(false);
 
-			if (!link.getText().equals(text)) link.setText(text);
+			if (!link.getText().equals(text)) {
+                link.setText(text);
+            }
 			((RULinkListener)link.getActionListeners()[0]).setRoaduser(ru);
 			
 			counter++;
@@ -224,20 +227,24 @@ public class SimDrivelanePanel extends ConfigPanel implements ActionListener, It
 			Roaduser ru;
 			public RULinkListener(Roaduser ru) { this.ru = ru; }
 			public void setRoaduser(Roaduser ru) { this.ru = ru; }
+            @Override
 			public void actionPerformed(ActionEvent e) { confd.showRoaduser(ru); }
 		}
 		
+        @Override
 		public Dimension getPreferredSize() { return new Dimension(130, counter * 20); }
 	}
 
 
 
 
+    @Override
 	public void reset() {
-		if (lane.getSign().getType() == Sign.NO_SIGN)
-			sign.setText("Drivelane has no trafficlight");
-		else
-			sign.setText(lane.getNumRoadusersWaiting() + " waiting for trafficlight");
+		if (lane.getSign().getType() == Sign.NO_SIGN) {
+            sign.setText("Drivelane has no trafficlight");
+        } else {
+            sign.setText(lane.getNumRoadusersWaiting() + " waiting for trafficlight");
+        }
 
 
 		queue.reset();
@@ -257,17 +264,20 @@ public class SimDrivelanePanel extends ConfigPanel implements ActionListener, It
 		allows.setText("Drivelane allows " + RoaduserFactory.getDescByType(lane.getType()));
 	}
 
+    @Override
 	public void itemStateChanged(ItemEvent e) {
 		reset();
 	}
 
+    @Override
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
-		if (source == alphaLink)
-			confd.selectObject(lane.getNodeLeadsTo());
-		else if (source == betaLink)
-			confd.selectObject(lane.getNodeComesFrom());
-		else if (source == roadLink)
-			confd.selectObject(lane.getRoad());
+		if (source == alphaLink) {
+            confd.selectObject(lane.getNodeLeadsTo());
+        } else if (source == betaLink) {
+            confd.selectObject(lane.getNodeComesFrom());
+        } else if (source == roadLink) {
+            confd.selectObject(lane.getRoad());
+        }
 	}
 }

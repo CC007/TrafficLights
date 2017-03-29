@@ -16,8 +16,6 @@
 
 package com.github.cc007.trafficlights.sim.stats;
 
-import com.github.cc007.trafficlights.infra.*;
-import com.github.cc007.trafficlights.infra.Node.NodeStatistics;
 import com.github.cc007.trafficlights.sim.SimModel;
 
 /**
@@ -41,12 +39,15 @@ public class RemovedCarsTrackingView extends ExtendedTrackingView
 	}
 
 	/** Returns the next sample to be 'tracked'. */
+    @Override
 	protected float nextSample(int index)
 	{
             return (float) model.getInfrastructure().getRemovedCarsCount();
 	}
 
+    @Override
 	protected String getYLabel() { return "removed cars"; }
 
+    @Override
 	public String getDescription() { return "Total number of removed cars"; }
 }

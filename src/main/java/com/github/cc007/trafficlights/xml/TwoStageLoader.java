@@ -13,24 +13,24 @@
  * See the GNU General Public License for more details.
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
-
 package com.github.cc007.trafficlights.xml;
 
-import java.util.Dictionary;
+import java.util.Map;
 
-/** This interface can be implemented by XMLSerializable objects if they
-  * need additional info from their parent for initializing themselves after
-  * they have been loaded by the parser.
+/**
+ * This interface can be implemented by XMLSerializable objects if they need
+ * additional info from their parent for initializing themselves after they have
+ * been loaded by the parser.
  */
+public interface TwoStageLoader /**
+ * This method is called by the parent of the object to provide it with
+ * additional information after the XML parser has loaded it via the
+ * XMLSerializable interface.
+ *
+ * @param maps The info is passed in the form of a map of maps. Each map is a
+ * translation table from an unique id to an object.
+ */
+{
 
-public interface TwoStageLoader
-  /** This method is called by the parent of the object to provide it with
-    * additional information after the XML parser has loaded it via the
-    * XMLSerializable interface.
-    * @param dictionaries The info is passed in the form of a dictionary
-    *                     of dictionaries. Each dictionary is a translation
-    * 			  table from an unique id to an object.		 		  
-   */ 
-    
-{ public void loadSecondStage (Dictionary dictionaries) throws XMLInvalidInputException,XMLTreeException;
+    public void loadSecondStage(Map<String, Map<Integer, TwoStageLoader>> maps) throws XMLInvalidInputException, XMLTreeException;
 }

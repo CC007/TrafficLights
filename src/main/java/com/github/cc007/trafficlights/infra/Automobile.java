@@ -19,7 +19,6 @@ package com.github.cc007.trafficlights.infra;
 import com.github.cc007.trafficlights.*;
 
 import java.awt.*;
-import java.util.*;
 import java.applet.*;
 import java.io.*;
 
@@ -45,18 +44,21 @@ public abstract class Automobile extends Roaduser
 	{ // Empty constructor for loading
 	}
   
+    @Override
 	public void paint(Graphics g, int x, int y, float zf) {}
      
+    @Override
 	public void paint(Graphics g, int x, int y, float zf, double angle) {
 		g.setColor(Color.black);
 		g.fillRect((int)((x - 3) * zf),(int)((y - 3) * zf),(int)(7 * zf),(int)(7 * zf));
 	}
   	
 	public void toot() {
-		if (! GeneralSettings.getCurrentSettings().getPropertyBooleanValue("sound"))
-			return; // Sound is disabled 
+		if (! GeneralSettings.getCurrentSettings().getPropertyBooleanValue("sound")) {
+            return; // Sound is disabled 
+        }
 		try {
-			(Applet.newAudioClip((new File(soundFileName)).toURL())).play();
+			(Applet.newAudioClip((new File(soundFileName)).toURI().toURL())).play();
 		}
 		catch (Exception e) {
 			// Why can't I toot ???
@@ -67,5 +69,6 @@ public abstract class Automobile extends Roaduser
 	}
 
 	// Specific XMLSerializable implementation 
+    @Override
     public String getXMLName () { return parentName+".roaduser-auto"; }
 }

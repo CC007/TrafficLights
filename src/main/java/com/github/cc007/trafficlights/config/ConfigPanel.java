@@ -17,9 +17,6 @@
 package com.github.cc007.trafficlights.config;
 
 import java.awt.*;
-import java.util.*;
-
-import com.github.cc007.trafficlights.*;
 
 /**
  *

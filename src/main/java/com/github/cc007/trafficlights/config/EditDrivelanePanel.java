@@ -120,16 +120,19 @@ public class EditDrivelanePanel extends ConfigPanel implements ItemListener, Act
 		setLane(l);
 	}
 	
+    @Override
 	public void reset() {
-		if (lane.getSign().getType() == Sign.NO_SIGN)
-			sign.setText("Drivelane has no sign");
-		else
-			sign.setText("Drivelane has normal trafficlight");
+		if (lane.getSign().getType() == Sign.NO_SIGN) {
+            sign.setText("Drivelane has no sign");
+        } else {
+            sign.setText("Drivelane has normal trafficlight");
+        }
 		
-		if (lane.getRoad().getNumAllLanes() > 1)
-			delete.setEnabled(true);
-		else
-			delete.setEnabled(false);
+		if (lane.getRoad().getNumAllLanes() > 1) {
+            delete.setEnabled(true);
+        } else {
+            delete.setEnabled(false);
+        }
 	}
 		
 	
@@ -154,6 +157,7 @@ public class EditDrivelanePanel extends ConfigPanel implements ItemListener, Act
 		typeList.select(RoaduserFactory.getDescByType(lane.getType()));
 	}
 
+    @Override
 	public void itemStateChanged(ItemEvent e) {
 		ItemSelectable es = e.getItemSelectable();
 		EditModel em = (EditModel)confd.getController().getModel();
@@ -163,27 +167,29 @@ public class EditDrivelanePanel extends ConfigPanel implements ItemListener, Act
 				int[] types = RoaduserFactory.getTypes();
 				em.setLaneType(lane, types[typeList.getSelectedIndex()]);
 			}
-			else if (es == left)
-				em.setLaneTarget(lane, 0, left.getState());
-			else if (es == ahead)
-				em.setLaneTarget(lane, 1, ahead.getState());
-			else if (es == right)
-				em.setLaneTarget(lane, 2, right.getState());
+			else if (es == left) {
+                em.setLaneTarget(lane, 0, left.getState());
+            } else if (es == ahead) {
+                em.setLaneTarget(lane, 1, ahead.getState());
+            } else if (es == right) {
+                em.setLaneTarget(lane, 2, right.getState());
+            }
 		}
 		catch (GLDException ex) {
 			Controller.reportError(ex);
 		}
 	}
 
+    @Override
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
-		if (source == alphaLink)
-			confd.selectObject(lane.getNodeLeadsTo());
-		else if (source == betaLink)
-			confd.selectObject(lane.getNodeComesFrom());
-		else if (source == roadLink)
-			confd.selectObject(lane.getRoad());
-		else if (source == delete) {
+		if (source == alphaLink) {
+            confd.selectObject(lane.getNodeLeadsTo());
+        } else if (source == betaLink) {
+            confd.selectObject(lane.getNodeComesFrom());
+        } else if (source == roadLink) {
+            confd.selectObject(lane.getRoad());
+        } else if (source == delete) {
 			if (lane.getRoad().getNumAllLanes() > 1) {
 				EditModel em = (EditModel)confd.getController().getModel();
 				try {

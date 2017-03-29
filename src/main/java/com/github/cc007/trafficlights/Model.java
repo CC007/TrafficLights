@@ -16,13 +16,9 @@
 
 package com.github.cc007.trafficlights;
 
-import com.github.cc007.trafficlights.*;
 import com.github.cc007.trafficlights.infra.*;
-import com.github.cc007.trafficlights.edit.*;
-import com.github.cc007.trafficlights.sim.*;
 import com.github.cc007.trafficlights.xml.*;
 import java.util.*;
-import java.awt.Rectangle;
 import java.io.IOException;
 
 /**
@@ -62,26 +58,31 @@ public class Model extends Observable implements XMLSerializable
 	
 
 	// XMLSerializable implementation
+    @Override
 	public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
 	{	infra = new Infrastructure();
 		SAVE_STATS=myElement.getAttribute("save-stats").getBoolValue();
 		loader.load(this,infra);
 	}
   
+    @Override
 	public XMLElement saveSelf () 
 	{ 	XMLElement result=new XMLElement("model"); 
 		result.addAttribute(new XMLAttribute("save-stats",SAVE_STATS));
 		return result;
 	}
 	
+    @Override
 	public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
 	{	saver.saveObject(infra);
 	}
 	
+    @Override
 	public String getXMLName () 
 	{ 	return "model"; 
 	}
 	
+    @Override
 	public void setParentName (String parentName) throws XMLTreeException
 	{	throw new XMLTreeException
 		("XML root class Model does not support different parent names");

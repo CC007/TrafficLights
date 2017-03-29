@@ -41,13 +41,19 @@ public class TotalEditTool implements Tool
 		typePanel = new NodeTypeChoice();
 	}
 	
+    @Override
 	public void mousePressed(View view, Point p, Tool.Mask mask) { }
+    @Override
 	public void mouseReleased(View view, Point p, Tool.Mask mask) { }
+    @Override
 	public void mouseMoved(View view, Point p, Tool.Mask mask) { }
 
+    @Override
 	public int overlayType() { return 0; }
+    @Override
 	public void paint(Graphics g) throws GLDException { }
 	
+    @Override
 	public Panel getPanel() { return typePanel; }
 
 
@@ -70,6 +76,7 @@ public class TotalEditTool implements Tool
   	public int getNodeType() { return nodeType; }
   	public void setNodeType(int type) { nodeType = type; }
 
+      @Override
 		public void itemStateChanged(ItemEvent e) {
 			setNodeType(((Choice) e.getSource()).getSelectedIndex() + 1);
 		}
