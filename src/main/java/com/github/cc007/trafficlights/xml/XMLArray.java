@@ -54,7 +54,7 @@ public class XMLArray implements XMLSerializable { // The data itself
             BYTE_CLASS = 12;
 
     protected final static int CONTAINER_ARRAY = 0,
-            CONTAINER_VECTOR = 1,
+            CONTAINER_ARRAYLIST = 1,
             CONTAINER_LINKEDLIST = 2;
 
     protected String[] lookUpTable
@@ -125,10 +125,14 @@ public class XMLArray implements XMLSerializable { // The data itself
      * @returns The new XMLArray
      */
     public XMLArray(Object input, String parentName, String alias) throws XMLCannotSaveException {
+        
+        dataClass = input.getClass();
+        this.parentName = parentName;
+        this.alias = alias;
         if (input.getClass().isArray()) {
             containerType = CONTAINER_ARRAY;
         } else if (input instanceof ArrayList) {
-            containerType = CONTAINER_VECTOR;
+            containerType = CONTAINER_ARRAYLIST;
             input = ((ArrayList) (input)).toArray();
         } else if (input instanceof LinkedList) {
             containerType = CONTAINER_LINKEDLIST;
@@ -137,10 +141,9 @@ public class XMLArray implements XMLSerializable { // The data itself
             throw new XMLCannotSaveException("Cannot construct XMLArray : input is not of valid type. Input class :"
                     + dataClass.getName());
         }
-        data = input;
         dataClass = input.getClass();
-        this.parentName = parentName;
-        this.alias = alias;
+        data = input;
+       
     }
 
     /**
@@ -159,7 +162,7 @@ public class XMLArray implements XMLSerializable { // The data itself
         switch (containerType) {
             case CONTAINER_ARRAY:
                 return data;
-            case CONTAINER_VECTOR:
+            case CONTAINER_ARRAYLIST:
                 return getResultArrayList();
             case CONTAINER_LINKEDLIST:
                 return getResultLinkedList();
