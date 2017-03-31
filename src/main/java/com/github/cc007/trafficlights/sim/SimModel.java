@@ -737,7 +737,7 @@ public class SimModel extends Model implements XMLSerializable {
             }
         }
         // Fuck it, we aint got the power to cross, so don't even bother calculating further..
-        return (PosMov[]) vPosMovs.toArray();
+        return vPosMovs.toArray(new PosMov[vPosMovs.size()]);
     }
 
     /**

@@ -187,7 +187,9 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
             }
 
             int disabledLaneIndex = disabledLanes.size();   //index of the first disabled lane in the disabledLanes vector
-            try { // Junctions only So no roads going from an edgenode or a non junction node will be able to be
+            try {
+                // TODO: check if kruispunt is junction, get rid catch in the end of function
+                // Junctions only So no roads going from an edgenode or a non junction node will be able to be
                 //disabled
                 Junction kruispunt = (Junction) toBeDisabledLane.
                         getNodeComesFrom();
