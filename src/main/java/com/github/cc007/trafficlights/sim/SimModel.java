@@ -700,7 +700,7 @@ public class SimModel extends Model implements XMLSerializable {
         int ru_type = ru.getType();
         int ru_des = ru.getDestNode().getId();
 
-        ArrayList vPosMovs = new ArrayList();
+        ArrayList<PosMov> vPosMovs = new ArrayList<>();
         int tlId = sign.getId();
 
         // Get the position closest to the Sign the RU can reach
@@ -749,8 +749,8 @@ public class SimModel extends Model implements XMLSerializable {
      */
     public void spawnNewRoadusers() throws InfraException, ClassNotFoundException {
         SpecialNode[] specialNodes = infra.getSpecialNodes();
-        LinkedList wqueue;
-        ListIterator list;
+        LinkedList<Roaduser> wqueue;
+        ListIterator<Roaduser> list;
         EdgeNode edge;
         Roaduser r;
         int num_edges = specialNodes.length;
@@ -768,7 +768,7 @@ public class SimModel extends Model implements XMLSerializable {
             list = wqueue.listIterator();
             while (list.hasNext()) {
                 total_queue++;
-                r = (Roaduser) list.next();
+                r = list.next();
                 if (placeRoaduser(r, edge)) {
                     list.remove();
                 }
@@ -1033,7 +1033,7 @@ public class SimModel extends Model implements XMLSerializable {
             XMLTreeException, IOException, XMLInvalidInputException {
         super.load(myElement, loader);
         setInfrastructure(infra);
-        Map loadMap;
+        Map<String, Map<Integer, TwoStageLoader>> loadMap;
         try {
             loadMap = infra.getMainMap();
         } catch (InfraException ohNo) {
@@ -1041,9 +1041,11 @@ public class SimModel extends Model implements XMLSerializable {
                     "This is weird. The infra can't make a map for the second "
                     + "stage loader of the algorithms. Like : " + ohNo);
         }
+        /* TODO fix and explain why you want to put an infra into the loadMap, even though it's not a two stage loader and the index isn't an integer
         Map infraMap = new HashMap();
         infraMap.put("infra", infra);
         loadMap.put("infra", infraMap);
+         */
         boolean savedBySim = ("simulator").equals(myElement.getAttribute(
                 "saved-by").getValue());
         if (savedBySim) {
@@ -1054,7 +1056,7 @@ public class SimModel extends Model implements XMLSerializable {
             tlc = null;
 
             try {
-                tlc = factory.getInstanceForLoad(factory.getNumberByXMLTagName(loader.getNextElementName()));
+                tlc = factory.getInstanceForLoad(TLCFactory.getNumberByXMLTagName(loader.getNextElementName()));
                 loader.load(this, tlc);
                 System.out.println("Loaded TLC " + tlc.getXMLName());
             } catch (InfraException e2) {
@@ -1065,7 +1067,7 @@ public class SimModel extends Model implements XMLSerializable {
             tlc.loadSecondStage(loadMap);
             DPFactory dpFactory = new DPFactory(this, tlc);
             try {
-                dp = dpFactory.getInstance(dpFactory.getNumberByXMLTagName(loader.getNextElementName()));
+                dp = dpFactory.getInstance(DPFactory.getNumberByXMLTagName(loader.getNextElementName()));
                 loader.load(this, dp);
                 System.out.println("Loaded DP " + dp.getXMLName());
             } catch (ClassNotFoundException e) {

@@ -18,14 +18,13 @@ package com.github.cc007.trafficlights.xml;
 /**
  * This class represents XML elements and their attributes.
  */
-
 import java.util.*;
 
 // TODO:  - Write JUnit test
 public class XMLElement {
 
     protected String name;
-    protected ArrayList attributes;
+    protected ArrayList<XMLAttribute> attributes;
 
     /**
      * Make a new XMLElement
@@ -143,7 +142,7 @@ public class XMLElement {
      */
     public XMLAttribute[] getAttributesArray() {
         XMLAttribute[] result = new XMLAttribute[attributes.size()];
-        return (XMLAttribute[]) (attributes.toArray(result));
+        return attributes.toArray(result);
     }
 
     /**

@@ -85,8 +85,8 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
     /**
      * List of disabled Lanes
      */
-    protected static ArrayList disabledLanes = new ArrayList();
-    protected static ArrayList notYetDisabledLanes = new ArrayList();
+    protected static ArrayList<DriveLane> disabledLanes = new ArrayList<>();
+    protected static ArrayList<DriveLane> notYetDisabledLanes = new ArrayList<>();
     /**
      * Accidents rate (DOAS 06)
      */
@@ -214,8 +214,8 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
 
                 // Disable all lanes on the road shared by the target lane to be disabled
                 for (int i = 0; i < otherlanes.length; i++) {
-                    disabledLanes.add((Object) otherlanes[i]);
-                    notYetDisabledLanes.remove((Object) otherlanes[i]);
+                    disabledLanes.add(otherlanes[i]);
+                    notYetDisabledLanes.remove(otherlanes[i]);
                 }
 
                 Road[] incomingRoads = kruispunt.getAllRoads();
@@ -356,12 +356,17 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
 
     protected void enableLane(int disabledLaneIndex) throws InfraException {
         // Junctions only
-        DriveLane toBeEnabledLane = (DriveLane) disabledLanes.get(
-                disabledLaneIndex);
-        Junction kruispunt = (Junction) toBeEnabledLane.
-                getNodeComesFrom();
+        DriveLane toBeEnabledLane = disabledLanes.get(disabledLaneIndex);
 
-        kruispunt.decreaseAccidentsCount();
+        Junction junction;
+        Node node = toBeEnabledLane.getNodeComesFrom();
+        if (!(node instanceof Junction)) {
+            throw new InfraException("This node isn't a junction!");
+        } else {
+            junction = (Junction) node;
+        }
+
+        junction.decreaseAccidentsCount();
 
         Road ro = toBeEnabledLane.getRoad();
         //System.out.println(ro.getName() + " has been enabled [" + curCycle + "]");
@@ -373,10 +378,10 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
         }
 
         for (int i = 0; i < otherlanes.length; i++) {
-            disabledLanes.remove((Object) otherlanes[i]);
-            notYetDisabledLanes.add((Object) otherlanes[i]);
+            disabledLanes.remove(otherlanes[i]);
+            notYetDisabledLanes.add(otherlanes[i]);
         }
-        Road[] incomingRoads = kruispunt.getAllRoads();
+        Road[] incomingRoads = junction.getAllRoads();
         int ro_num = 0;
         for (int i = 0; i < 4; i++) {
             if (incomingRoads[i] != null && incomingRoads[i] == ro) {
@@ -389,7 +394,7 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
                 int dir = Node.getDirection(i, ro_num);
                 DriveLane[] il;
 
-                if (ri.getAlphaNode() == kruispunt) { //Road heeft kruispunt als Alpha node
+                if (ri.getAlphaNode() == junction) { //Road heeft kruispunt als Alpha node
                     il = ri.getAlphaLanes();
                 } else { //Road heeft kruispunt als Beta node
                     il = ri.getBetaLanes();
@@ -414,7 +419,7 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
                         //possible lanes:
                         DriveLane[] pl;
                         if (incomingRoads[t].getAlphaNode()
-                                == kruispunt) {
+                                == junction) {
                             pl = incomingRoads[t].getBetaLanes();
                         } else {
                             pl = incomingRoads[t].getAlphaLanes();

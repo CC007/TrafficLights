@@ -66,7 +66,7 @@ public class Validation
         }
     }
 
-    public ArrayList validate() throws InfraException
+    public ArrayList<String> validate() throws InfraException
     {
         ArrayList<String> errors = new ArrayList<>();
 
