@@ -254,7 +254,7 @@ public class EditController extends Controller
 	public void deleteSelection() {
 		try {
 			List<Selectable> objects = currentSelection.getSelectedObjects();
-			currentSelection.setSelectedObjects(new LinkedList());
+			currentSelection.setSelectedObjects(new LinkedList<>());
 			getEditModel().remObjects(objects);
 		}
 		catch (GLDException e) {

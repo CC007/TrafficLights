@@ -36,7 +36,7 @@ public class Hyperlink extends Component
 	protected boolean underline;
 	protected int alignment;
 
-	protected ArrayList listeners;
+	protected ArrayList<ActionListener> listeners;
 	protected Rectangle textBounds;
 
 	/**
@@ -67,7 +67,7 @@ public class Hyperlink extends Component
 		super();
 		setForeground(Color.blue);
 		textBounds = null;
-		listeners = new ArrayList(1);
+		listeners = new ArrayList<>(1);
 
 		Listener listener = new Listener();
 		addFocusListener(listener);
@@ -134,7 +134,7 @@ public class Hyperlink extends Component
 	
 	/** Returns an array of the action listeners. */
 	public ActionListener[] getActionListeners() {
-		return (ActionListener[])listeners.toArray(new ActionListener[1]);
+		return listeners.toArray(new ActionListener[1]);
 	}
 	
 

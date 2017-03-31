@@ -54,7 +54,7 @@ public class DriveLane
     /**
      * The roadusers currently on this DriveLane
      */
-    protected LinkedList queue;
+    protected LinkedList<Roaduser> queue;
     /**
      * The Sign at the end of this DriveLane
      */
@@ -94,7 +94,7 @@ public class DriveLane
         cycleMoved = -1;
         Id = -1;
         type = RoaduserFactory.getTypeByDesc("Automobiles");
-        queue = new LinkedList();
+        queue = new LinkedList<>();
     }
 
     /**
@@ -130,7 +130,7 @@ public class DriveLane
     /**
      * Sets the queue of this DriveLane
      */
-    public void setQueue(LinkedList q) {
+    public void setQueue(LinkedList<Roaduser> q) {
         queue = q;
     }
 
@@ -313,7 +313,7 @@ public class DriveLane
     }
 
     @Override
-    public List<Selectable> getChildren() {
+    public List<Roaduser> getChildren() {
         return queue;
     }
 
@@ -330,17 +330,20 @@ public class DriveLane
         loadData.roadId = myElement.getAttribute("road-id").getIntValue();
         targets = (boolean[]) XMLArray.loadArray(this, loader);
 
-        if (loader.getNextElementName().equals("sign-tl")) {
-            sign = new TrafficLight();
-        } else if (loader.getNextElementName().equals("sign-no")) {
-            sign = new NoSign();
-        } else {
-            throw new XMLInvalidInputException("A drivelane in road " + loadData.roadId
-                    + " couldn't load its sign. No sign element found.");
+        switch (loader.getNextElementName()) {
+            case "sign-tl":
+                sign = new TrafficLight();
+                break;
+            case "sign-no":
+                sign = new NoSign();
+                break;
+            default:
+                throw new XMLInvalidInputException("A drivelane in road " + loadData.roadId
+                        + " couldn't load its sign. No sign element found.");
         }
         loader.load(this, sign);
         sign.setLane(this);
-        queue = (LinkedList) XMLArray.loadArray(this, loader);
+        queue = (LinkedList<Roaduser>) XMLArray.loadArray(this, loader);
     }
 
     @Override
@@ -379,10 +382,13 @@ public class DriveLane
     }
 
     @Override
-    public void loadSecondStage(Map maps) throws
-            XMLInvalidInputException, XMLTreeException {
-        road = (Road) (((Map) (maps.get("road"))).get(new Integer(
-                loadData.roadId)));
+    public void loadSecondStage(Map<String, Map<Integer, TwoStageLoader>> maps) throws XMLInvalidInputException, XMLTreeException {
+        TwoStageLoader tsl = maps.get("road").get(loadData.roadId);
+        if (!(tsl instanceof Road)) {
+            throw new XMLInvalidInputException("The two stage loader isn't a road!");
+        } else {
+            road = (Road) tsl;
+        }
         sign.loadSecondStage(maps);
         XMLUtils.loadSecondStage(queue, maps);
     }
@@ -399,7 +405,7 @@ public class DriveLane
     public void reset() {
         //System.out.println("Resetting lane " + Id);
         resetTargets();
-        queue = new LinkedList();
+        queue = new LinkedList<>();
         cycleMoved = -1;
         cycleAsked = -1;
         sign.reset();
@@ -457,10 +463,10 @@ public class DriveLane
      */
     public void addRoaduser(Roaduser ru, int pos) throws InfraException {
         if (!queue.isEmpty()) {
-            ListIterator li = queue.listIterator();
+            ListIterator<Roaduser> li = queue.listIterator();
             Roaduser r = null;
             while (li.hasNext()) {
-                r = (Roaduser) li.next();
+                r = li.next();
                 if (r.getPosition() <= pos && r.getLength() + r.getPosition() > pos) {
                     throw new InfraException("Position taken");
                 }
@@ -472,7 +478,7 @@ public class DriveLane
                     break;
                 }
             }
-            if (pos >= r.getPosition() + r.getLength()) {
+            if (r == null || pos >= r.getPosition() + r.getLength()) {
                 queue.addLast(ru);
             }
         } else {

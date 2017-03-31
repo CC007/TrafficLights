@@ -434,7 +434,7 @@ public abstract class Node implements Selectable, XMLSerializable,
     }
 
     @Override
-    public void loadSecondStage(Map maps) throws
+    public void loadSecondStage(Map<String, Map<Integer, TwoStageLoader>> maps) throws
             XMLInvalidInputException, XMLTreeException {
         spdata.loadSecondStage(maps);
     }

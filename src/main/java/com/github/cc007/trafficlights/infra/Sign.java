@@ -13,7 +13,6 @@
  * See the GNU General Public License for more details.
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
-
 package com.github.cc007.trafficlights.infra;
 
 import com.github.cc007.trafficlights.xml.*;
@@ -27,113 +26,155 @@ import java.util.Map;
  * @author Group Datastructures
  * @version 1.0
  */
+public abstract class Sign implements XMLSerializable, TwoStageLoader {
 
-public abstract class Sign implements XMLSerializable, TwoStageLoader
-{
-	protected boolean state = false;
-	protected Node node;
-	protected DriveLane lane;
-	/** Data for loading the second stage */
-	protected TwoStageLoaderData loadData = new TwoStageLoaderData();
-	protected String parentName="model.infrastructure.lane";
+    protected boolean state = false;
+    protected Node node;
+    protected DriveLane lane;
+    /**
+     * Data for loading the second stage
+     */
+    protected TwoStageLoaderData loadData = new TwoStageLoaderData();
+    protected String parentName = "model.infrastructure.lane";
 
-	public static final int SIGN = 0;
-	public static final int TRAFFICLIGHT = 1;
-	public static final int NO_SIGN = 2;
+    public static final int SIGN = 0;
+    public static final int TRAFFICLIGHT = 1;
+    public static final int NO_SIGN = 2;
 
+    public Sign(Node _node, DriveLane _lane) {
+        node = _node;
+        lane = _lane;
+        state = false;
+    }
 
-	public Sign(Node _node, DriveLane _lane) {
-		node = _node;
-		lane = _lane;
-		state = false;
-	}
-	
-	public Sign () { }
-	
-	/** Smallest factory ever */
-	public static Sign getInstance(int type) throws InfraException {
-		if (type == TRAFFICLIGHT) {
+    public Sign() {
+    }
+
+    /**
+     * Smallest factory ever
+     */
+    public static Sign getInstance(int type) throws InfraException {
+        if (type == TRAFFICLIGHT) {
             return new TrafficLight();
         }
-		if (type == NO_SIGN) {
+        if (type == NO_SIGN) {
             return new NoSign();
         }
-		throw new InfraException("Unknown sign type: " + type);
-	}
+        throw new InfraException("Unknown sign type: " + type);
+    }
 
-	/** This will reset the sign to its default state (false) */
-	public void reset() {
-		state = false;
-	}
+    /**
+     * This will reset the sign to its default state (false)
+     */
+    public void reset() {
+        state = false;
+    }
 
-	/** Returns true if this Sign should be handled by an external algorithm (TC-3 for example) */
-	public abstract boolean needsExternalAlgorithm();
-	
-	/**
-	 * Returns true if the Roaduser at the start of the DriveLane may cross the Node.
-	 * Default behavior is implemented to return state.
-	 * Any Sign using an external algorithm does not need to override this method.
-	 */
-	public boolean mayDrive() { return state; }
+    /**
+     * Returns true if this Sign should be handled by an external algorithm
+     * (TC-3 for example)
+     */
+    public abstract boolean needsExternalAlgorithm();
 
-	/** Returns the Id of this sign. It is the same as the Id of the drivelane this sign is on. */
-	public int getId() { return lane.getId(); }
+    /**
+     * Returns true if the Roaduser at the start of the DriveLane may cross the
+     * Node. Default behavior is implemented to return state. Any Sign using an
+     * external algorithm does not need to override this method.
+     */
+    public boolean mayDrive() {
+        return state;
+    }
 
-	/** Returns the current state */
-	public boolean getState() { return state; }
-	/** Sets the current state */
-	public void setState(boolean b) { state = b; }
+    /**
+     * Returns the Id of this sign. It is the same as the Id of the drivelane
+     * this sign is on.
+     */
+    public int getId() {
+        return lane.getId();
+    }
 
-	/** Returns the DriveLane this Sign is on */
-	public DriveLane getLane() { return lane; }
-	/** Sets the DriveLane this Sign is on */
-	public void setLane(DriveLane l) { lane = l; }
-	
-	/** Returns the Node this Sign is on */
-	public Node getNode() { return node; }
-	/** Sets the Node this Sign is on */
-	public void setNode(Node n) { node = n; }
+    /**
+     * Returns the current state
+     */
+    public boolean getState() {
+        return state;
+    }
 
-	/** Returns the type of this Sign */
-	public abstract int getType();
-	
-	// Common XMLSerializable implementation for subclasses
-	
+    /**
+     * Sets the current state
+     */
+    public void setState(boolean b) {
+        state = b;
+    }
+
+    /**
+     * Returns the DriveLane this Sign is on
+     */
+    public DriveLane getLane() {
+        return lane;
+    }
+
+    /**
+     * Sets the DriveLane this Sign is on
+     */
+    public void setLane(DriveLane l) {
+        lane = l;
+    }
+
+    /**
+     * Returns the Node this Sign is on
+     */
+    public Node getNode() {
+        return node;
+    }
+
+    /**
+     * Sets the Node this Sign is on
+     */
+    public void setNode(Node n) {
+        node = n;
+    }
+
+    /**
+     * Returns the type of this Sign
+     */
+    public abstract int getType();
+
+    // Common XMLSerializable implementation for subclasses
     @Override
-	public void load (XMLElement myElement,XMLLoader loader) throws XMLTreeException,IOException,XMLInvalidInputException
-	{
-		state=myElement.getAttribute("state").getBoolValue();
-		loadData.nodeId=myElement.getAttribute("node-id").getIntValue();
-	}
+    public void load(XMLElement myElement, XMLLoader loader) throws XMLTreeException, IOException, XMLInvalidInputException {
+        state = myElement.getAttribute("state").getBoolValue();
+        loadData.nodeId = myElement.getAttribute("node-id").getIntValue();
+    }
 
     @Override
-	public XMLElement saveSelf () throws XMLCannotSaveException
-	{ 	XMLElement result=new XMLElement("sign");
-	  	result.addAttribute(new XMLAttribute("type",getType()));
-	  	result.addAttribute(new XMLAttribute("state",state));
-	  	result.addAttribute(new XMLAttribute("node-id",node.getId()));
-	  	// Lane id doesn't have to be saved, because it is set by the parent
-	  	// lane on loading
-	 	return result;
-	}
-  
-    @Override
-	public void saveChilds (XMLSaver saver) throws XMLTreeException,IOException,XMLCannotSaveException
-	{
-	}
+    public XMLElement saveSelf() throws XMLCannotSaveException {
+        XMLElement result = new XMLElement("sign");
+        result.addAttribute(new XMLAttribute("type", getType()));
+        result.addAttribute(new XMLAttribute("state", state));
+        result.addAttribute(new XMLAttribute("node-id", node.getId()));
+        // Lane id doesn't have to be saved, because it is set by the parent
+        // lane on loading
+        return result;
+    }
 
     @Override
-	public void setParentName (String parentName)
-	{	this.parentName=parentName; 
-	}
+    public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException, XMLCannotSaveException {
+    }
 
-	class TwoStageLoaderData 
- 	{ 	int nodeId;
- 	}
- 
     @Override
- 	public void loadSecondStage (Map maps) throws XMLInvalidInputException,XMLTreeException
- 	{ 	node=(Node)(((Map)(maps.get("node"))).get(new Integer(loadData.nodeId)));
- 		//System.out.println("Node gotten:"+node);
- 	}
- }
+    public void setParentName(String parentName) {
+        this.parentName = parentName;
+    }
+
+    class TwoStageLoaderData {
+
+        int nodeId;
+    }
+
+    @Override
+    public void loadSecondStage(Map maps) throws XMLInvalidInputException, XMLTreeException {
+        node = (Node) (((Map) (maps.get("node"))).get(new Integer(loadData.nodeId)));
+        //System.out.println("Node gotten:"+node);
+    }
+}

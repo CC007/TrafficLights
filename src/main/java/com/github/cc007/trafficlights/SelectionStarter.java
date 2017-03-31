@@ -30,5 +30,5 @@ public interface SelectionStarter
 	/** @return true if this Selectable has any children */
 	public boolean hasChildren();
 	/** @return all Selectables held by this Selectable */
-	public List<Selectable> getChildren();
+	public List<? extends Selectable> getChildren();
 }

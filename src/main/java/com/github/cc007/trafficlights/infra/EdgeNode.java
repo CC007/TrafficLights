@@ -48,7 +48,7 @@ public class EdgeNode extends SpecialNode {
     /**
      * The frequency at which various roadusers spawn at given cycles.
      */
-    protected HashMap<Integer, List<SpawnFrequencyCycles>> spawnCyclesHash = new HashMap();
+    protected HashMap<Integer, List<SpawnFrequencyCycles>> spawnCyclesHash = new HashMap<>();
 
     /**
      * The frequency with which spawned roadusers choose specific destinations
@@ -74,15 +74,15 @@ public class EdgeNode extends SpecialNode {
 
         try {
             SpawnFrequencyCycles[] dSpawnFreq = (SpawnFrequencyCycles[]) XMLArray.loadArray(this, loader);
-            spawnCyclesHash = new HashMap();
+            spawnCyclesHash = new HashMap<>();
             for (SpawnFrequencyCycles dSpawnFreqElem : dSpawnFreq) {
                 Integer key = dSpawnFreqElem.cycle;
                 if (spawnCyclesHash.get(key) == null) {
-                    spawnCyclesHash.put(key, new ArrayList());
+                    spawnCyclesHash.put(key, new ArrayList<>());
                 }
-                ((ArrayList) spawnCyclesHash.get(key)).add((Object) dSpawnFreqElem);
+                spawnCyclesHash.get(key).add(dSpawnFreqElem);
             }
-        } catch (Exception e) {
+        } catch (XMLInvalidInputException | XMLTreeException | IOException e) {
             System.out.println(e.getMessage() + "\n Due to new XML entry, safe to ignore the first time when loading older files.");
             Logger.getLogger(EdgeNode.class.getName()).log(Level.SEVERE, null, e);
         }
@@ -126,15 +126,15 @@ public class EdgeNode extends SpecialNode {
         int roadId;
     }
 
-    public void addDSpawnCycles(int _rutype, int _cycle, float _freq) {
+    public void addDSpawnCycles(int rutype, int cycle, float freq) {
 
-        SpawnFrequencyCycles sf = new SpawnFrequencyCycles(_rutype, _cycle, _freq);
-        Integer key = new Integer(_cycle);
+        SpawnFrequencyCycles sf = new SpawnFrequencyCycles(rutype, cycle, freq);
+        Integer key = cycle;
         if (spawnCyclesHash.get(key) == null) {
-            spawnCyclesHash.put(key, new ArrayList());
+            spawnCyclesHash.put(key, new ArrayList<>());
         }
 
-        ((ArrayList) spawnCyclesHash.get(key)).add((Object) sf);
+        spawnCyclesHash.get(key).add(sf);
 
     }
 

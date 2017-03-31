@@ -157,7 +157,7 @@ public class EditModel extends Model
 	 * @param posb The connection-position to connect the road at the beta node at
 	 * @param turnPoints The turn points. Angles are calculated.
 	 */
-	public void addRoad(Road road, Node alpha, int posa, Node beta, int posb, ArrayList turnPoints) throws InfraException
+	public void addRoad(Road road, Node alpha, int posa, Node beta, int posb, ArrayList<Point> turnPoints) throws InfraException
 	{
 		if(getConPos(alpha, posa).x != getConPos(beta, posb).x)
 		{

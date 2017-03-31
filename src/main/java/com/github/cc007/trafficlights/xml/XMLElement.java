@@ -33,7 +33,7 @@ public class XMLElement {
      */
     public XMLElement(String name) {
         this.name = name;
-        attributes = new ArrayList();
+        attributes = new ArrayList<>();
     }
 
     /**
@@ -45,7 +45,7 @@ public class XMLElement {
      */
     public XMLElement(String name, XMLAttribute[] attList) {
         this.name = name;
-        attributes = new ArrayList();
+        attributes = new ArrayList<>();
         for (int t = 0; t < attList.length; t++) {
             attributes.add(attList[t]);
         }
@@ -134,7 +134,7 @@ public class XMLElement {
      * Reset the attribute list (make it empty)
      */
     public void removeAllAttributes() {
-        attributes = new ArrayList();
+        attributes = new ArrayList<>();
     }
 
     /**

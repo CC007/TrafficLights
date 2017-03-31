@@ -63,7 +63,7 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
     /**
      * All the inbound lanes on all the Nodes in our Infrastructure
      */
-    protected ArrayList allLanes;
+    protected ArrayList<DriveLane> allLanes;
     /**
      * Number dispenser for sign id's
      */
@@ -149,7 +149,7 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
         allNodes = new Node[0];
         specialNodes = new SpecialNode[0];
         junctions = new Junction[0];
-        allLanes = new ArrayList();
+        allLanes = new ArrayList<>();
         title = "untitled";
         author = "";
         comments = "";
@@ -727,13 +727,11 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
      * underscore in the function name was added to emphasize that you probably
      * need another method now.
      */
-    public EdgeNode[] getEdgeNodes_() {
-        Iterator it = new ArrayList<>(Arrays.asList(specialNodes)).iterator();
-        ArrayList result = new ArrayList();
-        Node tmp;
-        while (it.hasNext()) {
-            if ((tmp = (Node) it.next()) instanceof EdgeNode) {
-                result.add(tmp);
+    public EdgeNode[] getEdgeNodes() {
+        ArrayList<EdgeNode> result = new ArrayList<>();
+        for (Node tmp : new ArrayList<>(Arrays.asList(specialNodes))) {
+            if (tmp instanceof EdgeNode) {
+                result.add((EdgeNode) tmp);
             }
         }
         EdgeNode[] resultArray = new EdgeNode[result.size()];
@@ -744,8 +742,8 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
     /**
      * Gets the number of EdgeNodes in the infrastructure
      */
-    public int getNumEdgeNodes_() {
-        return getEdgeNodes_().length;
+    public int getNumEdgeNodes() {
+        return getEdgeNodes().length;
     }
 
     /**
@@ -845,7 +843,7 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
 
     public void cacheInboundLanes() throws InfraException {
         int num_nodes = allNodes.length;
-        allLanes = new ArrayList(num_nodes * 3);
+        allLanes = new ArrayList<>(num_nodes * 3);
         DriveLane[] temp;
         int num_temp;
 
@@ -883,16 +881,15 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
         size = new Dimension(myElement.getAttribute("width").getIntValue(),
                 myElement.getAttribute("height").getIntValue());
 
-        allLanes = (ArrayList) XMLArray.loadArray(this, loader);
-        notYetDisabledLanes = (ArrayList) allLanes.clone();
+        allLanes = (ArrayList<DriveLane>) XMLArray.loadArray(this, loader);
+        notYetDisabledLanes = new ArrayList<>(allLanes);
         allNodes = (Node[]) XMLArray.loadArray(this, loader);
-        specialNodes = new SpecialNode[myElement.getAttribute(
-                "num-specialnodes").getIntValue()];
+        specialNodes = new SpecialNode[myElement.getAttribute("num-specialnodes").getIntValue()];
         junctions = new Junction[allNodes.length - specialNodes.length];
         copySpecialNodes();
         copyJunctions();
         // Internal second stage load of child objects
-        Map mainMap;
+        Map<String, Map<Integer, TwoStageLoader>> mainMap;
         try {
             mainMap = getMainMap();
         } catch (InfraException e) {
@@ -911,8 +908,7 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
         result.addAttribute(new XMLAttribute("height", size.height));
         result.addAttribute(new XMLAttribute("width", size.width));
         result.addAttribute(new XMLAttribute("file-version", version));
-        result.addAttribute(new XMLAttribute("num-specialnodes",
-                specialNodes.length));
+        result.addAttribute(new XMLAttribute("num-specialnodes", specialNodes.length));
         laneMap = (HashMap) (getLaneSignMap());
         return result;
     }
@@ -934,43 +930,39 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
         this.parentName = parentName;
     }
 
-    public Map getMainMap() throws InfraException {
-        Map result = new HashMap();
+    public Map<String, Map<Integer, TwoStageLoader>> getMainMap() throws InfraException {
+        Map<String, Map<Integer, TwoStageLoader>> result = new HashMap<>();
         result.put("lane", getLaneSignMap());
         result.put("node", getNodeMap());
         result.put("road", getRoadMap());
         return result;
     }
 
-    protected Map getLaneSignMap() {
-        Map result = new HashMap();
+    protected Map<Integer, TwoStageLoader> getLaneSignMap() {
+        Map<Integer, TwoStageLoader> result = new HashMap<>();
         Iterator lanes = allLanes.iterator();
         DriveLane tmp;
         while (lanes.hasNext()) {
             tmp = (DriveLane) (lanes.next());
-            result.put(new Integer(tmp.getId()), tmp);
+            result.put(tmp.getId(), tmp);
         }
         return result;
     }
 
-    protected Map getNodeMap() {
-        Map result = new HashMap();
+    protected Map<Integer, TwoStageLoader> getNodeMap() {
+        Map<Integer, TwoStageLoader> result = new HashMap<>();
         Iterator nodes = new ArrayIterator(allNodes);
         Node tmp;
         while (nodes.hasNext()) {
             tmp = (Node) (nodes.next());
-            result.put(new Integer(tmp.getId()), tmp);
+            result.put(tmp.getId(), tmp);
         }
         return result;
     }
 
-    protected Map getRoadMap() throws InfraException {
-        Map result = new HashMap();
-        Iterator nodes = new ArrayIterator(allNodes), roads;
-        Node tmp;
-        Road road;
-        while (nodes.hasNext()) {
-            tmp = (Node) (nodes.next());
+    protected Map<Integer, TwoStageLoader> getRoadMap() throws InfraException {
+        Map<Integer, TwoStageLoader> result = new HashMap<>();
+        for (Node tmp : Arrays.asList(allNodes)) {
             if (tmp instanceof SpecialNode) {
                 addAlphaRoads(result, (SpecialNode) (tmp));
             } else if (tmp instanceof Junction) {
@@ -984,33 +976,31 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
 
     protected void copySpecialNodes() {
         int specialNodePos = 0;
-        for (int t = 0; t < allNodes.length; t++) {
-            if (allNodes[t] instanceof SpecialNode) {
-                specialNodes[specialNodePos++] = (SpecialNode) (allNodes[t]);
+        for (Node node : allNodes) {
+            if (node instanceof SpecialNode) {
+                specialNodes[specialNodePos++] = (SpecialNode) (node);
             }
         }
     }
 
     protected void copyJunctions() {
         int junctionPos = 0;
-        for (int t = 0; t < allNodes.length; t++) {
-            if (allNodes[t] instanceof Junction) {
-                junctions[junctionPos++] = (Junction) (allNodes[t]);
+        for (Node node : allNodes) {
+            if (node instanceof Junction) {
+                junctions[junctionPos++] = (Junction) (node);
             }
         }
     }
 
-    protected void addAlphaRoads(Map d, SpecialNode n) {
+    protected void addAlphaRoads(Map<Integer, TwoStageLoader> d, SpecialNode n) {
         if (n.getAlpha()) {
-            d.put(new Integer(n.getRoad().getId()), n.getRoad());
+            d.put(n.getRoad().getId(), n.getRoad());
         }
     }
 
-    protected void addAlphaRoads(Map d, Junction n) {
-        Iterator roads = new ArrayIterator(n.getAlphaRoads());
-        while (roads.hasNext()) {
-            Road road = (Road) (roads.next());
-            d.put(new Integer(road.getId()), road);
+    protected void addAlphaRoads(Map<Integer, TwoStageLoader> d, Junction n) {
+        for (Road road : Arrays.asList(n.getAlphaRoads())) {
+            d.put(road.getId(), road);
         }
     }
 }

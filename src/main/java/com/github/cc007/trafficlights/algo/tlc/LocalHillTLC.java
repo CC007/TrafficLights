@@ -46,7 +46,7 @@ public class LocalHillTLC extends TLController implements Colearning {
     protected final static String shortXMLName = "tlc-localhill";
 
     protected Random seed;
-    protected ArrayList tld_backup;
+    protected ArrayList<TLDecision> tld_backup;
     protected int[] v_table;	//signID
     protected final int iteration_length = 1;
 
@@ -69,7 +69,7 @@ public class LocalHillTLC extends TLController implements Colearning {
         } catch (Exception e) {
         }
 
-        tld_backup = new ArrayList();
+        tld_backup = new ArrayList<>();
 
         // Create the array
         v_table = new int[numSigns];
@@ -305,7 +305,7 @@ public class LocalHillTLC extends TLController implements Colearning {
     public void load(XMLElement myElement, XMLLoader loader) throws XMLTreeException, IOException, XMLInvalidInputException {
         super.load(myElement, loader);
         v_table = (int[]) XMLArray.loadArray(this, loader);
-        tld_backup = (ArrayList) (XMLArray.loadArray(this, loader));
+        tld_backup = (ArrayList<TLDecision>) (XMLArray.loadArray(this, loader));
     }
 
     @Override

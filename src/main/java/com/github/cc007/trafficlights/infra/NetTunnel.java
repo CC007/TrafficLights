@@ -60,7 +60,7 @@ public class NetTunnel extends SpecialNode {
      * A LinkedList with Roadusers which are waiting to be send to the remote
      * machine
      */
-    protected LinkedList sendQueue;
+    protected LinkedList<Roaduser> sendQueue;
     /**
      * These variables indicate the state of the infra
      */
@@ -73,18 +73,18 @@ public class NetTunnel extends SpecialNode {
 
     public NetTunnel() {
         super();
-        sendQueue = new LinkedList();
+        sendQueue = new LinkedList<>();
     }
 
     public NetTunnel(Point _coord) {
         super(_coord);
-        sendQueue = new LinkedList();
+        sendQueue = new LinkedList<>();
     }
 
     @Override
     public void start() {
         try {
-            sendQueue = new LinkedList();
+            sendQueue = new LinkedList<>();
             server = new SocketServer();
             server.start();
             netInitialized = true;
@@ -118,7 +118,7 @@ public class NetTunnel extends SpecialNode {
         remoteHostname = myElement.getAttribute("remote-host").getValue();
         remotePort = myElement.getAttribute("remote-port").getIntValue();
         localPort = myElement.getAttribute("local-port").getIntValue();
-        sendQueue = (LinkedList) (XMLArray.loadArray(this, loader));
+        sendQueue = (LinkedList<Roaduser>) (XMLArray.loadArray(this, loader));
     }
 
     @Override
@@ -144,7 +144,7 @@ public class NetTunnel extends SpecialNode {
     }
 
     @Override
-    public void loadSecondStage(Map maps) throws XMLInvalidInputException, XMLTreeException {
+    public void loadSecondStage(Map<String, Map<Integer, TwoStageLoader>> maps) throws XMLInvalidInputException, XMLTreeException {
         super.loadSecondStage(maps);
         XMLUtils.loadSecondStage(sendQueue, maps);
     }
@@ -212,8 +212,8 @@ public class NetTunnel extends SpecialNode {
     @Override
     public void reset() {
         super.reset();
-        sendQueue = new LinkedList();
-        waitingQueue = new LinkedList();
+        sendQueue = new LinkedList<>();
+        waitingQueue = new LinkedList<>();
     }
 
     public int getSendQueueLength() {

@@ -530,7 +530,7 @@ public class Junction extends Node {
             srt_rarr[2] = allRoads[0];
         }
 
-        ArrayList v = new ArrayList();
+        ArrayList<DriveLane> v = new ArrayList<>();
         DriveLane[] lanes;
         int num_lanes;
         int cnt_lanes = 0;
@@ -551,7 +551,7 @@ public class Junction extends Node {
             }
         }
 
-        return (DriveLane[]) v.toArray(new DriveLane[cnt_lanes]);
+        return v.toArray(new DriveLane[cnt_lanes]);
     }
 
     /* Needs Testing! */
@@ -581,7 +581,7 @@ public class Junction extends Node {
         }
 
         //System.out.println("Junction getLanesLeadingFrom "+nodeId);		
-        ArrayList v = new ArrayList();
+        ArrayList<DriveLane> v = new ArrayList<>();
         DriveLane[] lanes;
         int num_lanes;
         int cnt_lanes = 0;
@@ -603,9 +603,10 @@ public class Junction extends Node {
                 }
             }
         }
-        return (DriveLane[]) v.toArray(new DriveLane[cnt_lanes]);
+        return v.toArray(new DriveLane[cnt_lanes]);
     }
 
+    //TODO reduce code copy
     public DriveLane[] getLanesLeadingFrom(DriveLane lane) throws InfraException {
         Road road = lane.getRoad();
         // Road[] which will contain the Roads of this Node in a sorted fashion:
@@ -631,7 +632,7 @@ public class Junction extends Node {
         }
 
         //System.out.println("Junction getLanesLeadingFrom "+nodeId);		
-        ArrayList v = new ArrayList();
+        ArrayList<DriveLane> v = new ArrayList<>();
         DriveLane[] lanes;
         int num_lanes;
         int cnt_lanes = 0;
@@ -649,7 +650,7 @@ public class Junction extends Node {
                 }
             }
         }
-        return (DriveLane[]) v.toArray(new DriveLane[cnt_lanes]);
+        return v.toArray(new DriveLane[cnt_lanes]);
     }
 
     /**
@@ -912,7 +913,7 @@ public class Junction extends Node {
     }
 
     @Override
-    public void loadSecondStage(Map maps) throws XMLInvalidInputException, XMLTreeException {
+    public void loadSecondStage(Map<String, Map<Integer, TwoStageLoader>> maps) throws XMLInvalidInputException, XMLTreeException {
         super.loadSecondStage(maps);
         // Load roads
         Map roadMap = (Map) (maps.get("road"));

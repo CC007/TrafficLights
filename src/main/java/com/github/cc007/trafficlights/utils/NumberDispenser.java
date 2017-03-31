@@ -24,12 +24,12 @@ import java.util.Arrays;
 // A very simple number dispenser for ID's. It sucks. It also works.
 public class NumberDispenser implements XMLSerializable {
 
-    Stack stack;
+    Stack<Integer> stack;
     int counter;
     String parentName = "model";
 
     public NumberDispenser() {
-        stack = new Stack();
+        stack = new Stack<>();
         counter = 0;
     }
 
@@ -37,22 +37,22 @@ public class NumberDispenser implements XMLSerializable {
         if (stack.isEmpty()) {
             return counter++;
         } else {
-            return ((Integer) (stack.pop())).intValue();
+            return stack.pop();
         }
     }
 
     public void giveBack(int number) {
         if (number == counter - 1) {
             counter--;
-        } else if (number < counter && !stack.contains(new Integer(number))) {
-            stack.push(new Integer(number));
+        } else if (number < counter && !stack.contains(number)) {
+            stack.push(number);
         }
     }
 
     @Override
     public void load(XMLElement myElement, XMLLoader loader) throws XMLTreeException, IOException, XMLInvalidInputException {
-        stack = new Stack();
-        stack.addAll((ArrayList) (XMLArray.loadArray(this, loader)));
+        stack = new Stack<>();
+        stack.addAll((ArrayList<Integer>) XMLArray.loadArray(this, loader));
         counter = myElement.getAttribute("counter").getIntValue();
     }
 

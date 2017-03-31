@@ -71,7 +71,7 @@ public class EdgeNodeTool implements Tool
 	public EdgeNodeTool(Controller c) {
 		controller = c;
 		view = controller.getView();
-		edges = controller.getModel().getInfrastructure().getEdgeNodes_();
+		edges = controller.getModel().getInfrastructure().getEdgeNodes();
 		roaduserPanel = new RoaduserPanel();
 	}
 	

@@ -45,7 +45,8 @@ public class TC1TLCDestless extends TCRL implements Colearning, InstantiationAss
     protected int num_nodes;
 
     // TC1 vars
-    protected ArrayList count[][][], pTable[][][];
+    protected ArrayList<CountEntry> count[][][];
+    protected ArrayList<PEntry> pTable[][][];
     protected float[][][][] qTable; //sign, pos, des, color (red=0, green=1)
     protected float[][][] vTable;
     protected static float gamma = 0.90f;				//Discount Factor; used to decrease the influence of previous V values, that's why: 0 < gamma < 1
@@ -104,8 +105,8 @@ public class TC1TLCDestless extends TCRL implements Colearning, InstantiationAss
                             qTable[id][k][l][0] = 0.0f;
                             qTable[id][k][l][1] = 0.0f;
                             vTable[id][k][l] = 0.0f;
-                            count[id][k][l] = new ArrayList();
-                            pTable[id][k][l] = new ArrayList();
+                            count[id][k][l] = new ArrayList<>();
+                            pTable[id][k][l] = new ArrayList<>();
                         }
                     }
                 }

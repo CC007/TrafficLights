@@ -44,7 +44,7 @@ public abstract class SpecialNode extends Node implements XMLSerializable, TwoSt
      * The queue with all road users which have not entered the road. For
      * example because it's already full
      */
-    protected LinkedList waitingQueue = new LinkedList();
+    protected LinkedList<Roaduser> waitingQueue = new LinkedList<>();
 
     /**
      * Temporary data structure to tranfer info from the first stage loader to
@@ -72,7 +72,7 @@ public abstract class SpecialNode extends Node implements XMLSerializable, TwoSt
             loader.load(this, road);
         }
         loadData.roadId = myElement.getAttribute("road-id").getIntValue();
-        waitingQueue = (LinkedList) (XMLArray.loadArray(this, loader));
+        waitingQueue = (LinkedList<Roaduser>) (XMLArray.loadArray(this, loader));
     }
 
     @Override
@@ -101,11 +101,15 @@ public abstract class SpecialNode extends Node implements XMLSerializable, TwoSt
     }
 
     @Override
-    public void loadSecondStage(Map maps) throws XMLInvalidInputException, XMLTreeException {
+    public void loadSecondStage(Map<String, Map<Integer, TwoStageLoader>> maps) throws XMLInvalidInputException, XMLTreeException {
         super.loadSecondStage(maps);
         if (!isAlpha) {
-            Map roadMap = (Map) (maps.get("road"));
-            road = (Road) (roadMap.get(new Integer(loadData.roadId)));
+            Map<Integer, TwoStageLoader> roadMap = maps.get("road");
+            TwoStageLoader tsl = roadMap.get(loadData.roadId);
+            if (!(tsl instanceof Road)) {
+                throw new XMLInvalidInputException("The two stage loader isn't a road");
+            }
+            road = (Road) tsl;
         }
         road.loadSecondStage(maps);
         try {
@@ -224,14 +228,15 @@ public abstract class SpecialNode extends Node implements XMLSerializable, TwoSt
     /**
      * Returns the queue with waiting road users for this node
      */
-    public LinkedList getWaitingQueue() {
+    public LinkedList<Roaduser> getWaitingQueue() {
         return waitingQueue;
     }
 
     /**
      * Sets a new queue with waiting road users
+     * @param l
      */
-    public void setWaitingQueue(LinkedList l) {
+    public void setWaitingQueue(LinkedList<Roaduser> l) {
         waitingQueue = l;
     }
 
@@ -278,7 +283,7 @@ public abstract class SpecialNode extends Node implements XMLSerializable, TwoSt
         if (isAlpha) {
             road.reset();
         }
-        waitingQueue = new LinkedList();
+        waitingQueue = new LinkedList<>();
     }
 
     @Override
