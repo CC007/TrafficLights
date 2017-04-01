@@ -54,7 +54,9 @@ public class TC3TLCWorkInProgress extends TCRL implements Colearning, Instantiat
     protected int num_nodes;
 
     // TC3 vars
-    protected ArrayList[][][] count, pTable, pKtlTable;	//qa_table respresents the q'_table
+    protected ArrayList[][][] count;
+    protected ArrayList[][][] pTable;
+    protected ArrayList[][][] pKtlTable;	//qa_table respresents the q'_table
     protected float[][][][] qTable, qaTable;			//sign, pos, des, color (red=0, green=1)
     protected float[][][] vTable, wTable;
     protected float gamma = 0.95f;						//Discount Factor; used to decrease the influence of previous V values, that's why: 0 < gamma < 1
@@ -807,7 +809,7 @@ public class TC3TLCWorkInProgress extends TCRL implements Colearning, Instantiat
     }
 
     @Override
-    public void loadSecondStage(Map maps) throws XMLInvalidInputException, XMLTreeException {
+    public void loadSecondStage(Map<String, Map<Integer, TwoStageLoader>> maps) throws XMLInvalidInputException, XMLTreeException {
         super.loadSecondStage(maps);
         for (int i = 0; i < count.length; i++) {
             for (int j = 0; j < count[i].length; j++) {

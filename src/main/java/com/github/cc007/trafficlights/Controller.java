@@ -161,7 +161,7 @@ public abstract class Controller extends Frame implements XMLSerializable {
             settings = new GeneralSettings();
             try {
                 settings.doLoad();
-            } catch (Exception e) {
+            } catch (IOException | XMLTreeException | XMLInvalidInputException e) {
                 Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, e);
                 showError("Cannot load settings. Reverting to defaults. Cause : " + e);
             }
