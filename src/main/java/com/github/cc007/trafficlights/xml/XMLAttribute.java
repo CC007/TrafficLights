@@ -60,6 +60,15 @@ public class XMLAttribute
   { this (name,value+"",false);
   }
 
+  
+  /** Make a new XMLAttribute. The value is an long 
+    * @param name The name of the attribute
+    * @param value The value of the attribute
+   */
+  public XMLAttribute(String name,long value)
+  { this (name,value+"",false);
+  }
+  
   /** Make a new XMLAttribute. The value is a float
     * @param name The name of the attribute
     * @param value The value of the attribute

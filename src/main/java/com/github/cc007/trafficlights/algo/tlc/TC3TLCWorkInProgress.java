@@ -586,7 +586,7 @@ public class TC3TLCWorkInProgress extends TCRL implements Colearning, Instantiat
             tlNewId = myElement.getAttribute("new-tl-id").getIntValue();
             posNew = myElement.getAttribute("new-pos").getIntValue();
             Ktl = myElement.getAttribute("ktl").getIntValue();
-            value = myElement.getAttribute("value").getIntValue();
+            value = myElement.getAttribute("value").getLongValue();
         }
 
         @Override
@@ -740,7 +740,7 @@ public class TC3TLCWorkInProgress extends TCRL implements Colearning, Instantiat
 
         @Override
         public XMLElement saveSelf() throws XMLCannotSaveException {
-            XMLElement result = new XMLElement("pval");
+            XMLElement result = new XMLElement("pktlval");
             result.addAttribute(new XMLAttribute("pos", pos));
             result.addAttribute(new XMLAttribute("tl-id", tlId));
             result.addAttribute(new XMLAttribute("des-id", desId));
@@ -811,27 +811,29 @@ public class TC3TLCWorkInProgress extends TCRL implements Colearning, Instantiat
     @Override
     public void loadSecondStage(Map<String, Map<Integer, TwoStageLoader>> maps) throws XMLInvalidInputException, XMLTreeException {
         super.loadSecondStage(maps);
-        for (int i = 0; i < count.length; i++) {
-            for (int j = 0; j < count[i].length; j++) {
-                for (int k = 0; k < count[i][j].length; k++) {
-                    XMLUtils.loadSecondStage(count[i][j][k], maps);
-                }
-            }
-        }
-        for (int i = 0; i < pTable.length; i++) {
-            for (int j = 0; j < pTable[i].length; j++) {
-                for (int k = 0; k < pTable[i][j].length; k++) {
-                    XMLUtils.loadSecondStage(pTable[i][j][k], maps);
-                }
-            }
-        }
-        for (int i = 0; i < pKtlTable.length; i++) {
-            for (int j = 0; j < pKtlTable[i].length; j++) {
-                for (int k = 0; k < pKtlTable[i][j].length; k++) {
-                    XMLUtils.loadSecondStage(pKtlTable[i][j][k], maps);
-                }
-            }
-        }
+        
+        //TODO these classes do not implement the TwoStageLoader interface. Find out why this is used and how it should be used correcty
+//        for (int i = 0; i < count.length; i++) {
+//            for (int j = 0; j < count[i].length; j++) {
+//                for (int k = 0; k < count[i][j].length; k++) {
+//                    XMLUtils.loadSecondStage(count[i][j][k], maps);
+//                }
+//            }
+//        }
+//        for (int i = 0; i < pTable.length; i++) {
+//            for (int j = 0; j < pTable[i].length; j++) {
+//                for (int k = 0; k < pTable[i][j].length; k++) {
+//                    XMLUtils.loadSecondStage(pTable[i][j][k], maps);
+//                }
+//            }
+//        }
+//        for (int i = 0; i < pKtlTable.length; i++) {
+//            for (int j = 0; j < pKtlTable[i].length; j++) {
+//                for (int k = 0; k < pKtlTable[i][j].length; k++) {
+//                    XMLUtils.loadSecondStage(pKtlTable[i][j][k], maps);
+//                }
+//            }
+//        }
         System.out.println("TC3 second stage load finished.");
     }
 
