@@ -50,7 +50,8 @@ public class TC1B1 extends TCRL implements Colearning, InstantiationAssistant {
             WAIT = 1;
 
     // TC1 vars
-    protected ArrayList count[][][], p_table[][][];
+    protected ArrayList<CountEntry> count[][][];
+    protected ArrayList<PEntry> p_table[][][];
     protected float[][][][] q_table; //sign, pos, des, color (red=0, green=1)
     protected float[][][] v_table;
     protected static float gamma = 0.90f;				//Discount Factor; used to decrease the influence of previous V values, that's why: 0 < gamma < 1
@@ -110,8 +111,8 @@ public class TC1B1 extends TCRL implements Colearning, InstantiationAssistant {
                             q_table[id][k][l][0] = 0.0f;
                             q_table[id][k][l][1] = 0.0f;
                             v_table[id][k][l] = 0.0f;
-                            count[id][k][l] = new ArrayList();
-                            p_table[id][k][l] = new ArrayList();
+                            count[id][k][l] = new ArrayList<>();
+                            p_table[id][k][l] = new ArrayList<>();
                         }
                     }
                     bucket[id][BUCK] = 0;

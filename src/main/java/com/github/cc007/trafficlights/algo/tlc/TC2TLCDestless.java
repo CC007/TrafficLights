@@ -46,7 +46,9 @@ public class TC2TLCDestless extends TCRL implements Colearning, InstantiationAss
     protected int num_nodes;
 
     // TC2 vars
-    protected ArrayList[][][] count, pTable, pKtlTable;		// SituationCount, Chance for situtation for SignId, Position, DestinationNodeId
+    protected ArrayList<CountEntry>[][][] count;
+    protected ArrayList<PEntry>[][][] pTable;
+    protected ArrayList<PKtlEntry>[][][] pKtlTable;		// SituationCount, Chance for situtation for SignId, Position, DestinationNodeId
     protected float[][][][] qTable;						// Punishment for SignId, Position, DestinationNodeId, LightColor
     protected float[][][] vTable;						// Average wait for SignId, Position, DestinationNodeId
     protected static float gamma = 0.95f;						// Discount Factor; used to decrease the influence of previous V values, that's why: 0 < gamma < 1
@@ -108,9 +110,9 @@ public class TC2TLCDestless extends TCRL implements Colearning, InstantiationAss
                             qTable[id][k][l][0] = 0.0f;
                             qTable[id][k][l][1] = 0.0f;
                             vTable[id][k][l] = 0.0f;
-                            count[id][k][l] = new ArrayList();
-                            pTable[id][k][l] = new ArrayList();
-                            pKtlTable[id][k][l] = new ArrayList();
+                            count[id][k][l] = new ArrayList<>();
+                            pTable[id][k][l] = new ArrayList<>();
+                            pKtlTable[id][k][l] = new ArrayList<>();
                         }
                     }
                 }
@@ -564,6 +566,34 @@ public class TC2TLCDestless extends TCRL implements Colearning, InstantiationAss
             this.parentName = parentName;
         }
     }
+    public class PEntry implements XMLSerializable {	// PEntry vars
+
+        @Override
+        public void load(XMLElement myself, XMLLoader loader) throws XMLTreeException, IOException, XMLInvalidInputException {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public XMLElement saveSelf() throws XMLCannotSaveException {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException, XMLCannotSaveException {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public String getXMLName() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void setParentName(String parentName) throws XMLTreeException {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+        
+    }
 
     public class PKtlEntry implements XMLSerializable {	// PEntry vars
 
@@ -762,7 +792,7 @@ public class TC2TLCDestless extends TCRL implements Colearning, InstantiationAss
     }
 
     @Override
-    public void loadSecondStage(Map maps) throws XMLInvalidInputException, XMLTreeException {
+    public void loadSecondStage(Map<String, Map<Integer, TwoStageLoader>> maps) throws XMLInvalidInputException, XMLTreeException {
     }
 
     @Override

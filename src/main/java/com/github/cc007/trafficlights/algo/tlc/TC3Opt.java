@@ -53,7 +53,9 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
     protected int num_nodes;
 
     // TC3 vars
-    protected ArrayList[][][] count, p_table, pKtl_table;	//qa_table respresents the q'_table
+    protected ArrayList<CountEntry>[][][] count;
+    protected ArrayList<PEntry>[][][] p_table;
+    protected ArrayList<PKtlEntry>[][][] pKtl_table;	//qa_table respresents the q'_table
     protected float[][][][] q_table, qa_table;			//sign, pos, des, color (red=0, green=1)
     protected float[][][] v_table, va_table;
     protected float gamma = 0.95f;						//Discount Factor; used to decrease the influence of previous V values, that's why: 0 < gamma < 1
@@ -129,9 +131,9 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
                             qa_table[id][k][l][1] = 0.0f;
                             v_table[id][k][l] = 0.0f;
                             va_table[id][k][l] = 0.0f;
-                            count[id][k][l] = new ArrayList();
-                            p_table[id][k][l] = new ArrayList();
-                            pKtl_table[id][k][l] = new ArrayList();
+                            count[id][k][l] = new ArrayList<>();
+                            p_table[id][k][l] = new ArrayList<>();
+                            pKtl_table[id][k][l] = new ArrayList<>();
                         }
                     }
                 }
@@ -229,7 +231,7 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
         CountEntry currentsituation = new CountEntry(tl, pos, destination, light, tl_new, pos_new, Ktl);
         int count_index = count[tlId][pos][desId].indexOf(currentsituation);
         if (count_index >= 0) {
-            currentsituation = (CountEntry) count[tlId][pos][desId].get(count_index);
+            currentsituation = count[tlId][pos][desId].get(count_index);
             currentsituation.incrementValue();
         } else {
             count[tlId][pos][desId].add(currentsituation);
@@ -1071,7 +1073,7 @@ public class TC3Opt extends TCRL implements Colearning, InstantiationAssistant {
     }
 
     @Override
-    public void loadSecondStage(Map maps) throws XMLInvalidInputException, XMLTreeException {
+    public void loadSecondStage(Map<String, Map<Integer, TwoStageLoader>> maps) throws XMLInvalidInputException, XMLTreeException {
         super.loadSecondStage(maps);
         for (int i = 0; i < count.length; i++) {
             for (int j = 0; j < count[i].length; j++) {

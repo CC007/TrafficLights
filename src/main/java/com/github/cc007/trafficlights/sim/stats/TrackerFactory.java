@@ -63,7 +63,7 @@ public class TrackerFactory
 	public final static int REMOVEDCARS_COUNT = 12;
 
 	
-	protected static ArrayList trackingControllers = new ArrayList();
+	protected static ArrayList<TrackingController> trackingControllers = new ArrayList<>();
 
 	/**
 	* Shows one of the 'global' tracking windows.
@@ -77,16 +77,24 @@ public class TrackerFactory
 		}
 
 		ExtendedTrackingView view = null;
-		if(type == TOTAL_JUNCTION) {
-            view = new AllJunctionsTrackingView(model.getCurCycle(), model);
-        } else if(type == TOTAL_WAIT) {
-            view = new TotalWaitTrackingView(model.getCurCycle(), model);
-        } else if(type == TOTAL_ROADUSERS) {
-            view = new TotalRoadusersTrackingView(model.getCurCycle(), model);
-        } else if(type == ACCIDENTS_COUNT) {
-            view = new AccidentsCountTrackingView(model.getCurCycle(), model);
-        } else if(type == REMOVEDCARS_COUNT) {
-            view = new RemovedCarsTrackingView(model.getCurCycle(), model);
+        switch (type) {
+            case TOTAL_JUNCTION:
+                view = new AllJunctionsTrackingView(model.getCurCycle(), model);
+                break;
+            case TOTAL_WAIT:
+                view = new TotalWaitTrackingView(model.getCurCycle(), model);
+                break;
+            case TOTAL_ROADUSERS:
+                view = new TotalRoadusersTrackingView(model.getCurCycle(), model);
+                break;
+            case ACCIDENTS_COUNT:
+                view = new AccidentsCountTrackingView(model.getCurCycle(), model);
+                break;
+            case REMOVEDCARS_COUNT:
+                view = new RemovedCarsTrackingView(model.getCurCycle(), model);
+                break;
+            default:
+                break;
         }
 
 

@@ -125,7 +125,7 @@ public class XMLArray implements XMLSerializable { // The data itself
      * @returns The new XMLArray
      */
     public XMLArray(Object input, String parentName, String alias) throws XMLCannotSaveException {
-        
+
         dataClass = input.getClass();
         this.parentName = parentName;
         this.alias = alias;
@@ -143,7 +143,7 @@ public class XMLArray implements XMLSerializable { // The data itself
         }
         dataClass = input.getClass();
         data = input;
-       
+
     }
 
     /**
@@ -174,25 +174,17 @@ public class XMLArray implements XMLSerializable { // The data itself
     /**
      * Gets the result array in ArrayList form. Used by getResult()
      */
-    protected ArrayList getResultArrayList() {
+    protected ArrayList<Object> getResultArrayList() {
         Object[] array = (Object[]) (data);
-        ArrayList result = new ArrayList(array.length);
-        for (int t = 0; t < array.length; t++) {
-            result.add(array[t]);
-        }
-        return result;
+        return new ArrayList<>(Arrays.asList(array));
     }
 
     /**
      * Gets the result array in LinkedList form. Used by getResult()
      */
-    protected LinkedList getResultLinkedList() {
+    protected LinkedList<Object> getResultLinkedList() {
         Object[] array = (Object[]) (data);
-        LinkedList result = new LinkedList();
-        for (int t = 0; t < array.length; t++) {
-            result.add(array[t]);
-        }
-        return result;
+        return new LinkedList<>(Arrays.asList(array));
     }
 
     /**

@@ -317,7 +317,7 @@ public class ACGJ1 extends TLController implements XMLSerializable, TwoStageLoad
         public void load(XMLElement myElement, XMLLoader loader) throws XMLTreeException, IOException, XMLInvalidInputException {
             numMaxTimes = myElement.getAttribute("max-times").getIntValue();
             currentMax = myElement.getAttribute("current-max").getFloatValue();
-            members = (ArrayList) (XMLArray.loadArray(this, loader, assistant));
+            members = (ArrayList<Person>) (XMLArray.loadArray(this, loader, assistant));
         }
 
         @Override

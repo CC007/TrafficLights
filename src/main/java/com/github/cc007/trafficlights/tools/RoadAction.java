@@ -39,14 +39,14 @@ public class RoadAction implements ToolAction {
     protected Point startPoint = null;
     protected Point mousePoint = null;
     protected Point alphaPoint = null;
-    protected ArrayList turnPoints = null;
+    protected ArrayList<Point> turnPoints = null;
     protected int alphaConPos = -1, betaConPos = -1;
 
     protected static final int MIN_TURN_DISTANCE = 50;
 
     public RoadAction(EditModel em) {
         model = em;
-        turnPoints = new ArrayList();
+        turnPoints = new ArrayList<>();
     }
 
     @Override

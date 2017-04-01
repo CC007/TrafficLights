@@ -42,7 +42,7 @@ public class SL5TLC extends TCRL implements InstantiationAssistant {
     protected Node[] allnodes;
     protected int num_nodes;
 
-    protected ArrayList count; //, p_table;
+    protected ArrayList<CountEntry> count; //, p_table;
     protected float[][][][] q_table; //sign, pos, des, color (red=0, green=1)
     protected static float gamma = 0.95f;				//Discount Factor; used to decrease the influence of previous V values, that's why: 0 < gamma < 1
     protected static float random_chance = 0.01f;				//A random gain setting is chosen instead of the on the TLC dictates with this chance
@@ -64,7 +64,7 @@ public class SL5TLC extends TCRL implements InstantiationAssistant {
         Node[] nodes = infra.getAllNodes(); //Moet Edge zijn eigenlijk, alleen testSimModel knalt er dan op
         int num_nodes = nodes.length;
 
-        count = new ArrayList();
+        count = new ArrayList<>();
         //p_table = new ArrayList();
 
         int numSigns = infra.getAllInboundLanes().size();
@@ -248,8 +248,8 @@ public class SL5TLC extends TCRL implements InstantiationAssistant {
 
         CountEntry dummy = new CountEntry(tl, pos, des, light, tl, pos);
         Target[] ownedtargets;
-        ArrayList candidate_targets;
-        candidate_targets = new ArrayList();
+        ArrayList<Target> candidate_targets;
+        candidate_targets = new ArrayList<>();
 
         //Use the count table to sort this out, we need all Targets from
         //Only the elements in the count table are used, other  just give a P
@@ -624,7 +624,7 @@ public class SL5TLC extends TCRL implements InstantiationAssistant {
         random_chance = myElement.getAttribute("random-chance").getFloatValue();
         q_table = (float[][][][]) XMLArray.loadArray(this, loader);
         //v_table=(float[][][])XMLArray.loadArray(this,loader);
-        count = (ArrayList) XMLArray.loadArray(this, loader, this);
+        count = (ArrayList<CountEntry>) XMLArray.loadArray(this, loader, this);
         //p_table=(ArrayList)XMLArray.loadArray(this,loader,this);
     }
 
@@ -652,7 +652,7 @@ public class SL5TLC extends TCRL implements InstantiationAssistant {
     }
 
     @Override
-    public void loadSecondStage(Map maps) throws XMLInvalidInputException, XMLTreeException {
+    public void loadSecondStage(Map<String, Map<Integer, TwoStageLoader>> maps) throws XMLInvalidInputException, XMLTreeException {
         XMLUtils.loadSecondStage(count, maps);
         //XMLUtils.loadSecondStage(p_table.iterator(),maps);
         System.out.println("SL5 second stage load finished.");

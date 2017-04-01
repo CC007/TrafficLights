@@ -386,13 +386,13 @@ public class ACGJ2 extends TLController implements XMLSerializable, TwoStageLoad
             tldIndex = myElement.getAttribute("tld-index").getIntValue();
             loadData.nodeId = myElement.getAttribute("node-id").getIntValue();
             // Set NodeInfo in DrivelaneInfo
-            Iterator it1 = new ArrayIterator(dli);
+            Iterator<DrivelaneInfo> it1 = Arrays.asList(dli).iterator();
             while (it1.hasNext()) {
-                ((DrivelaneInfo) (it1.next())).setNodeInfo(this);
+                it1.next().setNodeInfo(this);
             }
-            Iterator it2 = new ArrayIterator(dlo);
+            Iterator<DrivelaneInfo> it2 = Arrays.asList(dlo).iterator();
             while (it2.hasNext()) {
-                ((DrivelaneInfo) (it2.next())).setNodeInfo(this);
+                it2.next().setNodeInfo(this);
             }
         }
 
@@ -443,7 +443,7 @@ public class ACGJ2 extends TLController implements XMLSerializable, TwoStageLoad
             }
         }
 
-        public void loadThirdStage(Map maps) throws XMLInvalidInputException, XMLTreeException {
+        public void loadThirdStage(Map<String, Map<Integer, TwoStageLoader>> maps) throws XMLInvalidInputException, XMLTreeException {
             XMLUtils.loadSecondStage(new ArrayList<>(Arrays.asList(dli)), maps);
             XMLUtils.loadSecondStage(new ArrayList<>(Arrays.asList(dlo)), maps);
         }
@@ -528,13 +528,13 @@ public class ACGJ2 extends TLController implements XMLSerializable, TwoStageLoad
         }
 
         public float getLookAheadDisc() {
-            ListIterator li = dl.getQueue().listIterator();
-            Roaduser ru = null;
             int pos = 0;
             int ru_pos;
             int count = 0;
+            Iterator<Roaduser> li = dl.getQueue().iterator();
+            Roaduser ru = null;
             while (li.hasNext()) {
-                ru = (Roaduser) li.next();
+                ru = li.next();
                 ru_pos = ru.getPosition();
                 if (ru_pos > pos) {
                     break;
@@ -547,7 +547,7 @@ public class ACGJ2 extends TLController implements XMLSerializable, TwoStageLoad
             float laFactor = 0.0f;
 
             while (li.hasNext()) {
-                ru = (Roaduser) li.next();
+                ru = li.next();
                 ru_pos = ru.getPosition();
                 laFactor -= (1 / (ru_pos - pos));
             }
@@ -598,9 +598,9 @@ public class ACGJ2 extends TLController implements XMLSerializable, TwoStageLoad
         }
 
         @Override
-        public void loadSecondStage(Map maps) {
-            otherNode = (NodeInfo) ((Map) maps.get("node-info")).get(new Integer(loadData.nodeId));
-            dl = (DriveLane) ((Map) maps.get("lane")).get(new Integer(loadData.laneId));
+        public void loadSecondStage(Map<String, Map<Integer, TwoStageLoader>> maps) {
+            otherNode = (NodeInfo) maps.get("node-info").get(loadData.nodeId);
+            dl = (DriveLane) maps.get("lane").get(loadData.laneId);
         }
 
     }
@@ -745,7 +745,7 @@ public class ACGJ2 extends TLController implements XMLSerializable, TwoStageLoad
 
     // Yeah. Baby. A three-stage loader
     public void loadThirdStage(Map<String, Map<Integer, TwoStageLoader>> maps) throws XMLInvalidInputException, XMLTreeException {
-        Map<Integer, TwoStageLoader> nodeInfoMap = new HashMap();
+        Map<Integer, TwoStageLoader> nodeInfoMap = new HashMap<>();
         for (NodeInfo nodeInfo : new ArrayList<>(Arrays.asList(ndinf))) {
             nodeInfoMap.put(nodeInfo.getId(), nodeInfo);
         }

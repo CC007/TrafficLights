@@ -44,7 +44,8 @@ public class TCA1 extends TCRL implements Colearning, InstantiationAssistant {
     protected int num_nodes;
 
     // TC1 vars
-    protected ArrayList count[][][], pTable[][][];
+    protected ArrayList<CountEntry> count[][][];
+    protected ArrayList<PEntry> pTable[][][];
     protected float[][][][] qTable; //sign, pos, des, color (red=0, green=1)
     protected float[][][] vTable;
     protected static float gamma = 0.90f;				//Discount Factor; used to decrease the influence of previous V values, that's why: 0 < gamma < 1
@@ -102,8 +103,8 @@ public class TCA1 extends TCRL implements Colearning, InstantiationAssistant {
                             qTable[id][k][l][0] = 0.0f;
                             qTable[id][k][l][1] = 0.0f;
                             vTable[id][k][l] = 0.0f;
-                            count[id][k][l] = new ArrayList();
-                            pTable[id][k][l] = new ArrayList();
+                            count[id][k][l] = new ArrayList<>();
+                            pTable[id][k][l] = new ArrayList<>();
                         }
                     }
                 }
@@ -241,7 +242,7 @@ public class TCA1 extends TCRL implements Colearning, InstantiationAssistant {
         int p_index = pTable[tlId][pos][desId].indexOf(thisChance);
 
         if (p_index >= 0) {
-            thisChance = (PEntry) pTable[tlId][pos][desId].get(p_index);
+            thisChance = pTable[tlId][pos][desId].get(p_index);
         } else {
             pTable[tlId][pos][desId].add(thisChance);
             p_index = pTable[tlId][pos][desId].indexOf(thisChance);
@@ -254,7 +255,7 @@ public class TCA1 extends TCRL implements Colearning, InstantiationAssistant {
         int num_p = pTable[tlId][pos][desId].size();
         PEntry curP;
         for (int i = 0; i < num_p; i++) {
-            curP = (PEntry) pTable[tlId][pos][desId].get(i);
+            curP = pTable[tlId][pos][desId].get(i);
             if (curP.sameStartSituation(thisSituation) && i != p_index) {
                 curP.addSameStartSituation();
             }

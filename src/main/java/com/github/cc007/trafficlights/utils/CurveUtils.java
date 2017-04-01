@@ -126,7 +126,7 @@ public class CurveUtils {
      * @return The length of the specified QCurve
      */
     public static double calcLength(TurnCurve c, int step) {
-        ArrayList points = new ArrayList();
+        ArrayList<Point> points = new ArrayList<>();
         c.rewind();
         Point p;
         points.add(c.getFirst());

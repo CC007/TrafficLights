@@ -790,13 +790,11 @@ public class GenNeuralTLC extends TLController implements XMLSerializable, TwoSt
         }
 
         @Override
-        public void loadSecondStage(Map maps) throws XMLInvalidInputException, XMLTreeException {
-            Map nodeMap = (Map) (maps.get("node"));
+        public void loadSecondStage(Map<String, Map<Integer, TwoStageLoader>> maps) throws XMLInvalidInputException, XMLTreeException {
+            Map<Integer, TwoStageLoader> nodeMap = maps.get("node");
             my_nodes = new Node[loadData.nodeIds.length];
             for (int t = 0; t < my_nodes.length; t++) {
-                my_nodes[t] = loadData.nodeIds[t] == -1 ? null
-                        : (Node) (nodeMap.get(new Integer(
-                                loadData.nodeIds[t])));
+                my_nodes[t] = loadData.nodeIds[t] == -1 ? null : (Node) (nodeMap.get(loadData.nodeIds[t]));
             }
         }
 

@@ -286,7 +286,7 @@ public class LocalHillTLC extends TLController implements Colearning {
         try {
             DriveLane[] lanes = thisnode.getInboundLanes();
             for (int j = 0; j < lanes.length; j++) {
-                tld[i][j] = (TLDecision) tld_backup.get(j);
+                tld[i][j] = tld_backup.get(j);
             }
         } catch (Exception e) {
             Logger.getLogger(LocalHillTLC.class.getName()).log(Level.SEVERE, null, e);

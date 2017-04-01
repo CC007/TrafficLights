@@ -42,7 +42,7 @@ public class SL2TLC extends TCRL implements InstantiationAssistant {
     protected Node[] allnodes;
     protected int num_nodes;
 
-    protected ArrayList count; //, p_table;
+    protected ArrayList<CountEntry> count; //, p_table;
     protected float[][][][] q_table; //sign, pos, des, color (red=0, green=1)
     protected static float gamma = 0.95f;				//Discount Factor; used to decrease the influence of previous V values, that's why: 0 < gamma < 1
     protected static float random_chance = 0.01f;				//A random gain setting is chosen instead of the on the TLC dictates with this chance
@@ -64,7 +64,7 @@ public class SL2TLC extends TCRL implements InstantiationAssistant {
         Node[] nodes = infra.getAllNodes(); //Moet Edge zijn eigenlijk, alleen testSimModel knalt er dan op
         int num_nodes = nodes.length;
 
-        count = new ArrayList();
+        count = new ArrayList<>();
 
         int numSigns = infra.getAllInboundLanes().size();
         q_table = new float[numSigns + 1][][][];
@@ -146,11 +146,11 @@ public class SL2TLC extends TCRL implements InstantiationAssistant {
 
                 DriveLane currentlane = currenttl.getLane();
                 int waitingsize = currentlane.getNumRoadusersWaiting();
-                ListIterator queue = currentlane.getQueue().listIterator();
+                Iterator<Roaduser> queue = currentlane.getQueue().iterator();
 
                 if (!do_this_random) {
                     for (; waitingsize > 0; waitingsize--) {
-                        Roaduser ru = (Roaduser) queue.next();
+                        Roaduser ru = queue.next();
                         int pos = ru.getPosition();
                         Node destination = ru.getDestNode();
                         gain += q_table[currenttl.getId()][pos][destination.getId()][1] - q_table[currenttl.getId()][pos][destination.getId()][0];  //red - green
@@ -243,19 +243,19 @@ public class SL2TLC extends TCRL implements InstantiationAssistant {
 
         CountEntry dummy = new CountEntry(tl, pos, des, light, tl, pos);
         Target[] ownedtargets;
-        ArrayList candidate_targets;
-        candidate_targets = new ArrayList();
+        ArrayList<Target> candidate_targets;
+        candidate_targets = new ArrayList<>();
 
         //Use the count table to sort this out, we need all Targets from
         //Only the elements in the count table are used, other  just give a P
-        Iterator it = count.iterator();
+        Iterator<CountEntry> it = count.iterator();
         while (it.hasNext()) {
-            CountEntry current_entry = (CountEntry) it.next();
+            CountEntry current_entry = it.next();
             if (current_entry.sameSource(dummy) != 0) {
                 candidate_targets.add(new Target(current_entry.tl_new, current_entry.pos_new));
             }
         }
-        return (Target[]) candidate_targets.toArray();
+        return candidate_targets.toArray(new Target[candidate_targets.size()]);
     }
 
     /*
@@ -377,15 +377,12 @@ public class SL2TLC extends TCRL implements InstantiationAssistant {
         }
 
         @Override
-        public void loadSecondStage(Map maps) {
-            Map laneMap = (Map) (maps.get("lane")),
-                    nodeMap = (Map) (maps.get("node"));
-            tl = ((DriveLane) (laneMap.get(
-                    new Integer(loadData.oldTlId)))).getSign();
-            tl_new = ((DriveLane) (laneMap.get(
-                    new Integer(loadData.newTlId)))).getSign();
-            destination = (Node) (nodeMap.get(
-                    new Integer(loadData.destNodeId)));
+        public void loadSecondStage(Map<String, Map<Integer, TwoStageLoader>> maps) {
+            Map laneMap = maps.get("lane");
+            Map nodeMap = maps.get("node");
+            tl = ((DriveLane) (laneMap.get(loadData.oldTlId))).getSign();
+            tl_new = ((DriveLane) (laneMap.get(loadData.newTlId))).getSign();
+            destination = (Node) (nodeMap.get(loadData.destNodeId));
         }
 
     }
@@ -504,15 +501,12 @@ public class SL2TLC extends TCRL implements InstantiationAssistant {
         }
 
         @Override
-        public void loadSecondStage(Map maps) {
-            Map laneMap = (Map) (maps.get("lane")),
-                    nodeMap = (Map) (maps.get("node"));
-            tl = ((DriveLane) (laneMap.get(
-                    new Integer(loadData.oldTlId)))).getSign();
-            tl_new = ((DriveLane) (laneMap.get(
-                    new Integer(loadData.newTlId)))).getSign();
-            destination = (Node) (nodeMap.get(
-                    new Integer(loadData.destNodeId)));
+        public void loadSecondStage(Map<String, Map<Integer, TwoStageLoader>> maps) {
+            Map laneMap = maps.get("lane");
+            Map nodeMap = maps.get("node");
+            tl = ((DriveLane) (laneMap.get(loadData.oldTlId))).getSign();
+            tl_new = ((DriveLane) (laneMap.get(loadData.newTlId))).getSign();
+            destination = (Node) (nodeMap.get(loadData.destNodeId));
         }
 
     }
@@ -591,10 +585,9 @@ public class SL2TLC extends TCRL implements InstantiationAssistant {
         }
 
         @Override
-        public void loadSecondStage(Map maps) throws XMLInvalidInputException, XMLTreeException {
-            Map laneMap = (Map) (maps.get("lane"));
-            tl = ((DriveLane) (laneMap.get(
-                    new Integer(loadData.tlId)))).getSign();
+        public void loadSecondStage(Map<String, Map<Integer, TwoStageLoader>> maps) throws XMLInvalidInputException, XMLTreeException {
+            Map laneMap = maps.get("lane");
+            tl = ((DriveLane) (laneMap.get(loadData.tlId))).getSign();
         }
 
     }
@@ -619,8 +612,8 @@ public class SL2TLC extends TCRL implements InstantiationAssistant {
         random_chance = myElement.getAttribute("random-chance").getFloatValue();
         q_table = (float[][][][]) XMLArray.loadArray(this, loader);
         //v_table=(float[][][])XMLArray.loadArray(this,loader);
-        count = (ArrayList) XMLArray.loadArray(this, loader, this);
-        //p_table=(ArrayList)XMLArray.loadArray(this,loader,this);
+        count = (ArrayList<CountEntry>) XMLArray.loadArray(this, loader, this);
+        //p_table=(ArrayList<PEntry>)XMLArray.loadArray(this,loader,this);
     }
 
     @Override
@@ -647,7 +640,7 @@ public class SL2TLC extends TCRL implements InstantiationAssistant {
     }
 
     @Override
-    public void loadSecondStage(Map maps) throws XMLInvalidInputException, XMLTreeException {
+    public void loadSecondStage(Map<String, Map<Integer, TwoStageLoader>> maps) throws XMLInvalidInputException, XMLTreeException {
         XMLUtils.loadSecondStage(count, maps);
         //XMLUtils.loadSecondStage(p_table.iterator(),maps);
         System.out.println("SL2 second stage load finished.");

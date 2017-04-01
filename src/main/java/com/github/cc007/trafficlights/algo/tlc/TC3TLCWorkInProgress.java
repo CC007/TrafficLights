@@ -54,9 +54,9 @@ public class TC3TLCWorkInProgress extends TCRL implements Colearning, Instantiat
     protected int num_nodes;
 
     // TC3 vars
-    protected ArrayList[][][] count;
-    protected ArrayList[][][] pTable;
-    protected ArrayList[][][] pKtlTable;	//qa_table respresents the q'_table
+    protected ArrayList<CountEntry>[][][] count;
+    protected ArrayList<PEntry>[][][] pTable;
+    protected ArrayList<PKtlEntry>[][][] pKtlTable;	//qa_table respresents the q'_table
     protected float[][][][] qTable, qaTable;			//sign, pos, des, color (red=0, green=1)
     protected float[][][] vTable, wTable;
     protected float gamma = 0.95f;						//Discount Factor; used to decrease the influence of previous V values, that's why: 0 < gamma < 1
@@ -127,9 +127,9 @@ public class TC3TLCWorkInProgress extends TCRL implements Colearning, Instantiat
                             qaTable[id][k][l][1] = 0.0f;
                             vTable[id][k][l] = 0.0f;
                             wTable[id][k][l] = 0.0f;
-                            count[id][k][l] = new ArrayList();
-                            pTable[id][k][l] = new ArrayList();
-                            pKtlTable[id][k][l] = new ArrayList();
+                            count[id][k][l] = new ArrayList<>();
+                            pTable[id][k][l] = new ArrayList<>();
+                            pKtlTable[id][k][l] = new ArrayList<>();
                         }
                     }
                 }
@@ -481,6 +481,36 @@ public class TC3TLCWorkInProgress extends TCRL implements Colearning, Instantiat
 					Internal Classes to provide a way to put entries into the tables
 				==========================================================================
      */
+    
+    
+    public class PEntry implements XMLSerializable {
+
+        @Override
+        public void load(XMLElement myself, XMLLoader loader) throws XMLTreeException, IOException, XMLInvalidInputException {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public XMLElement saveSelf() throws XMLCannotSaveException {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void saveChilds(XMLSaver saver) throws XMLTreeException, IOException, XMLCannotSaveException {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public String getXMLName() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void setParentName(String parentName) throws XMLTreeException {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+        
+    }
     public class CountEntry implements XMLSerializable {
         // CountEntry vars
 

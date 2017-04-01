@@ -148,7 +148,7 @@ public class SignConfigCalculator {
                     if (il1.getRoad() == il2.getRoad()) {
                         continue;  // Buggy solution, crossing some invalid configs are valid with this.
                     }
-                    DriveLane[] cw = ((Junction) nd).getAllLanesCW(il1); // TO DO: it shouldn't be always Junction
+                    DriveLane[] cw = ((Junction) nd).getAllLanesCW(il1); //TODO: it shouldn't be always Junction
 
                     int k = 0;
                     while (k < cw.length) {

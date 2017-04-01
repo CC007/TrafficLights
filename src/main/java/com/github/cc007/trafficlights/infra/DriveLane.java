@@ -123,7 +123,7 @@ public class DriveLane
     /**
      * Returns the queue of this DriveLane
      */
-    public LinkedList getQueue() {
+    public LinkedList<Roaduser> getQueue() {
         return queue;
     }
 
