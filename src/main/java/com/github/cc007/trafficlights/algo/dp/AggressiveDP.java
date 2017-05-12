@@ -16,7 +16,6 @@
 
 package com.github.cc007.trafficlights.algo.dp;
 
-import com.github.cc007.trafficlights.algo.dp.*;
 import com.github.cc007.trafficlights.algo.tlc.*;
 import com.github.cc007.trafficlights.infra.*;
 import com.github.cc007.trafficlights.sim.*;

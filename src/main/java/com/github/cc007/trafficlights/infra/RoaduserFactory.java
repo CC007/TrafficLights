@@ -50,7 +50,7 @@ public class RoaduserFactory
 	protected static final int[] UNMOTORIZED = {BICYCLE};
 	/** All possible Roaduser types. */
 	public static final int[] types = { getSuperType(ALL),
-																				 getSuperType(AUTOMOBILE),
+					    getSuperType(AUTOMOBILE),
 	                                    getSuperType(UNMOTORIZED),
 	                                    CAR,
 	                                    BUS,
