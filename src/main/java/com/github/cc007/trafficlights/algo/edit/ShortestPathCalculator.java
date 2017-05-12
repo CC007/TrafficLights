@@ -199,7 +199,7 @@ public class ShortestPathCalculator
 
     /**
      *Find the nearest which can be choosen as an alternative destination
-     * @param The Id of the current node
+     * @param nodeId The Id of the current node
      * @return The node found
      */
     public int findNearestAvailableNode(int nodeId)
