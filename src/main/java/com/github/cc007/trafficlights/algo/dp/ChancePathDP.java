@@ -13,6 +13,8 @@ import com.github.cc007.trafficlights.infra.RoaduserFactory;
 import com.github.cc007.trafficlights.sim.SimModel;
 import com.github.cc007.trafficlights.xml.XMLCannotSaveException;
 import com.github.cc007.trafficlights.xml.XMLElement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -25,7 +27,7 @@ public class ChancePathDP extends DrivingPolicy {
 
     /**
      * Constructor for the Chance Path driving policy
-     * 
+     *
      * @param sim The model which is used
      * @param _tlc The traffic light controller which is used
      */
@@ -36,38 +38,33 @@ public class ChancePathDP extends DrivingPolicy {
 
     @Override
     public DriveLane getDirectionLane(Roaduser r, DriveLane lane_now, DriveLane[] allOutgoing, DriveLane[] shortest) {
-        DriveLane[] subset;
+        List<DriveLane> subset = new ArrayList<>();
         int index = 0;
         int num_outgoing = allOutgoing.length;
         int num_shortest = shortest.length;
 
-        if (num_shortest < num_outgoing) {
-            subset = new DriveLane[num_shortest];
-        } else {
-            subset = new DriveLane[num_outgoing];
-        }
-
         for (int i = 0; i < num_outgoing; i++) {
             for (int j = 0; j < num_shortest; j++) {
-                if (allOutgoing[i].getId() == shortest[j].getId()) {
-                    subset[index] = allOutgoing[i];
+                if (allOutgoing[i] != null && allOutgoing[i].getId() == shortest[j].getId()) {
+                    subset.add(allOutgoing[i]);
                     index++;
                 }
             }
         }
         double total = 0;
-        double[] subsetLengths = new double[subset.length];
-        for (int i = 0; i < subset.length; i++) {
-            subsetLengths[i] = 1/subset[i].getNodeLeadsTo().getShortestPathMinLength(r.getDestNode().getId(), r.getType());
+        double[] subsetLengths = new double[subset.size()];
+        for (int i = 0; i < subset.size(); i++) {
+            subsetLengths[i] = 1 / (double)subset.get(i).getNodeLeadsTo().getShortestPathMinLength(r.getDestNode().getId(), r.getType());
+            
             total += subsetLengths[i];
         }
 
         if (index > 0) {
             Random generator = model.getRNGen();
-            double wantedLength = generator.nextDouble()*total;
+            double wantedLength = generator.nextDouble() * total;
             for (int i = 0; wantedLength >= 0; i++) {
                 if (subsetLengths[i] >= wantedLength) {
-                    return subset[i];
+                    return subset.get(i);
                 }
                 wantedLength -= subsetLengths[i];
             }
