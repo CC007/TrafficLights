@@ -784,6 +784,13 @@ public abstract class Node implements Selectable, XMLSerializable,
     }
 
     /**
+     * Returns length of shortest paths for exitnode and Roaduser type
+     */
+    public int getShortestPathMinLength(int nodeID, int ruType) {
+        return spdata.getShortestPathMinLength(nodeID, ruType);
+    }
+
+    /**
      * Removes all lanes on the path towards nodeId with length larger than
      * length
      */

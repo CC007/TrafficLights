@@ -46,6 +46,18 @@ public class ShortestPathCalculator
     public void calcAllShortestPaths(Infrastructure infra) throws
             InfraException
     {
+        calcAllShortestPaths(infra, derivation_factor);
+    }
+
+    /**
+     * Calculates all the shortest paths for each EdgeNode in the Infrastructure.
+     * @param infra The Infrastructure of which the shortest paths should be calculated.
+     * @param derivation_factor the derivation from the real shortest path that is still accepted as shortest
+     */
+
+    public void calcAllShortestPaths(Infrastructure infra, double derivation_factor) throws
+            InfraException
+    {
         infra.resetShortestPaths(); //(DOAS 06)
         Node[] exits = infra.getSpecialNodes();
         allNodes = infra.getAllNodes();
@@ -53,7 +65,7 @@ public class ShortestPathCalculator
         //System.out.println("Calculating Shortest Paths to "+num_exits+" ExitNodes");
         for (int i = 0; i < num_exits; i++)
         {
-            calcShortestPaths(infra, exits[i]);
+            calcShortestPaths(infra, exits[i], derivation_factor);
         }
     }
 
@@ -62,7 +74,7 @@ public class ShortestPathCalculator
      * @param infra The Infrastructure of which the shortest paths should be calculated.
      * @param exit The Node to which the shortest paths should be caluclated.
      */
-    private void calcShortestPaths(Infrastructure infra, Node exit) throws
+    private void calcShortestPaths(Infrastructure infra, Node exit, double derivation_factor) throws
             InfraException
     {
         Node node = exit; // The Node variable we need for tracking

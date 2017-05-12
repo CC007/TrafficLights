@@ -89,6 +89,28 @@ public class SPData implements XMLSerializable, TwoStageLoader, InstantiationAss
             return ps;
         }
     }
+    
+     /**
+     * Returns an array of Drivelanes that are on 1 of the shortest paths from
+     * the node this SPData belongs to, to the Node with exiNodeId, for
+     * Roadusers with type ruType.
+     *
+     * @param exitNodeId The Id of the exit node that is your destination.
+     * @param ruType The type of Roaduser.
+     * @return an array of Drivelanes.
+     */
+    public int getShortestPathMinLength(int exitNodeId, int ruType) {
+        //System.out.println("SPData.Getting shortestPath to:"+exitNodeId+" with type:"+ruType+" from "+paths.size());
+        Path p = getPath(exitNodeId, ruType);
+        /*System.out.println("SPData.Gotten:"+p.getNodeId()+","+p.getRUType());
+		System.out.println("SPData.With "+p.getLanes());*/
+
+        if (p != null) {
+            return p.getMinLength();
+        } else {
+            return Integer.MAX_VALUE;
+        }
+    }
 
     /*============================================*/
  /* SETS                                       */
@@ -351,6 +373,15 @@ public class SPData implements XMLSerializable, TwoStageLoader, InstantiationAss
                 }
             }
         }
+        
+        public int getMinLength() {
+            int minLength = Integer.MAX_VALUE;
+            for (Integer length : lengths) {
+                minLength = Integer.min(minLength, length);
+            }
+            return minLength;
+        }
+
 
         /**
          * Remove all Drivelanes
