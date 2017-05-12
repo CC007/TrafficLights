@@ -328,7 +328,7 @@ public class SPData implements XMLSerializable, TwoStageLoader, InstantiationAss
             lanes = (DriveLane[]) Arrayutils.addUnique(lanes, l);
             if (oldlen < lanes.length) {
                 // Something added
-                lengths = (Integer[]) Arrayutils.add(lengths, new Integer(length));
+                lengths = (Integer[]) Arrayutils.add(lengths, length);
             }
         }
 
