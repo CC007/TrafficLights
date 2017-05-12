@@ -41,6 +41,7 @@ public class SmarterShortestPathDP extends DrivingPolicy
     
 	public SmarterShortestPathDP(SimModel sim, TLController _tlc) {
 		super(sim,_tlc);
+        sim.setDerivationFactor(1.1);
 	}
     
 

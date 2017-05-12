@@ -41,6 +41,7 @@ public class AggressiveDP extends DrivingPolicy
     
 	public AggressiveDP(SimModel sim, TLController _tlc) {
 		super(sim,_tlc);
+        sim.setDerivationFactor(1.1);
 	}
     
 

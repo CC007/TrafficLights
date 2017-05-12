@@ -377,7 +377,9 @@ public class SPData implements XMLSerializable, TwoStageLoader, InstantiationAss
         public int getMinLength() {
             int minLength = Integer.MAX_VALUE;
             for (Integer length : lengths) {
-                minLength = Integer.min(minLength, length);
+                if(length > 0 && length < minLength){
+                    minLength = length;
+                }
             }
             return minLength;
         }

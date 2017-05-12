@@ -270,6 +270,7 @@ public class SimMenuBar extends MenuBar {
     }
     
     public class DPMenu extends CheckMenu implements ItemListener {
+        private SimModel model;
         public DPMenu(String[] dps) {
             super("Driving policy", dps);
             addItemListener(this);

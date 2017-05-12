@@ -19,12 +19,19 @@ import java.util.Random;
  *
  * @author Rik
  */
-public class ChancePathDP extends DrivingPolicy{
+public class ChancePathDP extends DrivingPolicy {
 
     public static final String shortXMLName = "dp-cp";
-    
-    public ChancePathDP(SimModel m, TLController _tlc) {
-        super(m, _tlc);
+
+    /**
+     * Constructor for the Chance Path driving policy
+     * 
+     * @param sim The model which is used
+     * @param _tlc The traffic light controller which is used
+     */
+    public ChancePathDP(SimModel sim, TLController _tlc) {
+        super(sim, _tlc);
+        sim.setDerivationFactor(2.0);
     }
 
     @Override
@@ -48,21 +55,27 @@ public class ChancePathDP extends DrivingPolicy{
                 }
             }
         }
-        int total = 0;
-        int[] subsetLengths = new int[subset.length];
-        for (int i=0;i<subset.length;i++) {
-            subsetLengths[i] =  subset[i].getNodeComesFrom().getShortestPathMinLength(r.getDestNode().getId(), r.getType());
+        double total = 0;
+        double[] subsetLengths = new double[subset.length];
+        for (int i = 0; i < subset.length; i++) {
+            subsetLengths[i] = 1/subset[i].getNodeLeadsTo().getShortestPathMinLength(r.getDestNode().getId(), r.getType());
             total += subsetLengths[i];
         }
-        
+
         if (index > 0) {
             Random generator = model.getRNGen();
-            int i = generator.nextInt(total);
-            return subset[i];
-        } else {
-            //System.out.println ("Couldnt't get direction in DP");
-            return null;  //Something very funny is going on now
+            double wantedLength = generator.nextDouble()*total;
+            for (int i = 0; wantedLength >= 0; i++) {
+                if (subsetLengths[i] >= wantedLength) {
+                    return subset[i];
+                }
+                wantedLength -= subsetLengths[i];
+            }
+
         }
+        //System.out.println ("Couldnt't get direction in DP");
+        return null;  //Something very funny is going on now
+
     }
 
     @Override
@@ -74,6 +87,5 @@ public class ChancePathDP extends DrivingPolicy{
     public String getXMLName() {
         return "model." + shortXMLName;
     }
-    
-    
+
 }

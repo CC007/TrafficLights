@@ -13,96 +13,116 @@
  * See the GNU General Public License for more details.
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
-
 package com.github.cc007.trafficlights.algo.dp;
-/** This class can be used to create instances of Driving Policies
-  * for a specific SimModel and TrafficLightController
+
+/**
+ * This class can be used to create instances of Driving Policies for a specific
+ * SimModel and TrafficLightController
  */
 
 import com.github.cc007.trafficlights.algo.tlc.TLController;
 import com.github.cc007.trafficlights.sim.SimModel;
 import com.github.cc007.trafficlights.utils.StringUtils;
 import java.util.NoSuchElementException;
- 
-public class DPFactory
-{
-	protected SimModel model;
-	protected TLController tlc;
-	public static final int
-		SHORTEST_PATH=0,
-		SMARTER_SHORTEST_PATH=1,
-		AGGRESSIVE=2,
-		COLEARNING=3;
-		
-	protected static final String[] dpDescs = {
-		"Normal shortest path",
-		"Least busy shortest path",
-		"Aggressive",
-		"Colearning"		
-		};
-	
-	protected static final String[] xmlNames = {
-		ShortestPathDP.shortXMLName,
-		SmarterShortestPathDP.shortXMLName,
-		AggressiveDP.shortXMLName,
-		ColearnPolicy.shortXMLName		
-	};
-		
-	/** Makes a new DPFactory for a specific SimModel and TLC 
-	  * @param model The SimModel to create the algorithm for
-	  * @param tlc The traffic light controller to co-operate with
-	 */
-  	public DPFactory(SimModel model,TLController tlc)
-	{ 	this.model=model;
-		this.tlc=tlc;
-	}
-  
-	/** Looks up the id of a DP algorithm by its description
-	  * @param algoDesc The description of the algorithm
-	  * @return The id of the algorithm
-	  * @throws NoSuchElementException If there is no algorithm with that
-	  *        description.
-	 */
-	public static int getId (String algoDesc)
-	{ 	return StringUtils.getIndexObject(dpDescs,algoDesc);
-	}
-	
-	/** Returns an array of driving policy descriptions */
-	public static String[] getDescriptions() { return dpDescs; }
-	
-	/** Returns a new DrivingPolicy of the requested ID */
-	public DrivingPolicy genDP(int dp) throws ClassNotFoundException
-	{	return getInstance(dp);
-	}
-	
 
-  	/** Look up the description of a DP algorithm by its id 
-	  * @param algoId The id of the algorithm
-	  * @returns The description
-	  * @throws NoSuchElementException If there is no algorithm with the
-	  *	    specified id.
-	*/
-  	public static String getDescription (int algoId)
-  	{ 	return dpDescs[algoId];
-  	}
-  
-  	/** Gets the number of an algorithm from its XML tag name */
-  	public static int getNumberByXMLTagName(String tagName) 
-  	{ 	return StringUtils.getIndexObject(xmlNames,tagName);
-  	}
-  
-  	/** Gets a new instance of an algorithm by its number. This method
-    	  * is meant to be used for loading.
-   	*/
-        public DrivingPolicy getInstance (int algoId) throws ClassNotFoundException
-        {
-            switch (algoId)
-            { 	case SHORTEST_PATH : return new ShortestPathDP(model,tlc);
-			case SMARTER_SHORTEST_PATH : return new ShortestPathDP(model,tlc);
-			case AGGRESSIVE : return new AggressiveDP (model,tlc);
-			case COLEARNING : return new	ColearnPolicy(model,tlc);
-            }
-            throw new ClassNotFoundException
-    		("The DPFactory can't make DP's of type "+algoId);
+public class DPFactory {
+
+    protected SimModel model;
+    protected TLController tlc;
+    public static final int SHORTEST_PATH = 0,
+            SMARTER_SHORTEST_PATH = 1,
+            AGGRESSIVE = 2,
+            COLEARNING = 3,
+            CHANCE_PATH = 4;
+
+    protected static final String[] dpDescs = {
+        "Normal shortest path",
+        "Least busy shortest path",
+        "Aggressive",
+        "Colearning",
+        "Chance path"
+    };
+
+    protected static final String[] xmlNames = {
+        ShortestPathDP.shortXMLName,
+        SmarterShortestPathDP.shortXMLName,
+        AggressiveDP.shortXMLName,
+        ColearnPolicy.shortXMLName
+    };
+
+    /**
+     * Makes a new DPFactory for a specific SimModel and TLC
+     *
+     * @param model The SimModel to create the algorithm for
+     * @param tlc The traffic light controller to co-operate with
+     */
+    public DPFactory(SimModel model, TLController tlc) {
+        this.model = model;
+        this.tlc = tlc;
+    }
+
+    /**
+     * Looks up the id of a DP algorithm by its description
+     *
+     * @param algoDesc The description of the algorithm
+     * @return The id of the algorithm
+     * @throws NoSuchElementException If there is no algorithm with that
+     * description.
+     */
+    public static int getId(String algoDesc) {
+        return StringUtils.getIndexObject(dpDescs, algoDesc);
+    }
+
+    /**
+     * Returns an array of driving policy descriptions
+     */
+    public static String[] getDescriptions() {
+        return dpDescs;
+    }
+
+    /**
+     * Returns a new DrivingPolicy of the requested ID
+     */
+    public DrivingPolicy genDP(int dp) throws ClassNotFoundException {
+        return getInstance(dp);
+    }
+
+    /**
+     * Look up the description of a DP algorithm by its id
+     *
+     * @param algoId The id of the algorithm
+     * @returns The description
+     * @throws NoSuchElementException If there is no algorithm with the
+     * specified id.
+     */
+    public static String getDescription(int algoId) {
+        return dpDescs[algoId];
+    }
+
+    /**
+     * Gets the number of an algorithm from its XML tag name
+     */
+    public static int getNumberByXMLTagName(String tagName) {
+        return StringUtils.getIndexObject(xmlNames, tagName);
+    }
+
+    /**
+     * Gets a new instance of an algorithm by its number. This method is meant
+     * to be used for loading.
+     */
+    public DrivingPolicy getInstance(int algoId) throws ClassNotFoundException {
+        switch (algoId) {
+            case SHORTEST_PATH:
+                return new ShortestPathDP(model, tlc);
+            case SMARTER_SHORTEST_PATH:
+                return new ShortestPathDP(model, tlc);
+            case AGGRESSIVE:
+                return new AggressiveDP(model, tlc);
+            case COLEARNING:
+                return new ColearnPolicy(model, tlc);
+            case CHANCE_PATH:
+                return new ChancePathDP(model, tlc);
         }
-}  
+        throw new ClassNotFoundException("The DPFactory can't make DP's of type " + algoId);
+    }
+}

@@ -18,6 +18,7 @@ import com.github.cc007.trafficlights.GLDSim;
 import com.github.cc007.trafficlights.Model;
 
 import com.github.cc007.trafficlights.algo.dp.*;
+import com.github.cc007.trafficlights.algo.edit.ShortestPathCalculator;
 import com.github.cc007.trafficlights.algo.tlc.*;
 import com.github.cc007.trafficlights.infra.*;
 import com.github.cc007.trafficlights.sim.stats.TrackerFactory;
@@ -93,6 +94,11 @@ public class SimModel extends Model implements XMLSerializable {
     protected static int LOCK_THRESHOLD = 10000;
     protected static int numSeries = 10; // DOAS 06: 10 series per test config
     protected int curSeries = 0;
+
+    /**
+     * The derivation factor for calculating shortest paths
+     */
+    protected double derivationFactor = 1.1;
 
     /**
      * Creates second thread
@@ -318,7 +324,7 @@ public class SimModel extends Model implements XMLSerializable {
             throw new SimulationRunningException(
                     "Cannot reset data while simulation is running.");
         }
-        infra.reset();
+        infra.reset(derivationFactor);
         tlc.reset();
         dp.reset(); //driving policy might also need being reset (DOAS 06)
         curCycle = 0;
@@ -340,18 +346,20 @@ public class SimModel extends Model implements XMLSerializable {
         boolean structureChanged = false;
         // (DOAS 06) Setting added to the menu
         if (this.controller.getAccidents()) {
-            structureChanged = infra.disableRandomLane(); // (DOAS 05) these two functions enable the use of 'accidents'
-            structureChanged |= infra.enableRandomLane();  // removing those two lines will revert the program to the normal version
+            structureChanged = infra.disableRandomLane(derivationFactor); // (DOAS 05) these two functions enable the use of 'accidents'
+            structureChanged |= infra.enableRandomLane(derivationFactor);  // removing those two lines will revert the program to the normal version
         }
-        if (structureChanged && this.controller.getRerouting()) {
-            // the paths have to be recalculated, because the structure changed (DOAS 06)
-            com.github.cc007.trafficlights.algo.edit.ShortestPathCalculator calc = new com.github.cc007.trafficlights.algo.edit.ShortestPathCalculator();
-            try {
-                calc.calcAllShortestPaths(infra);
-            } catch (InfraException e) {
-                e.printStackTrace();
-            }
-        }
+
+//TODO make sure that this can actually be turned off (enable/disable already calcs all shortest paths twice)
+//        if (structureChanged && this.controller.getRerouting()) {
+//            // the paths have to be recalculated, because the structure changed (DOAS 06)
+//            ShortestPathCalculator calc = new ShortestPathCalculator();
+//            try {
+//                calc.calcAllShortestPaths(infra);
+//            } catch (InfraException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
         if (!hasRun) {
             initialize();
@@ -383,6 +391,8 @@ public class SimModel extends Model implements XMLSerializable {
 
     /**
      * Gets the speed of the simulation
+     *
+     * @return the speed
      */
     public int getSpeed() {
         return thread.getSleepTime();
@@ -390,9 +400,29 @@ public class SimModel extends Model implements XMLSerializable {
 
     /**
      * Sets the speed of the simulation
+     *
+     * @param s the speed
      */
     public void setSpeed(int s) {
         thread.setSleepTime(s);
+    }
+
+    /**
+     * Gets the derivation factor of shortest path calculations
+     *
+     * @return the derivation factor
+     */
+    public double getDerivationFactor() {
+        return derivationFactor;
+    }
+
+    /**
+     * Sets the derivation factor of shortest path calculations
+     *
+     * @param derivationFactor the derivation factor
+     */
+    public void setDerivationFactor(double derivationFactor) {
+        this.derivationFactor = derivationFactor;
     }
 
     protected void cityDoStep() {

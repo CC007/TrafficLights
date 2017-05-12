@@ -42,6 +42,7 @@ public class ColearnPolicy extends DrivingPolicy {
     public ColearnPolicy(SimModel _m, TLController _tlc) {
         //TODO check if the tlc magic (field hiding and self casting) actually does what it is supposed to do
         super(_m, _tlc);
+        _m.setDerivationFactor(1.1);
         tlc = (Colearning) tlc;
         if (tlc == null) {
             tlc = (Colearning) _m.getTLController();

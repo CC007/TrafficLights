@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.*;
 
 import com.github.cc007.trafficlights.*;
+import com.github.cc007.trafficlights.algo.edit.ShortestPathCalculator;
 import com.github.cc007.trafficlights.infra.Node.NodeStatistics;
 import com.github.cc007.trafficlights.utils.*;
 import com.github.cc007.trafficlights.xml.*;
@@ -162,7 +163,7 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
     // drivelanes so that when the lane becomes available again the original target will be restored
     // thus letting cars be able to go there again. (DOAS 05)
     /// @return True, if any lane was actually disabled (DOAS 06)
-    public boolean disableRandomLane() {
+    public boolean disableRandomLane(double derivationFactor) {
         if (rnd.nextInt(accidentsRate) != 0) {
             return false;
         }
@@ -321,7 +322,7 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
 
                 if (!infraOK) {
                     //System.out.println(ro.getName() + " cannot be disabled. Enabled again.");
-                    enableLane(disabledLaneIndex);
+                    enableLane(disabledLaneIndex, derivationFactor);
                     continue;   //try another lane
                 }
 
@@ -336,7 +337,7 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
 
     // oposite of the disabled function (DOAS 05)
     /// @return True, if some lane was enabled (DOAS 06)
-    public boolean enableRandomLane() {
+    public boolean enableRandomLane(double derivationFactor) {
         if (disabledLanes.size() == 0
                 || (rnd.nextInt(300) + 1 > 1 * disabledLanes.size())) {
             return false;
@@ -346,7 +347,7 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
         // in case something goes weird, only the finite number of trials is to be performed (DOAS 06)
         for (int i = 0; i < 10; i++) {
             try {
-                enableLane(rnd.nextInt(numLanes));
+                enableLane(rnd.nextInt(numLanes), derivationFactor);
                 return true;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -356,7 +357,7 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
         return false;
     }
 
-    protected void enableLane(int disabledLaneIndex) throws InfraException {
+    protected void enableLane(int disabledLaneIndex, double derivationFactor) throws InfraException {
         // Junctions only
         DriveLane toBeEnabledLane = disabledLanes.get(disabledLaneIndex);
 
@@ -439,8 +440,8 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
         //Check if everything is still okay about the Infrastructure
         validator.validate();
 
-        com.github.cc007.trafficlights.algo.edit.ShortestPathCalculator calc = new com.github.cc007.trafficlights.algo.edit.ShortestPathCalculator();
-        calc.calcAllShortestPaths(this);
+        ShortestPathCalculator calc = new ShortestPathCalculator();
+        calc.calcAllShortestPaths(this, derivationFactor);
 
     }
 
@@ -814,18 +815,20 @@ public class Infrastructure implements XMLSerializable, SelectionStarter {
      *
      * @see Node#reset()
      */
-    public void reset() {
+    public void reset(double derivationFactor) {
         CustomFactory.reset();
         for (int i = 0; i < allNodes.length; i++) {
             allNodes[i].reset();
         }
 
         //(DOAS 06)
-        while (disabledLanes.size() > 0) {    //Because of some race condition issues only this kind of cycle seems to work
-            try {
-                enableLane(0);
-            } catch (InfraException e) {
-                e.printStackTrace();
+        synchronized (disabledLanes) {
+            while (disabledLanes.size() > 0) {    //Because of some race condition issues only this kind of cycle seems to work
+                try {
+                    enableLane(disabledLanes.size() - 1, derivationFactor);
+                } catch (InfraException e) {
+                    e.printStackTrace();
+                }
             }
         }
         this.removedCars = 0; //DOAS 06 (reset the number of cars removed from model)
