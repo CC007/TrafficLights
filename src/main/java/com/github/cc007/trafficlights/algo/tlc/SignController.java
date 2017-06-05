@@ -110,7 +110,7 @@ public class SignController implements XMLSerializable
 	 * On a normal junction traffic from the right gets priority
 	 * @param node The node involved.
 	 */
-	private void switchNonTrafficLights(NonTLJunction node, TLDecision[] dec)
+	public void switchNonTrafficLights(NonTLJunction node, TLDecision[] dec)
 	{
 		System.out.println("NonTLSwitch");
 		//Sign[][] signConfigs = node.getSignConfigs() ;
