@@ -56,7 +56,6 @@ import java.util.HashMap;
  * See the GNU General Public License for more details.
  * See the documentation of Green Light District for further information.
  *------------------------------------------------------------------------*/
-
 import com.github.cc007.trafficlights.*;
 import com.github.cc007.trafficlights.algo.tlc.*;
 import com.github.cc007.trafficlights.infra.*;
@@ -241,151 +240,145 @@ public class TC2B extends TCRL implements Colearning, InstantiationAssistant {
                 tld[i][j].setGain(gain);
             }
         }
-        
-        if(randomrun){
+
+        if (randomrun) {
             return tld;
         }
-                // now get where it is stuck
+        // now get where it is stuck
         SignController s = SimModel.getSignController();
         DrivingPolicy dp = SimModel.getDrivingPolicy();
-        
+
         for (int i = 0; i < num_nodes; i++) {
             num_dec = tld[i].length;
-            
+
             for (int j = 0; j < num_dec; j++) {
                 DriveLane l = tld[i][j].getTL().getLane();
-                if(l.getNumRoadusersWaiting() ==0){
+                if (l.getNumRoadusersWaiting() == 0) {
                     continue;
                 }
-                 if(l.getFirstRoaduser()== null){
+                if (l.getFirstRoaduser() == null) {
                     continue;
                 }
                 Roaduser user = l.getFirstRoaduser();
                 int g = 0;
-                if(user.getInQueueForSign()){
-                   
+                if (user.getInQueueForSign()) {
+
                     try {
                         DriveLane dir = dp.getDirection(user, l, l.getNodeLeadsTo());
-                        if(dir.isFull()){ // road first user wants to go is full, update gain for tl
+                        if (dir.isFull()) { // road first user wants to go is full, update gain for tl
                             g = 100;
-                           
-                            
-                        // all gains have to be updated in the end, in order to now for which node it is.
-                        //tld[i][j].setGain(tld[i][j].getGain() + 100);
-                            
+
+                            // all gains have to be updated in the end, in order to now for which node it is.
+                            //tld[i][j].setGain(tld[i][j].getGain() + 100);
                         }
-                        
+
                         // first user is in front of lane, get desired direction, look if that lane is full,
                         // if so add gain...
                     } catch (InfraException ex) {
                         Logger.getLogger(TC2B.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                   // b.put( tld[i][j].getTL().getId(), b.getOrDefault(tld[i][j].getTL().getId(), 0));
+                    // b.put( tld[i][j].getTL().getId(), b.getOrDefault(tld[i][j].getTL().getId(), 0));
                 }
-               
-                
-              //  int drLength = tld[i][j].getTL().getLane().getLength();
-             //   int drWait = tld[i][j].getTL().getLane().getNumBlocksWaiting();
-               // tld[i][j].getTL().getLane().getSign().;
-               // public DriveLane getDirectionLane(Roaduser r, DriveLane lane_now, DriveLane[] allOutgoing, DriveLane[] shortest) {
-              
+
+                //  int drLength = tld[i][j].getTL().getLane().getLength();
+                //   int drWait = tld[i][j].getTL().getLane().getNumBlocksWaiting();
+                // tld[i][j].getTL().getLane().getSign().;
+                // public DriveLane getDirectionLane(Roaduser r, DriveLane lane_now, DriveLane[] allOutgoing, DriveLane[] shortest) {
             }
-            
-            
-        
+
         }
-       
+
         // more loops is better I guess
         for (int i = 0; i < num_nodes; i++) {
             num_dec = tld[i].length;
-            
+
             for (int j = 0; j < num_dec; j++) {
                 tld[i][j].setGain(tld[i][j].getGain() + b.getOrDefault(tld[i][j].getTL().getId(), 0));
             }
         }
-       // return tld;
-   //     for(Junction j : infra.getJunctions()){
-     //       j.getNumSigns()
-   //     }
-   
-       Node node;
+        // return tld;
+        //     for(Junction j : infra.getJunctions()){
+        //       j.getNumSigns()
+        //     }
+
+        Node node;
         Node nodes[] = infra.getAllNodes();
-   
-        for(int c = 0; c < 6; c++){ // first just do 6 runs..
-        
-        for (int i=0; i < num_nodes; i++) {
-            node = nodes[i];
-            if (node.getType() == Node.JUNCTION) {
-                if (tld[i].length > 0) {
-                        
-                        s.switchTrafficLights((Junction)node, tld[i]);
-                }
-                else
-                if (node.getType() == Node.NON_TL )
-                {
-                        s.switchNonTrafficLights((NonTLJunction)node, tld[i]);
+
+        for (int c = 0; c < 6; c++) { // first just do 6 runs..
+
+            for (int i = 0; i < num_nodes; i++) {
+                node = nodes[i];
+                if (node.getType() == Node.JUNCTION) {
+                    if (tld[i].length > 0) {
+
+                        s.switchTrafficLights((Junction) node, tld[i]);
+                    } else if (node.getType() == Node.NON_TL) {
+                        s.switchNonTrafficLights((NonTLJunction) node, tld[i]);
+                    }
                 }
             }
-        }
-        
-        //UPDATED Traffic lights, update gain for situation... and now look at traffic lights situation
-        for (int i = 0; i < num_nodes; i++) {
-            num_dec = tld[i].length;
-            
-            for (int j = 0; j < num_dec; j++) {
-                DriveLane l = tld[i][j].getTL().getLane();
-                Roaduser user = l.getFirstRoaduser();
-                if(user.getInQueueForSign()){
-                    
+
+            //UPDATED Traffic lights, update gain for situation... and now look at traffic lights situation
+            for (int i = 0; i < num_nodes; i++) {
+                num_dec = tld[i].length;
+
+                for (int j = 0; j < num_dec; j++) {
+                    DriveLane l = tld[i][j].getTL().getLane();
+                    if (l.getNumRoadusersWaiting() == 0) {
+                    continue;
+                    }
+                    Roaduser user = l.getFirstRoaduser();
+                    if (user.getInQueueForSign()) {
+
+                    }
                 }
+
             }
-            
-        }
-        
-        // reset gains
-           for (int i = 0; i < num_nodes; i++) {
-              num_dec = tld[i].length;
-            
+
+            // reset gains
+            for (int i = 0; i < num_nodes; i++) {
+                num_dec = tld[i].length;
+
                 for (int j = 0; j < num_dec; j++) {
                     tld[i][j].setGain(tld[i][j].getGain() - b.getOrDefault(tld[i][j].getTL().getId(), 0));
                 }
             }
-        
-        b = new HashMap<>();
-        
-        for (int i = 0; i < num_nodes; i++) {
-              num_dec = tld[i].length;
-            
-            for (int j = 0; j < num_dec; j++) {
-             DriveLane l = tld[i][j].getTL().getLane();
-                if(l.getFirstRoaduser()== null){
-                    continue;
-                }
-                Roaduser user = l.getFirstRoaduser();
-                int g = 0;
-                if(user.getInQueueForSign()){
-                   
-                    try {
-                        DriveLane dir = dp.getDirection(user, l, l.getNodeLeadsTo());
-                        if(dir.isFull()){ // road first user wants to go is full, update gain for tl
-                            g = 100; // always set gain for that node to +100; 
-                            if(!dir.getSign().getState()){// light is red, so - gain for self
-                                 b.put( tld[i][j].getTL().getId(), b.getOrDefault(tld[i][j].getTL().getId(), 0) - 500);
-                            }
-                        }
-                        
-                        // first user is in front of lane, get desired direction, look if that lane is full,
-                        // if so add gain...
-                    } catch (InfraException ex) {
-                        Logger.getLogger(TC2B.class.getName()).log(Level.SEVERE, null, ex);
+
+            b = new HashMap<>();
+
+            for (int i = 0; i < num_nodes; i++) {
+                num_dec = tld[i].length;
+
+                for (int j = 0; j < num_dec; j++) {
+                    DriveLane l = tld[i][j].getTL().getLane();
+                    if (l.getFirstRoaduser() == null) {
+                        continue;
                     }
-                   
+                    Roaduser user = l.getFirstRoaduser();
+                    int g = 0;
+                    if (user.getInQueueForSign()) {
+
+                        try {
+                            DriveLane dir = dp.getDirection(user, l, l.getNodeLeadsTo());
+                            if (dir.isFull()) { // road first user wants to go is full, update gain for tl
+                                g = 100; // always set gain for that node to +100; 
+                                if (!dir.getSign().getState()) {// light is red, so - gain for self
+                                    b.put(tld[i][j].getTL().getId(), b.getOrDefault(tld[i][j].getTL().getId(), 0) - 500);
+                                }
+                            }
+
+                            // first user is in front of lane, get desired direction, look if that lane is full,
+                            // if so add gain...
+                        } catch (InfraException ex) {
+                            Logger.getLogger(TC2B.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+
+                    }
                 }
             }
+
         }
-               
-        }
-        
+
         return tld;
     }
 
@@ -1032,6 +1025,3 @@ public class TC2B extends TCRL implements Colearning, InstantiationAssistant {
         }
     }
 }
-
-
-       
