@@ -69,7 +69,7 @@ public class SimModel extends Model implements XMLSerializable {
     /**
      * The Thing that makes all Trafficlights shudder
      */
-    protected SignController sgnctrl;
+    protected static SignController sgnctrl;
     /**
      * Name of the simulation
      */
@@ -109,6 +109,10 @@ public class SimModel extends Model implements XMLSerializable {
         curCycle = 0;
         generator = new Random(GLDSim.seriesSeed[GLDSim.seriesSeedIndex]);
         sgnctrl = new SignController(tlc, infra);
+    }
+    
+    public static SignController getSignController(){
+        return sgnctrl;
     }
 
     //(DOAS 06)

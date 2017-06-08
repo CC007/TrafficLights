@@ -65,7 +65,8 @@ public class TLCFactory {
             RLSARSA6 = 31,
             TC_CBG = 32, //(DOAS 05)
             TC_ABG = 33, //(DOAS 06)
-            TC_ACBsG = 34;    //(DOAS 06)
+            TC_ACBsG = 34,    //(DOAS 06)
+            TC_2B = 35;
 
     protected static final String[] tlcDescs = {
         "Random",
@@ -102,7 +103,8 @@ public class TLCFactory {
         "RL Sarsa 6",
         "TC-CBG (Congestion B-Gone)", //(DOAS 05)
         "TC-ABG (Accident B-Gone)", //(DOAS 06)
-        "TC-ACBsG (Accident and Congestion Bs-Gone)" //(DOAS 06)
+        "TC-ACBsG (Accident and Congestion Bs-Gone)", //(DOAS 06)
+        "TC-2B"
     };
 
     protected static final String[] xmlNames = {
@@ -140,7 +142,8 @@ public class TLCFactory {
         SL6TLC.shortXMLName,
         TCCBG.shortXMLName, //(DOAS 05)
         TCABG.shortXMLName, //(DOAS 06)
-        TCACBsG.shortXMLName //(DOAS 06)
+        TCACBsG.shortXMLName, //(DOAS 06)
+        TC2B.shortXMLName
     };
 
     protected static final String[] categoryDescs = {"Simple Maths", "Complex Maths", "Longest Q-variants", "Reinforcement Learning", "Multi-TLC", "RL Sarsa TLCs", "Genetic", "Neural Network"};
@@ -148,7 +151,7 @@ public class TLCFactory {
         {RANDOM, MOST_CARS, RLD, RLD2},
         {LOCAL, ACGJ_2},
         {LONGEST_QUEUE, RELATIVE_LONGEST_QUEUE, BEST_FIRST},
-        {TC1_FIX, TC_1OPT, TC_2OPT, TC_3OPT, TC1_B1, TC2_B1, TC3_B1, TC_1_DESTLESS, TC_2_DESTLESS, TC_3_WORKINPROGRESS, TC_2FINAL},
+        {TC1_FIX, TC_1OPT, TC_2OPT, TC_3OPT, TC1_B1, TC2_B1, TC3_B1, TC_1_DESTLESS, TC_2_DESTLESS, TC_3_WORKINPROGRESS, TC_2FINAL, TC_2B},
         //		{TC1_FIX, TC_1OPT, TC_2OPT, TC_3OPT},
         {TC_CBG /*(DOAS 05)*/, TC_ABG/*(DOAS 06)*/, TC_ACBsG/*(DOAS 06)*/},
         {RLSARSA1, RLSARSA2, RLSARSA3, RLSARSA4, RLSARSA5, RLSARSA6},
@@ -324,6 +327,8 @@ public class TLCFactory {
                 return new TCABG(infra);  //(DOAS 06)
             case TC_ACBsG:
                 return new TCACBsG(infra);   //(DOAS 06)
+            case TC_2B:
+                return new TC2B(infra); 
 
         }
         throw new InfraException("The TLCFactory can't make TLC's of type " + algoId);
