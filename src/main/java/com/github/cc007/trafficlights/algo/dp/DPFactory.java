@@ -33,14 +33,16 @@ public class DPFactory {
             SMARTER_SHORTEST_PATH = 1,
             AGGRESSIVE = 2,
             COLEARNING = 3,
-            CHANCE_PATH = 4;
+            CHANCE_PATH = 4,
+            SMARTER_CHANCE_PATH = 5;
 
     protected static final String[] dpDescs = {
         "Normal shortest path",
         "Least busy shortest path",
         "Aggressive",
         "Colearning",
-        "Chance path"
+        "Chance path",
+        "Smarter Chance path"
     };
 
     protected static final String[] xmlNames = {
@@ -122,6 +124,8 @@ public class DPFactory {
                 return new ColearnPolicy(model, tlc);
             case CHANCE_PATH:
                 return new ChancePathDP(model, tlc);
+            case SMARTER_CHANCE_PATH:
+                return new SmarterChancePathDP(model, tlc);
         }
         throw new ClassNotFoundException("The DPFactory can't make DP's of type " + algoId);
     }
