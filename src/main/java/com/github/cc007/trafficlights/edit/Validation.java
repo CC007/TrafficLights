@@ -242,10 +242,9 @@ public class Validation {
                 spawn = (SpawnFrequency[]) Arrayutils.cropArray(spawn, ruTypeCount);
                 edge.setSpawnFrequencies(spawn);
             }
-            
-            
+
             SpecialNode[] spNodes = infra.getSpecialNodes();
-            float totalEdgeCount = 0;
+            int totalEdgeCount = 0;
             float totalEdgeChance = 0;
 
             // calc the average value of edge nodes (used to predict for net tunnels)
@@ -253,22 +252,22 @@ public class Validation {
                 for (int k = 0; k < numRuTypes; k++) {
                     if (spNodes[j] instanceof EdgeNode) {
                         EdgeNode edgeNode = (EdgeNode) spNodes[j];
-                        totalEdgeChance += edgeNode.getSpawnFrequency(ruTypes[k]);
+                        totalEdgeChance += Math.max(edgeNode.getSpawnFrequency(ruTypes[k]), 0.0f);
                         totalEdgeCount++;
                     }
                 }
             }
-            float avgEdgeChance = totalEdgeChance / totalEdgeCount;
+            float avgEdgeChance = totalEdgeCount == 0 ? 0 : totalEdgeChance / totalEdgeCount;
 
             // get the total value for all edge nodes based on the spawn freq
-            totalEdgeChance = 0;
+            float edgeChances[] = new float[numRuTypes];
             for (int j = 0; j < numSpecialNodes; j++) {
                 for (int k = 0; k < numRuTypes; k++) {
                     if (spNodes[j] instanceof EdgeNode) {
                         EdgeNode edgeNode = (EdgeNode) spNodes[j];
-                        totalEdgeChance += edgeNode.getSpawnFrequency(ruTypes[k]);
+                        edgeChances[k] += Math.max(edgeNode.getSpawnFrequency(ruTypes[k]), 0.0f);
                     } else {
-                        totalEdgeChance += avgEdgeChance;
+                        edgeChances[k] += avgEdgeChance;
                     }
                 }
             }
@@ -281,9 +280,9 @@ public class Validation {
                 for (int k = 0; k < numRuTypes; k++) {
                     if (spNodes[j] instanceof EdgeNode) {
                         EdgeNode edgeNode = (EdgeNode) spNodes[j];
-                        edgeChanceDest = edgeNode.getSpawnFrequency(ruTypes[k]) / totalEdgeChance;
+                        edgeChanceDest = Math.max(edgeNode.getSpawnFrequency(ruTypes[k]), 0.0f) / edgeChances[k];
                     } else {
-                        edgeChanceDest = avgEdgeChance / totalEdgeChance;
+                        edgeChanceDest = avgEdgeChance / edgeChances[k];
                     }
                     dest[j][k] = new DestFrequency(ruTypes[k], edgeChanceDest);
                 }
