@@ -280,10 +280,11 @@ public class Validation {
                 for (int k = 0; k < numRuTypes; k++) {
                     if (spNodes[j] instanceof EdgeNode) {
                         EdgeNode edgeNode = (EdgeNode) spNodes[j];
-                        edgeChanceDest = Math.max(edgeNode.getSpawnFrequency(ruTypes[k]), 0.0f) / edgeChances[k];
+                        edgeChanceDest = Math.max(edgeNode.getSpawnFrequency(ruTypes[k]), 0.0f);
                     } else {
-                        edgeChanceDest = avgEdgeChance / edgeChances[k];
+                        edgeChanceDest = avgEdgeChance;
                     }
+                    edgeChanceDest = edgeChances[k] == 0 ? 0 : edgeChanceDest / edgeChances[k];
                     dest[j][k] = new DestFrequency(ruTypes[k], edgeChanceDest);
                 }
             }
