@@ -245,7 +245,7 @@ public class Validation {
             
             
             SpecialNode[] spNodes = infra.getSpecialNodes();
-            float totalEdgeCount = 0;
+            int totalEdgeCount = 0;
             float totalEdgeChance = 0;
 
             // calc the average value of edge nodes (used to predict for net tunnels)
@@ -253,7 +253,7 @@ public class Validation {
                 for (int k = 0; k < numRuTypes; k++) {
                     if (spNodes[j] instanceof EdgeNode) {
                         EdgeNode edgeNode = (EdgeNode) spNodes[j];
-                        totalEdgeChance += edgeNode.getSpawnFrequency(ruTypes[k]);
+                        totalEdgeChance += Math.max(edgeNode.getSpawnFrequency(ruTypes[k]), 0.0f);
                         totalEdgeCount++;
                     }
                 }
@@ -266,7 +266,7 @@ public class Validation {
                 for (int k = 0; k < numRuTypes; k++) {
                     if (spNodes[j] instanceof EdgeNode) {
                         EdgeNode edgeNode = (EdgeNode) spNodes[j];
-                        totalEdgeChance += edgeNode.getSpawnFrequency(ruTypes[k]);
+                        totalEdgeChance += Math.max(edgeNode.getSpawnFrequency(ruTypes[k]), 0.0f);
                     } else {
                         totalEdgeChance += avgEdgeChance;
                     }
@@ -281,7 +281,7 @@ public class Validation {
                 for (int k = 0; k < numRuTypes; k++) {
                     if (spNodes[j] instanceof EdgeNode) {
                         EdgeNode edgeNode = (EdgeNode) spNodes[j];
-                        edgeChanceDest = edgeNode.getSpawnFrequency(ruTypes[k]) / totalEdgeChance;
+                        edgeChanceDest = Math.max(edgeNode.getSpawnFrequency(ruTypes[k]), 0.0f) / totalEdgeChance;
                     } else {
                         edgeChanceDest = avgEdgeChance / totalEdgeChance;
                     }
