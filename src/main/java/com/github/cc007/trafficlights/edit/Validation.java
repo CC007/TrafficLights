@@ -225,32 +225,35 @@ public class Validation {
             // now we've got an array of roadusers that can get on the road from here
             int[] types = Typeutils.getTypes(lanetypes);
 
-            SpawnFrequency[] spawn = new SpawnFrequency[numRuTypes];
-            int ruTypeCount = 0;
-
-            for (int j = 0; j < types.length; j++) {
-                int[] dests = edge.getShortestPathDestinations(types[j]);
-                //System.out.println("Now checking for type:"+types[j]+" there are "+dests.length);
-                if (dests.length > 0) {
-                    float freq = types[j] == RoaduserFactory.BUS ? 0.05f
-                            : 0.25f;
-                    spawn[ruTypeCount] = new SpawnFrequency(types[j], freq);
-                    //System.out.println("Added a spawn freq for type:"+types[j]+"(num_types:"+types.length+") from "+edges[i]);
-                    ruTypeCount++;
+            if (edge.getSpawnFrequencies().length == 0) {
+                SpawnFrequency[] spawn = new SpawnFrequency[numRuTypes];
+                int ruTypeCount = 0;
+                for (int j = 0; j < types.length; j++) {
+                    int[] dests = edge.getShortestPathDestinations(types[j]);
+                    //System.out.println("Now checking for type:"+types[j]+" there are "+dests.length);
+                    if (dests.length > 0) {
+                        float freq = types[j] == RoaduserFactory.BUS ? 0.05f
+                                : 0.25f;
+                        spawn[ruTypeCount] = new SpawnFrequency(types[j], freq);
+                        //System.out.println("Added a spawn freq for type:"+types[j]+"(num_types:"+types.length+") from "+edges[i]);
+                        ruTypeCount++;
+                    }
                 }
-            }
-            spawn = (SpawnFrequency[]) Arrayutils.cropArray(spawn, ruTypeCount);
-
-            DestFrequency[][] dest = new DestFrequency[numSpecialNodes][];
-            for (int j = 0; j < numSpecialNodes; j++) {
-                dest[j] = new DestFrequency[numRuTypes];
-                for (int k = 0; k < numRuTypes; k++) {
-                    dest[j][k] = new DestFrequency(ruTypes[k], edgeChance);
-                }
+                spawn = (SpawnFrequency[]) Arrayutils.cropArray(spawn, ruTypeCount);
+                edge.setSpawnFrequencies(spawn);
             }
 
-            edge.setSpawnFrequencies(spawn);
-            edge.setDestFrequencies(dest);
+            if (edge.getDestFrequencies().length == 0) {
+                DestFrequency[][] dest = new DestFrequency[numSpecialNodes][];
+                for (int j = 0; j < numSpecialNodes; j++) {
+                    dest[j] = new DestFrequency[numRuTypes];
+                    for (int k = 0; k < numRuTypes; k++) {
+                        dest[j][k] = new DestFrequency(ruTypes[k], edgeChance);
+                    }
+                }
+                edge.setDestFrequencies(dest);
+            }
+
         }
         return errors;
     }
