@@ -77,7 +77,7 @@ import java.util.logging.Logger;
  * @author Jilles V and Arne K
  * @version 1.0
  */
-public class TC2B extends TCRL implements Colearning, InstantiationAssistant {
+public class TC2BAnco extends TCRL implements Colearning, InstantiationAssistant {
     // TLC vars
 
     protected Infrastructure infrastructure;
@@ -95,7 +95,7 @@ public class TC2B extends TCRL implements Colearning, InstantiationAssistant {
     protected static float gamma = 0.95f;						// Discount Factor; used to decrease the influence of previous V values, that's why: 0 < gamma < 1
     protected final static boolean red = false, green = true;
     protected final static int green_index = 0, red_index = 1;
-    public final static String shortXMLName = "tlc-tc2final";
+    public final static String shortXMLName = "tlc-tc2Anco";
     protected static float random_chance = 0.01f;				//A random gain setting is chosen instead of the on the TLC dictates with this chance
     private Random random_number;
 
@@ -104,7 +104,7 @@ public class TC2B extends TCRL implements Colearning, InstantiationAssistant {
      *
      * @param The infrastructure being used.
      */
-    public TC2B(Infrastructure infra) throws InfraException {
+    public TC2BAnco(Infrastructure infra) throws InfraException {
         super(infra);
     }
 
@@ -162,10 +162,10 @@ public class TC2B extends TCRL implements Colearning, InstantiationAssistant {
                 }
             }
         } catch (Exception e) {
-            Logger.getLogger(TC2B.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(TC2BAnco.class.getName()).log(Level.SEVERE, null, e);
         }
         random_number = new Random(GLDSim.seriesSeed[GLDSim.seriesSeedIndex]);
-        System.out.println("selected right one");
+        System.out.println("selected right one, anco");
     }
 
     /**
@@ -193,7 +193,7 @@ public class TC2B extends TCRL implements Colearning, InstantiationAssistant {
         Roaduser ru;
         ListIterator queue;
         Node destination;
-        HashMap<Integer, Integer> b = new HashMap<>();
+        HashMap<Integer, Float> b = new HashMap<>();
 
         //Determine wheter it should be random or not
         boolean randomrun = false;
@@ -253,54 +253,67 @@ public class TC2B extends TCRL implements Colearning, InstantiationAssistant {
 
             for (int j = 0; j < num_dec; j++) {
                 DriveLane l = tld[i][j].getTL().getLane();
-                if (l.getNumRoadusersWaiting() == 0) {
+                float extraGain = 0;
+                // check if there are roadusers waiting and is full, otherwise, go to next node
+                if (l.getNumRoadusersWaiting() == 0 ||  (! l.isFull())  ) {
                     continue;
                 }
-                if (l.getFirstRoaduser() == null) {
-                    continue;
-                }
-                Roaduser user = l.getFirstRoaduser();
-                int g = 0;
-                if (user.getInQueueForSign()) {
+                
+                Node previous = l.getNodeComesFrom();
+                DriveLane connections[] = null;
+                try {
+                    for( DriveLane l2 : previous.getLanesLeadingTo(l, RoaduserFactory.getTypeByDesc("Automobiles"))){
+                        System.out.println("found previous lane");
+                        // there is car waiting, look at direction
+                        if (l2.getNumRoadusersWaiting() != 0){
+                             Roaduser user = l2.getFirstRoaduser();
+                            DriveLane dir = dp.getDirection(user, l2, l2.getNodeLeadsTo());
+                            if(dir.getId() == l.getId()){
+                                System.out.println("car is waiting for desired lane");
+                                extraGain = extraGain + 30;
+                                for( DriveLane l3 : previous.getLanesLeadingTo(l2, RoaduserFactory.getTypeByDesc("Automobiles"))){
+                                    System.out.println("found previous lane");
+                                    // there is car waiting, look at direction
+                                    if (l3.getNumRoadusersWaiting() != 0){
+                                         Roaduser user2 = l3.getFirstRoaduser();
+                                        DriveLane dir2 = dp.getDirection(user, l3, l3.getNodeLeadsTo());
+                                        // need also 
+                                        //&& l2.getSign().mayDrive()
+                                        // all drivers that want this way add gain, because they want to go there.
+                                        if(dir2.getId() == l2.getId() ){
+                                            System.out.println("car is waiting for desired lane");
+                                            extraGain = extraGain + 10;
+                                        }
 
-                    try {
-                        DriveLane dir = dp.getDirection(user, l, l.getNodeLeadsTo());
-                        if (dir.isFull()) { // road first user wants to go is full, update gain for tl
-                            g = 100;
-
-                            // all gains have to be updated in the end, in order to now for which node it is.
-                            //tld[i][j].setGain(tld[i][j].getGain() + 100);
+                                    }
+                                }
+                                
+                            }
+                            
                         }
-
-                        // first user is in front of lane, get desired direction, look if that lane is full,
-                        // if so add gain...
-                    } catch (InfraException ex) {
-                        Logger.getLogger(TC2B.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    // b.put( tld[i][j].getTL().getId(), b.getOrDefault(tld[i][j].getTL().getId(), 0));
+                       // b.put(tld[i][j].getTL().getId(), extraGain);
+                    };
+                } catch (InfraException ex) {
+                    Logger.getLogger(TC2BAnco.class.getName()).log(Level.SEVERE, null, ex);
                 }
-
-                //  int drLength = tld[i][j].getTL().getLane().getLength();
-                //   int drWait = tld[i][j].getTL().getLane().getNumBlocksWaiting();
-                // tld[i][j].getTL().getLane().getSign().;
-                // public DriveLane getDirectionLane(Roaduser r, DriveLane lane_now, DriveLane[] allOutgoing, DriveLane[] shortest) {
             }
+
 
         }
 
-        // more loops is better I guess
+        // in different loop for if we want to use the gain of the previous node itself.
         for (int i = 0; i < num_nodes; i++) {
             num_dec = tld[i].length;
 
             for (int j = 0; j < num_dec; j++) {
-                tld[i][j].setGain(tld[i][j].getGain() + b.getOrDefault(tld[i][j].getTL().getId(), 0));
+                if(b.containsKey(tld[i][j].getTL().getId())){
+                    tld[i][j].setGain(tld[i][j].getGain() + b.get(tld[i][j].getTL().getId()));
+                }
             }
         }
-        // return tld;
-        //     for(Junction j : infra.getJunctions()){
-        //       j.getNumSigns()
-        //     }
 
+
+        // switch the traffic lights for this situation
         Node node;
         Node nodes[] = infra.getAllNodes();
 
@@ -318,71 +331,107 @@ public class TC2B extends TCRL implements Colearning, InstantiationAssistant {
                 }
             }
 
-            //UPDATED Traffic lights, update gain for situation... and now look at traffic lights situation
-            for (int i = 0; i < num_nodes; i++) {
-                num_dec = tld[i].length;
-
-                for (int j = 0; j < num_dec; j++) {
-                    DriveLane l = tld[i][j].getTL().getLane();
-                    if (l.getNumRoadusersWaiting() == 0) {
-                    continue;
-                    }
-                    Roaduser user = l.getFirstRoaduser();
-                    if (user.getInQueueForSign()) {
-                      //  user.getD
-                    }
-                }
-
-            }
-
             // reset gains
             for (int i = 0; i < num_nodes; i++) {
                 num_dec = tld[i].length;
 
                 for (int j = 0; j < num_dec; j++) {
-                    tld[i][j].setGain(tld[i][j].getGain() - b.getOrDefault(tld[i][j].getTL().getId(), 0));
+                    if(b.containsKey(tld[i][j].getTL().getId())){
+                        tld[i][j].setGain(tld[i][j].getGain() - b.get(tld[i][j].getTL().getId()));
+                    }
                 }
             }
 
             b = new HashMap<>();
 
+            // calc again, now only if trafficlight in front has space and 
+            // take only drivelane that goes to this one
             for (int i = 0; i < num_nodes; i++) {
-                num_dec = tld[i].length;
+            num_dec = tld[i].length;
 
-                for (int j = 0; j < num_dec; j++) {
-                    DriveLane l = tld[i][j].getTL().getLane();
+            for (int j = 0; j < num_dec; j++) {
+                DriveLane l = tld[i][j].getTL().getLane();
+                float extraGain = 0;
+                // check if there are roadusers waiting and is full, otherwise, go to next node
+                if (l.getNumRoadusersWaiting() == 0 ) {
+                    continue;
+                }
+                
+                //check if there is place where first car wants to go
+                Roaduser firstCar = l.getFirstRoaduser();
+                try {
+                    DriveLane d = dp.getDirection(firstCar, l, l.getNodeLeadsTo());
+                    // if lane where car wants to go is full and light is red,
+                    // then set gain to 0; and continue
+                    if(d.isFull() && ! d.getSign().mayDrive()){
+                        //set gain to 0 because can not cross
+                        extraGain = tld[i][j].getGain()*-1;
+                        System.out.println("may not drive :( decrease gain");
+                        b.put(tld[i][j].getTL().getId(), extraGain);
+                          continue;
+                    }
                     
-                    if (l.getNumBlocksWaiting() == 0) {
-                        continue;
-                    }
-                    Roaduser user = l.getFirstRoaduser();
-                    int g = 0;
-                    if (user.getInQueueForSign()) {
-
-                        try {
-                            DriveLane dir = dp.getDirection(user, l, l.getNodeLeadsTo());
-                            if (dir.isFull()) { // road first user wants to go is full, update gain for tl
-                                g = 1000; // always set gain for that node to +100; 
-                                //int iT = dir.getNodeLeadsTo().getId();
+                }
+                 catch (InfraException ex) {
+                    Logger.getLogger(TC2BAnco.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+                if( (! l.isFull()) ){
+                    continue;
+                }
+                
+                Node previous = l.getNodeComesFrom();
+                DriveLane connections[] = null;
+                try {
+                    for( DriveLane l2 : previous.getLanesLeadingTo(l, RoaduserFactory.getTypeByDesc("Automobiles"))){
+                        System.out.println("found previous lane");
+                        // there is car waiting, look at direction
+                        if (l2.getNumRoadusersWaiting() != 0){
+                             Roaduser user = l2.getFirstRoaduser();
+                            DriveLane dir = dp.getDirection(user, l2, l2.getNodeLeadsTo());
+                            // need also 
+                            //&& l2.getSign().mayDrive()
+                            // all drivers that want this way add gain, because they want to go there.
+                            if(dir.getId() == l.getId() ){
+                                System.out.println("car is waiting for desired lane other loop");
+                                extraGain = extraGain + 10;
                                 
-                                b.put(dir.getSign().getId(), b.getOrDefault(dir.getSign().getId(), 0) + g);
-                                System.out.println("increase to: "+ (Integer) dir.getSign().getNode().getId()+ " from: "+ 
-                                        (Integer) tld[i][j].getTL().getNode().getId());
-                                if (!dir.getSign().getState()) {// light is red, so - gain for self
-                                    b.put(tld[i][j].getTL().getId(), b.getOrDefault(tld[i][j].getTL().getId(), 0) - 5000);
+                                
+                                for( DriveLane l3 : previous.getLanesLeadingTo(l2, RoaduserFactory.getTypeByDesc("Automobiles"))){
+                                    System.out.println("found previous lane");
+                                    // there is car waiting, look at direction
+                                    if (l3.getNumRoadusersWaiting() != 0){
+                                         Roaduser user2 = l3.getFirstRoaduser();
+                                        DriveLane dir2 = dp.getDirection(user, l3, l3.getNodeLeadsTo());
+                                        // need also 
+                                        //&& l2.getSign().mayDrive()
+                                        // all drivers that want this way add gain, because they want to go there.
+                                        if(dir2.getId() == l2.getId() ){
+                                            System.out.println("car is waiting for desired lane");
+                                            extraGain = extraGain + 10;
+                                        }
+
+                                    }
                                 }
+                                
+                                
                             }
-
-                            // first user is in front of lane, get desired direction, look if that lane is full,
-                            // if so add gain...
-                        } catch (InfraException ex) {
-                            Logger.getLogger(TC2B.class.getName()).log(Level.SEVERE, null, ex);
+                            
                         }
-
-                    }
+                
+                        b.put(tld[i][j].getTL().getId(), extraGain);
+                    };
+                } catch (InfraException ex) {
+                    Logger.getLogger(TC2BAnco.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+                
+
+
+        }
+
             
+
         }
 
         return tld;
